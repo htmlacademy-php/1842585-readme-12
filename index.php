@@ -200,8 +200,7 @@ $user_name = 'Андрей'; // укажите здесь ваше имя
                         </li>
                     </ul>
                 </nav>
-            <?php
-            endif; ?>
+            <?php endif; ?>
         </div>
     </div>
 </header>
