@@ -334,50 +334,22 @@ $posts = [
                         <h2><?= $post["title"] ?></h2>
                     </header>
                     <div class="post__main">
-                        <?php if ($post["type"] === "post-quote"): ?>
-                            <blockquote>
-                                <p>
-                                    <?= $post["contain"] ?>
-                                </p>
-                                <cite>Неизвестный Автор</cite>
-                            </blockquote>
-                        <?php elseif ($post["type"] === "post-link"): ?>
-                            <div class="post-link__wrapper">
-                                <a class="post-link__external" href="http://<?= $post["contain"] ?>"
-                                   title="Перейти по ссылке">
-                                    <div class="post-link__info-wrapper">
-                                        <div class="post-link__icon-wrapper">
-                                            <img src="https://www.google.com/s2/favicons?domain=vitadental.ru"
-                                                 alt="Иконка">
-                                        </div>
-                                        <div class="post-link__info">
-                                            <h3><?= $post["title"] ?></h3>
-                                        </div>
-                                    </div>
-                                    <span><?= $post["contain"] ?></span>
-                                </a>
-                            </div>
-                        <?php elseif ($post["type"] === "post-photo"): ?>
-                            <div class="post-photo__image-wrapper">
-                                <img src="img/<?= $post["contain"] ?>" alt="Фото от пользователя" width="360"
-                                     height="240">
-                            </div>
-                        <?php elseif ($post["type"] === "post-video"): ?>
-                            <div class="post-video__block">
-                                <div class="post-video__preview">
-                                    <?= embed_youtube_cover($post["contain"]); ?>
-                                    <img src="img/coast-medium.jpg" alt="Превью к видео" width="360" height="188">
-                                </div>
-                                <a href="post-details.html" class="post-video__play-big button">
-                                    <svg class="post-video__play-big-icon" width="14" height="14">
-                                        <use xlink:href="#icon-video-play-big"></use>
-                                    </svg>
-                                    <span class="visually-hidden">Запустить проигрыватель</span>
-                                </a>
-                            </div>
-                        <?php else: ?>
-                            <p><?= $post["contain"] ?></p>
-                        <?php endif; ?>
+                        <?php switch ($post["type"]) {
+                            case "post-quote":
+                                require("./templates/post/post_quote.php");
+                                break;
+                            case "post-link":
+                                require("./templates/post/post_link.php");
+                                break;
+                            case "post-photo":
+                                require("./templates/post/post_photo.php");
+                                break;
+                            case "post-video":
+                                require("./templates/post/post_video.php");
+                                break;
+                            default:
+                                require("./templates/post/post_text.php");
+                        } ?>
                     </div>
                     <footer class="post__footer">
                         <div class="post__author">
