@@ -1,5 +1,17 @@
+<?php
+/**
+ * @var $post [
+ * "title" => "Лучшие курсы",
+ * "type" => "post-link",
+ * "contain" => "www.htmlacademy.ru",
+ * "user_name" => "Владик",
+ * "avatar" => "userpic.jpg",
+ * ]
+ */
+
+?>
 <div class="post-link__wrapper">
-    <a class="post-link__external" href="http://<?= $post["contain"] ?>"
+    <a class="post-link__external" href="<?= $post["contain"] ?>"
        title="Перейти по ссылке">
         <div class="post-link__info-wrapper">
             <div class="post-link__icon-wrapper">

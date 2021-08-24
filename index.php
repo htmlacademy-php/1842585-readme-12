@@ -347,8 +347,11 @@ $posts = [
                             case "post-video":
                                 require("./templates/post/post_video.php");
                                 break;
-                            default:
+                            case "post-text":
                                 require("./templates/post/post_text.php");
+                                break;
+                            default:
+                                die("Неизвестный тип поста.");
                         } ?>
                     </div>
                     <footer class="post__footer">
