@@ -2,6 +2,7 @@
 
 $is_auth = rand(0, 1);
 $user_name = 'Андрей'; // укажите здесь ваше имя
+$textWasOptimized = false;
 $posts = [
     [
         "title" => "Цитата",
@@ -9,6 +10,13 @@ $posts = [
         "contain" => "Мы в жизни любим только раз, а после ищем лишь похожих",
         "user_name" => "Лариса",
         "avatar" => "userpic-larisa-small.jpg",
+    ],
+    [
+        "title" => "Игра престолов",
+        "type" => "post-text",
+        "contain" => "Американский драматический сериал в жанре фэнтези, является адаптацией цикла романов «Песнь Льда и Пламени». Создатели сериала — сценаристы Дэвид Беньофф и Дэн Вайс, съёмки ведутся в Северной Ирландии, Хорватии, Исландии, Испании, Марокко и на Мальте. Всего сериал включает 73 серии, объединённые в 8 сезонов. Премьера первого сезона в США состоялась на канале HBO 17 апреля 2011 года. Сериал отмечен множеством наград. Способствовал популяризации Джорджа Мартина как писателя и придуманного им мира.",
+        "user_name" => "Владик",
+        "avatar" => "userpic.jpg",
     ],
     [
         "title" => "Игра престолов",
@@ -39,6 +47,26 @@ $posts = [
         "avatar" => "userpic.jpg",
     ],
 ];
+function optimizeContent($content, $maxLength = 300): string
+{
+    global $textWasOptimized;
+    $resultLength = 0;
+    $resultArray = [];
+    $contentArray = explode(" ", $content);
+    foreach ($contentArray as $contentPart) {
+        $resultLength += strlen($contentPart);
+        array_push($resultArray, $contentPart);
+        if ($resultLength === $maxLength ||
+            $resultLength > $maxLength) {
+            break;
+        }
+    }
+    $textWasOptimized = count($contentArray) !== count($resultArray);
+    $result = implode(" ", $resultArray);
+    $extraText = $textWasOptimized ? "..." : "";
+    return $result . $extraText;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="ru">

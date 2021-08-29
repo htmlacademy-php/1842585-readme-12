@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var $post [
  * "title" => "Игра престолов",
@@ -7,7 +8,11 @@
  * "user_name" => "Владик",
  * "avatar" => "userpic.jpg",
  * ]
+ * @var $textWasOptimized bool
  */
 
 ?>
-<p><?= $post["contain"] ?></p>
+<p><?= optimizeContent($post["contain"]) ?></p>
+<?php if ($textWasOptimized): ?>
+<a class="post-text__more-link">Читать далее</a>
+<?php endif; ?>
