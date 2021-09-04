@@ -1,19 +1,22 @@
 <?php
 /**
- * @var $post [
- * "title" => "Моя мечта",
+ * Шаблон для видео поста
+ *
+ * @var $post array
+ *
+ * Пример:
+ * ["title" => "Моя мечта",
  * "type" => "post-video",
  * "contain" => "YouTube link",
  * "user_name" => "Лариса",
- * "avatar" => "userpic-larisa-small.jpg",
- * ]
+ * "avatar" => "userpic-larisa-small.jpg"]
  */
 
 ?>
 <div class="post-video__block">
     <div class="post-video__preview">
-        <?= embed_youtube_cover($post["contain"]); ?>
-        <img src="img/coast-medium.jpg" alt="Превью к видео <?= $post["title"] ?>" width="360" height="188">
+        <?= embed_youtube_cover(htmlspecialchars($post["contain"])); ?>
+        <img src="img/coast-medium.jpg" alt="Превью к видео <?= htmlspecialchars($post["title"]) ?>" width="360" height="188">
     </div>
     <a href="post-details.html" class="post-video__play-big button">
         <svg class="post-video__play-big-icon" width="14" height="14">

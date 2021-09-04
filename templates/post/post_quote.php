@@ -1,18 +1,21 @@
 <?php
 /**
- * @var $post [
- * "title" => "Цитата",
+ * Шаблон поста-цитаты
+ *
+ * @var $post array
+ *
+ * Пример:
+ * ["title" => "Цитата",
  * "type" => "post-quote",
  * "contain" => "Мы в жизни любим только раз, а после ищем лишь похожих",
  * "user_name" => "Лариса",
- * "avatar" => "userpic-larisa-small.jpg",
- * ]
+ * "avatar" => "userpic-larisa-small.jpg"]
  */
 
 ?>
 <blockquote>
     <p>
-        <?= $post["contain"] ?>
+        <?= htmlspecialchars($post["contain"]) ?>
     </p>
-    <cite><?= $post["user_name"] ?></cite>
+    <cite><?= htmlspecialchars($post["user_name"]) ?></cite>
 </blockquote>

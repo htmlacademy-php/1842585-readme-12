@@ -1,12 +1,15 @@
 <?php
 /**
- * @var $post [
- * "title" => "Моя мечта",
+ * Шаблон для поста с изображением
+ *
+ * @var $post array
+ *
+ * Пример:
+ * ["title" => "Моя мечта",
  * "type" => "post-photo",
  * "contain" => "coast-medium.jpg",
  * "user_name" => "Лариса",
- * "avatar" => "userpic-larisa-small.jpg",
- * ]
+ * "avatar" => "userpic-larisa-small.jpg"]
  */
 
 ?>
