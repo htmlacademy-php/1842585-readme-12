@@ -7,6 +7,7 @@
  * @var $is_auth bool - статус авторизации пользователя true - авторизован, false - не авторизован
  * @var $main html - основной контент страницы
  */
+
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -209,7 +210,7 @@
 </header>
 
 <section class="page__main page__main--popular">
-    <?php print($main); ?>
+    <?= $main; ?>
 </section>
 
 <footer class="footer">
