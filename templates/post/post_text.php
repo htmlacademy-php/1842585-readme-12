@@ -1,18 +1,20 @@
 <?php
 
 /**
- * @var $post [
- * "title" => "Игра престолов",
+ * Шаблон для текстового поста
+ *
+ * @var $post array
+ *
+ * Пример:
+ * ["title" => "Игра престолов",
  * "type" => "post-text",
  * "contain" => "Не могу дождаться начала финального сезона своего любимого сериала!",
  * "user_name" => "Владик",
- * "avatar" => "userpic.jpg",
- * ]
- * @var $textWasOptimized bool
+ * "avatar" => "userpic.jpg"]
  */
-
+$postSettings = truncateContent($post["contain"]);
 ?>
-<p><?= optimizeContent($post["contain"]) ?></p>
-<?php if ($textWasOptimized): ?>
-<a class="post-text__more-link">Читать далее</a>
+<p><?= htmlspecialchars($postSettings["content"]) ?></p>
+<?php if ($postSettings["truncated"]): ?>
+    <a class="post-text__more-link">Читать далее</a>
 <?php endif; ?>

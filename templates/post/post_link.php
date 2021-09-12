@@ -1,12 +1,15 @@
 <?php
 /**
- * @var $post [
- * "title" => "Лучшие курсы",
+ * Шаблон для поста со ссылкой
+ *
+ * @var $post array
+ *
+ * Пример:
+ * ["title" => "Лучшие курсы",
  * "type" => "post-link",
  * "contain" => "www.htmlacademy.ru",
  * "user_name" => "Владик",
- * "avatar" => "userpic.jpg",
- * ]
+ * "avatar" => "userpic.jpg"]
  */
 
 ?>
@@ -19,9 +22,9 @@
                      alt="Иконка">
             </div>
             <div class="post-link__info">
-                <h3><?= $post["title"] ?></h3>
+                <h3><?= htmlspecialchars($post["title"]) ?></h3>
             </div>
         </div>
-        <span><?= $post["contain"] ?></span>
+        <span><?= htmlspecialchars($post["contain"]) ?></span>
     </a>
 </div>
