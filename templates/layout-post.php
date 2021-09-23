@@ -4,13 +4,17 @@
  * Шаблон поста
  *
  * @var $post array{title: string, type: string, contain: string, user_name: string, avatar: string} - пост пользователя
+ * @var $index int
+ * @var $post_date array{create_date: date, alt_date: string, title: string} - дата создания поста и промежуток времени существования поста
  */
+
+$post_date = getPostDate($index);
 
 ?>
 
 <article class="popular__post post <?= $post["type"] ?>">
     <header class="post__header">
-        <h2><?= $post["title"] ?></h2>
+        <h2><?= htmlspecialchars($post["title"]) ?></h2>
     </header>
     <div class="post__main">
         <?php switch ($post["type"]) {
@@ -35,15 +39,16 @@
     </div>
     <footer class="post__footer">
         <div class="post__author">
-            <a class="post__author-link" href="#" title="Автор">
+            <a class="post__author-link" href="#" title="<?= $post_date["title"] ?>">
                 <div class="post__avatar-wrapper">
-                    <!--укажите путь к файлу аватара-->
                     <img class="post__author-avatar" src="img/<?= $post["avatar"] ?>"
                          alt="Аватар пользователя">
                 </div>
                 <div class="post__info">
-                    <b class="post__author-name"><?= $post["user_name"] ?></b>
-                    <time class="post__time" datetime="">дата</time>
+                    <b class="post__author-name"><?= htmlspecialchars($post["user_name"]) ?></b>
+                    <time class="post__time" datetime="<?= $post_date["created_date"] ?>"><?= htmlspecialchars(
+                            $post_date["alt_date"]
+                        ); ?></time>
                 </div>
             </a>
         </div>

@@ -94,7 +94,7 @@
     </div>
     <div class="popular__posts">
         <?php
-        foreach ($posts as $post) {
+        foreach ($posts as $index => $post) {
             require("layout-post.php");
         }
         ?>

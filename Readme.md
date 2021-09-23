@@ -1,7 +1,7 @@
 # Личный проект «Readme»
 
-* Студент: [Андрей Печенников](https://up.htmlacademy.ru/php/12/user/1842585).
-* Наставник: `Михаил Куклин`.
+* Студент: [Андрей Печенников](https://htmlacademy.ru/profile/id1842585).
+* Наставник: [Роман Шевченко](https://htmlacademy.ru/profile/id1242631).
 
 ---
 

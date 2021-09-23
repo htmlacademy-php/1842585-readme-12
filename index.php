@@ -4,6 +4,7 @@ require_once("functions.php");
 require_once("helpers.php");
 $is_auth = rand(0, 1);
 $user_name = 'Андрей'; // укажите здесь ваше имя
+date_default_timezone_set('Europe/Moscow');
 $posts = [
     [
         "title" => "Цитата",
