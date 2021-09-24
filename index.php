@@ -49,6 +49,7 @@ $posts = [
         "avatar" => "userpic.jpg",
     ],
 ];
+$posts = normalizePosts($posts);
 $main = include_template("main.php", [
     "posts" => $posts,
 ]);
