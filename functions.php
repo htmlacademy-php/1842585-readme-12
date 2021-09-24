@@ -64,38 +64,28 @@ function getTimeAgo(DateTime $created_date): string
 {
     $current_date = date_create();
     $diff = date_diff($current_date, $created_date);
-    $days_divider = 1;
 
-    if ($diff->days > 35) { // больше 5 недель
-        $date_format = '%m';
-        $first_form = 'месяц';
-        $second_form = 'месяца';
-        $third_form = 'месяцев';
+    if ($diff->y > 0) { // больше года
+        $date_count = $diff->y;
+        $format = ['год', 'года', 'лет'];
+    } elseif ($diff->days > 35) { // больше 5 недель
+        $date_count = $diff->m;
+        $format = ['месяц', 'месяца', 'месяцев'];
     } elseif ($diff->days > 7) { // больше 7 дней
-        $date_format = '%a';
-        $first_form = 'неделя';
-        $second_form = 'недели';
-        $third_form = 'недель';
-        $days_divider = 7;
+        $date_count = ceil($diff->a / 7);
+        $format = ['неделя', 'недели', 'недель'];
     } elseif ($diff->d > 0) { // больше 24 часов
-        $date_format = '%d';
-        $first_form = 'день';
-        $second_form = 'дня';
-        $third_form = 'дней';
+        $date_count = $diff->d;
+        $format = ['день', 'дня', 'дней'];
     } elseif ($diff->h > 0) { // больше часа
-        $date_format = '%h';
-        $first_form = 'час';
-        $second_form = 'часа';
-        $third_form = 'часов';
+        $date_count = $diff->h;
+        $format = ['час', 'часа', 'часов'];
     } else {
-        $date_format = '%i';
-        $first_form = 'минута';
-        $second_form = 'минуты';
-        $third_form = 'минут';
+        $date_count = $diff->i;
+        $format = ['минута', 'минуты', 'минут'];
     }
 
-    $date_count = ceil((int)date_interval_format($diff, $date_format) / $days_divider);
-    $dateType = get_noun_plural_form($date_count, $first_form, $second_form, $third_form);
+    $dateType = get_noun_plural_form($date_count, ...$format);
 
     return $date_count . " " . $dateType . " назад";
 }
