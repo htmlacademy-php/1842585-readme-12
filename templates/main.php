@@ -124,14 +124,16 @@
                         </div>
                     <?php elseif ($post["type"] === "post-photo"): ?>
                         <div class="post-photo__image-wrapper">
-                            <img src="img/<?= htmlspecialchars($post["contain"]) ?>" alt="<?= htmlspecialchars($post["title"]) ?>" width="360"
+                            <img src="img/<?= htmlspecialchars($post["contain"]) ?>"
+                                 alt="<?= htmlspecialchars($post["title"]) ?>" width="360"
                                  height="240">
                         </div>
                     <?php elseif ($post["type"] === "post-video"): ?>
                         <div class="post-video__block">
                             <div class="post-video__preview">
                                 <?= embed_youtube_cover(htmlspecialchars($post["contain"])); ?>
-                                <img src="img/coast-medium.jpg" alt="Превью к видео <?= htmlspecialchars($post["title"]) ?>" width="360"
+                                <img src="img/coast-medium.jpg"
+                                     alt="Превью к видео <?= htmlspecialchars($post["title"]) ?>" width="360"
                                      height="188">
                             </div>
                             <a href="post-details.html" class="post-video__play-big button">
@@ -145,8 +147,8 @@
                         $postSettings = truncateContent($post["contain"]); ?>
                         <p><?= htmlspecialchars($postSettings["content"]) ?></p>
                         <?php if ($postSettings["truncated"]): ?>
-                            <a class="post-text__more-link">Читать далее</a>
-                        <?php endif;
+                        <a class="post-text__more-link">Читать далее</a>
+                    <?php endif;
                     endif; ?>
                 </div>
                 <footer class="post__footer">
@@ -160,7 +162,7 @@
                                 <b class="post__author-name"><?= htmlspecialchars($post["user_name"]) ?></b>
                                 <time class="post__time" title="<?= htmlspecialchars($post["date_title"]) ?>"
                                       datetime="<?= htmlspecialchars($post["created_date"]) ?>"><?= htmlspecialchars(
-                                        htmlspecialchars($post["time_ago"])
+                                        $post["time_ago"]
                                     ); ?></time>
                             </div>
                         </a>
