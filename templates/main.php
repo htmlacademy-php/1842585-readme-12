@@ -146,9 +146,7 @@
                         <p><?= htmlspecialchars($postSettings["content"]) ?></p>
                         <?php if ($postSettings["truncated"]): ?>
                             <a class="post-text__more-link">Читать далее</a>
-                        <?php endif; ?>
-                    <?php else:
-                        die("Неизвестный тип поста.");
+                        <?php endif;
                     endif; ?>
                 </div>
                 <footer class="post__footer">
