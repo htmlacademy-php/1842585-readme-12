@@ -1,5 +1,5 @@
 DROP
-DATABASE readme;
+DATABASE IF EXISTS readme;
 
 CREATE
 DATABASE readme
@@ -11,12 +11,12 @@ readme;
 
 CREATE TABLE users
 (
-  id         INT AUTO_INCREMENT PRIMARY KEY,
-  registered DATETIME            NOT NULL,
-  email      VARCHAR(128) UNIQUE NOT NULL,
-  login      VARCHAR(128)        NOT NULL,
-  password   VARCHAR(64)         NOT NULL,
-  avatar     VARCHAR(125)
+  id            INT AUTO_INCREMENT PRIMARY KEY,
+  registered_at DATETIME            NOT NULL,
+  email         VARCHAR(320) UNIQUE NOT NULL,
+  login         VARCHAR(128) UNIQUE NOT NULL,
+  password      VARCHAR(1000)       NOT NULL,
+  avatar_path   VARCHAR(125)
 );
 
 CREATE TABLE content_types
@@ -29,20 +29,20 @@ CREATE TABLE content_types
 CREATE TABLE hashtags
 (
   id   INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(128) NOT NULL
+  name VARCHAR(128) UNIQUE NOT NULL
 );
 
 CREATE TABLE posts
 (
   id          INT AUTO_INCREMENT PRIMARY KEY,
-  created     DATETIME     NOT NULL,
+  created_at  DATETIME     NOT NULL,
   title       VARCHAR(200) NOT NULL,
   content     VARCHAR(1000),
   author      VARCHAR(128),
-  picture     VARCHAR(125),
-  video       VARCHAR(125),
-  website     VARCHAR(125),
-  views_count INT DEFAULT 0,
+  picture_url VARCHAR(1000),
+  video_url   VARCHAR(1000),
+  website     VARCHAR(1000),
+  views_count INT UNSIGNED DEFAULT 0,
   user_id     INT          NOT NULL,
   type_id     INT          NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users (id),
@@ -70,11 +70,11 @@ CREATE TABLE post_hashtags
 
 CREATE TABLE post_comments
 (
-  id      INT AUTO_INCREMENT PRIMARY KEY,
-  created DATETIME     NOT NULL,
-  content VARCHAR(300) NOT NULL,
-  user_id INT          NOT NULL,
-  post_id INT          NOT NULL,
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  created_at DATETIME      NOT NULL,
+  content    VARCHAR(1000) NOT NULL,
+  user_id    INT           NOT NULL,
+  post_id    INT           NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users (id),
   FOREIGN KEY (post_id) REFERENCES posts (id)
 );
@@ -118,7 +118,7 @@ CREATE TABLE subscribes
 CREATE TABLE messages
 (
   id           INT AUTO_INCREMENT PRIMARY KEY,
-  created      DATETIME      NOT NULL,
+  created_at   DATETIME      NOT NULL,
   content      VARCHAR(1000) NOT NULL,
   user_id      INT           NOT NULL,
   recipient_id INT           NOT NULL,
