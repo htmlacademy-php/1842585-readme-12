@@ -4,6 +4,14 @@ $connect = mysqli_connect("localhost", "root", "root", "readme");
 if ($connect == false) {
     print("Ошибка подключения: " . mysqli_connect_error());
 } else {
+    $query = "SELECT name, icon_class from content_types";
+    $result = mysqli_query($connect, $query);
+    if ($result == false) {
+        print("Ошибка получения данных по типам постов: " . mysqli_error($connect));
+        $post_types = [];
+    } else {
+        $post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
     // Получаем шесть самых популярных постов и их авторов, а так же типы постов
     $query = "SELECT created_at as created_date,
            title,
@@ -11,7 +19,7 @@ if ($connect == false) {
            author,
            users.login as user_name,
            content_types.name as type_name,
-           content_types.icon_class as type,
+           CONCAT('post-', content_types.icon_class) as type,
            views_count,
            users.avatar_path as avatar
     FROM posts
@@ -23,7 +31,7 @@ if ($connect == false) {
     LIMIT 6";
     $result = mysqli_query($connect, $query);
     if ($result == false) {
-        print("Ошибка получения данных: " . mysqli_error($connect));
+        print("Ошибка получения данных по постам: " . mysqli_error($connect));
         $posts = [];
     } else {
         $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);

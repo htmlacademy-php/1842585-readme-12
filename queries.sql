@@ -3,11 +3,11 @@ readme;
 
 -- Добавление типов постов
 INSERT INTO content_types (name, icon_class)
-VALUES ("Цитата", "post-quote"),
-       ("Ссылка", "post-link"),
-       ("Картинка", "post-photo"),
-       ("Видео", "post-video"),
-       ("Текст", "post-text");
+VALUES ("Цитата", "quote"),
+       ("Ссылка", "link"),
+       ("Картинка", "photo"),
+       ("Видео", "video"),
+       ("Текст", "text");
 
 -- Добавление тестовых пользователей
 INSERT INTO users (registered_at, email, login, password, avatar_path)
