@@ -134,7 +134,6 @@ function getTimeAgo(DateTime $created_date): string
 function normalizePosts(array $posts): array
 {
     foreach ($posts as $index => $post) {
-        $posts[$index]["created_date"] = generate_random_date($index); // Временное поле, пока не получим данные из базы
         $created_date = date_create($posts[$index]["created_date"]);
         $posts[$index]["time_ago"] = getTimeAgo($created_date);
         $posts[$index]["date_title"] = date_format($created_date, 'd.m.Y H:i');
