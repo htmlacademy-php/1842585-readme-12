@@ -44,6 +44,7 @@ function truncateContent(string $content, int $maxLength = 300): array
     }
     $truncated = count($contentArray) !== count($resultArray);
     $result = $truncated ? implode(" ", $resultArray) . "..." : implode(" ", $resultArray);
+
     return [
         "content" => $result,
         "truncated" => $truncated,
@@ -91,53 +92,128 @@ function getTimeAgo(DateTime $created_date): string
 }
 
 /**
- * Функция добавляет дату создания, время существования и заголовок каждому посту в массиве.
+ * Функция добавляет дату создания, время существования и заголовок каждому посту в массиве,
+ * так же переопределяет имена полей в ассоциативном массиве и задает тип поста.
  *
  * Пример:
  * normalizePosts([[
+ *       "id" => "3",
  *       "title" => "Моя мечта",
- *       "type" => "post-photo",
- *       "contain" => "coast-medium.jpg",
- *       "user_name" => "Лариса",
- *       "avatar" => "userpic-larisa-small.jpg",
+ *       "content" => "coast-medium.jpg",
+ *       "author" => "Лариса",
+ *       "login" => "Лариса",
+ *       "type_id" => "3",
+ *       "views_count" => "50",
+ *       "avatar_path" => "userpic-larisa-small.jpg",
  *       ],
  *       [
+ *       "id" => "4",
  *       "title" => "Лучшие курсы",
- *       "type" => "post-link",
- *       "contain" => "www.htmlacademy.ru",
- *       "user_name" => "Владик",
- *       "avatar" => "userpic.jpg",
+ *       "content" => "www.htmlacademy.ru",
+ *       "author" => "Владик",
+ *       "login" => "Владик",
+ *       "type_id" => "5",
+ *       "views_count" => "180",
+ *       "avatar_path" => "userpic.jpg",
  *   ]]);
  * result = [[
+ *          "id" => "3",
  *          "title" => "Моя мечта",
  *          "type" => "post-photo",
  *          "contain" => "coast-medium.jpg",
  *          "user_name" => "Лариса",
  *          "avatar" => "userpic-larisa-small.jpg",
+ *          "views_count" => "50",
  *          "created_date" => "2021-09-23 15:31:40",
  *          "time_ago" => "3 минуты назад",
  *          "date_title" => "23.09.2021 15:31",
  *       ],
  *       [
+ *          "id" => "4",
  *          "title" => "Лучшие курсы",
  *          "type" => "post-link",
  *          "contain" => "www.htmlacademy.ru",
  *          "user_name" => "Владик",
  *          "avatar" => "userpic.jpg",
+ *          "views_count" => "180",
  *          "created_date" => "2021-09-23 13:34:40",
  *          "time_ago" => "2 часа назад",
  *          "date_title" => "23.09.2021 13:34",
  *   ]]
  *
- * @param array - массив постов пользователей
+ * @param array $posts<array{id: string, title: string, content: string, author: string, login: string, type_id:string, views_count: string, avatar_path: string}>
+ * @param array $post_types<array{id: string, name: string, icon_class: string}>
+ * @return array<array{id: string, title: string, type: string, contain: string, user_name: string, avatar: string, views_count:string, created_date:string, time_ago: string, date_title: string}>
  */
-function normalizePosts(array $posts): array
+function normalizePosts(array $posts, array $post_types): array
 {
-    foreach ($posts as $index => $post) {
-        $posts[$index]["created_date"] = generate_random_date($index); // Временное поле, пока не получим данные из базы
-        $created_date = date_create($posts[$index]["created_date"]);
-        $posts[$index]["time_ago"] = getTimeAgo($created_date);
-        $posts[$index]["date_title"] = date_format($created_date, 'd.m.Y H:i');
+    $result = [];
+
+    foreach ($posts as $post) {
+        $created_date = date_create($post["created_date"]);
+        $type_key = array_search($post["type_id"], array_column($post_types, "id"));
+
+        $newPost = [
+            "id" => $post["id"],
+            "title" => $post["title"],
+            "contain" => $post["content"],
+            "author" => $post["author"],
+            "user_name" => $post["login"],
+            "avatar" => $post["avatar_path"],
+            "views_count" => $post["views_count"],
+            "created_date" => $post["created_date"],
+            "type" => "post-" . $post_types[$type_key]["icon_class"],
+            "time_ago" => getTimeAgo($created_date),
+            "date_title" => date_format($created_date, "d.m.Y H:i"),
+        ];
+
+        array_push($result, $newPost);
     }
-    return $posts;
+
+    return $result;
+}
+
+/**
+ * Функция переопределяет имена полей в ассоциативном массиве.
+ *
+ * Пример:
+ * normalizePostTypes([[
+ *       "id" => "2",
+ *       "name" => "Ссылка",
+ *       "icon_class" => "link",
+ *       ],
+ *       [
+ *       "id" => "3",
+ *       "name" => "Картинка",
+ *       "icon_class" => "photo",
+ *   ]]);
+ * result = [[
+ *       "id" => "2",
+ *       "name" => "Ссылка",
+ *       "icon_class" => "link",
+ *       ],
+ *       [
+ *       "id" => "3",
+ *       "name" => "Картинка",
+ *       "icon_class" => "photo",
+ *   ]]
+ *
+ * @param array $postTypes <array{id: string, name: string, icon_class: string}>
+ * @return array<array{id: string, name: string, icon_class: string}>
+ */
+function normalizePostTypes(array $postTypes): array
+{
+    $result = [];
+
+    foreach ($postTypes as $postType) {
+        $newPostType = [
+            "id" => $postType["id"],
+            "name" => $postType["name"],
+            "icon_class" => $postType["icon_class"],
+        ];
+
+        array_push($result, $newPostType);
+    }
+
+    return $result;
 }
