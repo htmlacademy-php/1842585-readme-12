@@ -131,12 +131,14 @@ function getTimeAgo(DateTime $created_date): string
  *
  * @param array - массив постов пользователей
  */
-function normalizePosts(array $posts): array
+function normalizePosts(array $posts, array $post_types): array
 {
     foreach ($posts as $index => $post) {
-        $created_date = date_create($posts[$index]["created_date"]);
+        $created_date = date_create($post["created_date"]);
+        $type_key = array_search($post["type_id"], array_column($post_types, "id"));
         $posts[$index]["time_ago"] = getTimeAgo($created_date);
         $posts[$index]["date_title"] = date_format($created_date, 'd.m.Y H:i');
+        $posts[$index]["type"] = "post-" . $post_types[$type_key]['icon_class'];
     }
     return $posts;
 }

@@ -1,39 +1,38 @@
 <?php
 
 $connect = mysqli_connect("localhost", "root", "root", "readme");
-if ($connect == false) {
-    print("Ошибка подключения: " . mysqli_connect_error());
-} else {
-    $query = "SELECT name, icon_class from content_types";
-    $result = mysqli_query($connect, $query);
-    if ($result == false) {
-        print("Ошибка получения данных по типам постов: " . mysqli_error($connect));
-        $post_types = [];
-    } else {
-        $post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
-    }
-    // Получаем шесть самых популярных постов и их авторов, а так же типы постов
-    $query = "SELECT created_at as created_date,
+if ($connect === false) {
+    die("Ошибка подключения: " . mysqli_connect_error());
+}
+// Запрос для типов постов
+function fetchPostTypes() {
+    $queryPostTypes = "SELECT id, name, icon_class from content_types";
+    return fetchData($queryPostTypes);
+}
+// Получаем шесть самых популярных постов и их авторов, а так же типы постов
+function fetchPopularPosts() {
+    $queryPopularPosts = "SELECT created_at as created_date,
            title,
            content as contain,
            author,
            users.login as user_name,
-           content_types.name as type_name,
-           CONCAT('post-', content_types.icon_class) as type,
+           type_id,
            views_count,
            users.avatar_path as avatar
     FROM posts
         INNER JOIN users
             ON user_id = users.id
-        INNER JOIN content_types
-            ON type_id = content_types.id
     ORDER BY views_count DESC
     LIMIT 6";
+    return fetchData($queryPopularPosts);
+}
+
+function fetchData($query) {
+    global $connect;
     $result = mysqli_query($connect, $query);
-    if ($result == false) {
-        print("Ошибка получения данных по постам: " . mysqli_error($connect));
-        $posts = [];
-    } else {
-        $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    if ($result === false) {
+        die("Ошибка получения данных по типам постов: " . mysqli_error($connect));
+        return [];
     }
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }

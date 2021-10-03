@@ -1,7 +1,7 @@
 <?php
 /**
  * Шаблон основного контента страницы
- * @var $post_types array
+ * @var $post_types array<array{id: string, name: string, icon_class: string}> - массив типов постов
  * @var $posts array<array{title: string, type: string, contain: string, user_name: string, avatar: string}> - массив постов пользователей
  */
 
