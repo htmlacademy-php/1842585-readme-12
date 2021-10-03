@@ -5,12 +5,10 @@ require_once("helpers.php");
 $is_auth = rand(0, 1);
 $user_name = 'Андрей'; // укажите здесь ваше имя
 date_default_timezone_set('Europe/Moscow');
-$post_types = fetchPostTypes();
-$posts = fetchPopularPosts();
-$posts = normalizePosts($posts, $post_types);
+$post_types = normalizePostTypes(fetchPostTypes());
 $main = include_template("main.php", [
     "post_types" => $post_types,
-    "posts" => $posts,
+    "posts" => normalizePosts(fetchPopularPosts(), $post_types),
 ]);
 $pagePopular = include_template(
     "layout.php",

@@ -2,7 +2,7 @@
 /**
  * Шаблон основного контента страницы
  * @var $post_types array<array{id: string, name: string, icon_class: string}> - массив типов постов
- * @var $posts array<array{title: string, type: string, contain: string, user_name: string, avatar: string}> - массив постов пользователей
+ * @var $posts array<array{id: string, title: string, type: string, contain: string, user_name: string, avatar: string, views_count:string, created_date:string, time_ago: string, date_title: string}> - массив постов пользователей
  */
 
 ?>
