@@ -151,7 +151,7 @@ function normalizePosts(array $posts, array $post_types): array
 
     foreach ($posts as $post) {
         $created_date = date_create($post["created_date"]);
-        $type_key = array_search($post["type_id"], array_column($post_types, "id"));
+        $type_key = array_search($post["type_id"], array_column($post_types, "id"), true);
 
         $newPost = [
             "id" => $post["id"],
@@ -201,19 +201,25 @@ function normalizePosts(array $posts, array $post_types): array
  * @param array $postTypes <array{id: string, name: string, icon_class: string}>
  * @return array<array{id: string, name: string, icon_class: string}>
  */
-function normalizePostTypes(array $postTypes): array
+function normalizePostTypes(array $post_types): array
 {
     $result = [];
 
-    foreach ($postTypes as $postType) {
-        $newPostType = [
-            "id" => $postType["id"],
-            "name" => $postType["name"],
-            "icon_class" => $postType["icon_class"],
+    foreach ($post_types as $post_type) {
+        $new_post_type = [
+            "id" => $post_type["id"],
+            "name" => $post_type["name"],
+            "icon_class" => $post_type["icon_class"],
         ];
 
-        array_push($result, $newPostType);
+        array_push($result, $new_post_type);
     }
 
     return $result;
+}
+
+function getCurrentPostType(array $post_types, string $current_type_id): string {
+    $type_key = array_search($current_type_id, array_column($post_types, "id"), true);
+
+    return $type_key !== false ? $post_types[$type_key]["icon_class"] : "all";
 }

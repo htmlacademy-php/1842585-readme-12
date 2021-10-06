@@ -13,8 +13,9 @@ function fetchPostTypes()
 }
 
 // Получаем шесть самых популярных постов и их авторов, а так же типы постов
-function fetchPopularPosts()
+function fetchPopularPosts($type_id)
 {
+    $filter = isset($type_id) ? " WHERE type_id = " . $type_id : "";
     $queryPopularPosts = "SELECT created_at as created_date,
         posts.id,
         title,
@@ -26,8 +27,9 @@ function fetchPopularPosts()
         users.avatar_path
     FROM posts
         INNER JOIN users
-            ON user_id = users.id
-    ORDER BY views_count DESC
+            ON user_id = users.id" .
+        $filter .
+        " ORDER BY views_count DESC
     LIMIT 6";
 
     return fetchData($queryPopularPosts);
@@ -42,4 +44,23 @@ function fetchData($query)
     }
 
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+function fetchPostById($post_id)
+{
+    $query = "SELECT created_at as created_date,
+        posts.id,
+        title,
+        content,
+        author,
+        users.login,
+        type_id,
+        views_count,
+        users.avatar_path
+    FROM posts
+        INNER JOIN users
+            ON user_id = users.id
+    WHERE posts.id = " . $post_id;
+
+    return fetchData($query);
 }

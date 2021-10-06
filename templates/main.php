@@ -1,8 +1,10 @@
 <?php
+
 /**
  * Шаблон основного контента страницы
  * @var $post_types array<array{id: string, name: string, icon_class: string}> - массив типов постов
  * @var $posts array<array{id: string, title: string, type: string, contain: string, user_name: string, avatar: string, views_count:string, created_date:string, time_ago: string, date_title: string}> - массив постов пользователей
+ * @var $current_type_id string - идентификатор типа поста, если установлена сортировка
  */
 
 ?>
@@ -44,14 +46,19 @@
             <b class="popular__filters-caption filters__caption">Тип контента:</b>
             <ul class="popular__filters-list filters__list">
                 <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
-                    <a class="filters__button filters__button--ellipse filters__button--all filters__button--active"
-                       href="#">
+                    <a class="filters__button filters__button--ellipse filters__button--all <?= $current_type_id === null ? "filters__button--active" : "" ?>"
+                       href="/">
                         <span>Все</span>
                     </a>
                 </li>
                 <?php foreach ($post_types as $post_type): ?>
                     <li class="popular__filters-item filters__item">
-                        <a class="filters__button filters__button--<?= htmlspecialchars($post_type["icon_class"]) ?> button" href="#">
+                        <a class="filters__button filters__button--<?php
+                        $active_class = $current_type_id === $post_type["id"] ? " filters__button--active" : "";
+                        $post_class = htmlspecialchars($post_type["icon_class"]);
+                        print($post_class . $active_class);
+                        ?> button"
+                           href="?type_id=<?= $post_type["id"] ?>">
                             <span class="visually-hidden"><?= htmlspecialchars($post_type["name"]) ?></span>
                             <svg class="filters__icon" width="22" height="18">
                                 <use xlink:href="#icon-filter-<?= htmlspecialchars($post_type["icon_class"]) ?>"></use>
@@ -66,61 +73,19 @@
         <?php foreach ($posts as $index => $post): ?>
             <article class="popular__post post <?= htmlspecialchars($post["type"]) ?>">
                 <header class="post__header">
-                    <h2><?= htmlspecialchars($post["title"]) ?></h2>
+                    <a href="/post.php?post_id=<?= $post["id"] ?>">
+                        <h2><?= htmlspecialchars($post["title"]) ?></h2>
+                    </a>
                 </header>
-                <div class="post__main">
-                    <?php if ($post["type"] === "post-quote"): ?>
-                        <blockquote>
-                            <p>
-                                <?= htmlspecialchars($post["contain"]) ?>
-                            </p>
-                            <cite><?= htmlspecialchars($post["user_name"]) ?></cite>
-                        </blockquote>
-                    <?php elseif ($post["type"] === "post-link"): ?>
-                        <div class="post-link__wrapper">
-                            <a class="post-link__external" href="<?= htmlspecialchars($post["contain"]) ?>"
-                               title="Перейти по ссылке">
-                                <div class="post-link__info-wrapper">
-                                    <div class="post-link__icon-wrapper">
-                                        <img src="https://www.google.com/s2/favicons?domain=vitadental.ru"
-                                             alt="Иконка">
-                                    </div>
-                                    <div class="post-link__info">
-                                        <h3><?= htmlspecialchars($post["title"]) ?></h3>
-                                    </div>
-                                </div>
-                                <span><?= htmlspecialchars($post["contain"]) ?></span>
-                            </a>
-                        </div>
-                    <?php elseif ($post["type"] === "post-photo"): ?>
-                        <div class="post-photo__image-wrapper">
-                            <img src="img/<?= htmlspecialchars($post["contain"]) ?>"
-                                 alt="<?= htmlspecialchars($post["title"]) ?>" width="360"
-                                 height="240">
-                        </div>
-                    <?php elseif ($post["type"] === "post-video"): ?>
-                        <div class="post-video__block">
-                            <div class="post-video__preview">
-                                <?= embed_youtube_cover(htmlspecialchars($post["contain"])); ?>
-                                <img src="img/coast-medium.jpg"
-                                     alt="Превью к видео <?= htmlspecialchars($post["title"]) ?>" width="360"
-                                     height="188">
-                            </div>
-                            <a href="post-details.html" class="post-video__play-big button">
-                                <svg class="post-video__play-big-icon" width="14" height="14">
-                                    <use xlink:href="#icon-video-play-big"></use>
-                                </svg>
-                                <span class="visually-hidden">Запустить проигрыватель</span>
-                            </a>
-                        </div>
-                    <?php elseif ($post["type"] === "post-text"):
-                        $postSettings = truncateContent($post["contain"]); ?>
-                        <p><?= htmlspecialchars($postSettings["content"]) ?></p>
-                        <?php if ($postSettings["truncated"]): ?>
-                        <a class="post-text__more-link">Читать далее</a>
-                    <?php endif;
-                    endif; ?>
-                </div>
+                <?php
+                    $template_post = include_template("/parts/" . $post["type"] . ".php", [
+                        "title" => $post["title"],
+                        "content" => $post["contain"],
+                        "author" => $post["user_name"],
+                        "is_details" => false,
+                    ]);
+                    print($template_post);
+                ?>
                 <footer class="post__footer">
                     <div class="post__author">
                         <a class="post__author-link" href="#" title="Автор">
@@ -133,7 +98,7 @@
                                 <time class="post__time" title="<?= htmlspecialchars($post["date_title"]) ?>"
                                       datetime="<?= htmlspecialchars($post["created_date"]) ?>"><?= htmlspecialchars(
                                         $post["time_ago"]
-                                    ); ?></time>
+                                    ) ?></time>
                             </div>
                         </a>
                     </div>
