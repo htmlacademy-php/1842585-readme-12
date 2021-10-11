@@ -73,7 +73,7 @@
         <?php foreach ($posts as $index => $post): ?>
             <article class="popular__post post <?= htmlspecialchars($post["type"]) ?>">
                 <header class="post__header">
-                    <a href="/post.php?post_id=<?= $post["id"] ?>">
+                    <a href="/post.php?post_id=<?= htmlspecialchars($post["id"]) ?>">
                         <h2><?= htmlspecialchars($post["title"]) ?></h2>
                     </a>
                 </header>

@@ -36,11 +36,11 @@ function truncateContent(string $content, int $maxLength = 300): array
     $contentArray = explode(" ", $content);
     foreach ($contentArray as $contentPart) {
         $resultLength += mb_strlen($contentPart);
-        array_push($resultArray, $contentPart);
+        $resultArray[] = $contentPart;
         if ($resultLength >= $maxLength) {
             break;
         }
-        $resultLength += 1;
+        $resultLength++;
     }
     $truncated = count($contentArray) !== count($resultArray);
     $result = $truncated ? implode(" ", $resultArray) . "..." : implode(" ", $resultArray);
@@ -150,27 +150,33 @@ function normalizePosts(array $posts, array $post_types): array
     $result = [];
 
     foreach ($posts as $post) {
-        $created_date = date_create($post["created_date"]);
-        $type_key = array_search($post["type_id"], array_column($post_types, "id"), true);
-
-        $newPost = [
-            "id" => $post["id"],
-            "title" => $post["title"],
-            "contain" => $post["content"],
-            "author" => $post["author"],
-            "user_name" => $post["login"],
-            "avatar" => $post["avatar_path"],
-            "views_count" => $post["views_count"],
-            "created_date" => $post["created_date"],
-            "type" => "post-" . $post_types[$type_key]["icon_class"],
-            "time_ago" => getTimeAgo($created_date),
-            "date_title" => date_format($created_date, "d.m.Y H:i"),
-        ];
-
-        array_push($result, $newPost);
+        $result[] = normalizePost($post, $post_types);
     }
 
     return $result;
+}
+
+function normalizePost(array $post, array $post_types): array {
+    if ($post === []) {
+        return $post;
+    }
+
+    $created_date = date_create($post["created_date"]);
+    $type_key = array_search((string) $post["type_id"], array_column($post_types, "id"), true);
+
+    return [
+        "id" => (string) $post["id"],
+        "title" => $post["title"],
+        "contain" => $post["content"],
+        "author" => $post["author"],
+        "user_name" => $post["login"],
+        "avatar" => $post["avatar_path"],
+        "views_count" => $post["views_count"],
+        "created_date" => $post["created_date"],
+        "type" => "post-" . $post_types[$type_key]["icon_class"],
+        "time_ago" => getTimeAgo($created_date),
+        "date_title" => date_format($created_date, "d.m.Y H:i"),
+    ];
 }
 
 /**
@@ -198,7 +204,7 @@ function normalizePosts(array $posts, array $post_types): array
  *       "icon_class" => "photo",
  *   ]]
  *
- * @param array $postTypes <array{id: string, name: string, icon_class: string}>
+ * @param array $post_types <array{id: string, name: string, icon_class: string}>
  * @return array<array{id: string, name: string, icon_class: string}>
  */
 function normalizePostTypes(array $post_types): array
@@ -206,20 +212,12 @@ function normalizePostTypes(array $post_types): array
     $result = [];
 
     foreach ($post_types as $post_type) {
-        $new_post_type = [
-            "id" => $post_type["id"],
+        $result[] = [
+            "id" => (string) $post_type["id"],
             "name" => $post_type["name"],
             "icon_class" => $post_type["icon_class"],
         ];
-
-        array_push($result, $new_post_type);
     }
 
     return $result;
-}
-
-function getCurrentPostType(array $post_types, string $current_type_id): string {
-    $type_key = array_search($current_type_id, array_column($post_types, "id"), true);
-
-    return $type_key !== false ? $post_types[$type_key]["icon_class"] : "all";
 }

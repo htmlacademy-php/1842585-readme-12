@@ -7,16 +7,16 @@ $is_auth = rand(0, 1);
 $user_name = 'Андрей';
 $post_id = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_SPECIAL_CHARS);
 $post_types = normalizePostTypes(fetchPostTypes());
-$posts = normalizePosts(fetchPostById($post_id), $post_types);
+$post = normalizePost(fetchPostById($post_id), $post_types);
 
-if (count($posts) === 0) {
+if (count($post) === 0) {
     header('HTTP/1.1 404 Not Found', true, 404);
     print("Ошибка 404, пост не найден.");
     exit();
 }
 
 $post_template = include_template("post.php", [
-    "post" => $posts[0],
+    "post" => $post,
 ]);
 $post_page = include_template(
     "layout.php",
