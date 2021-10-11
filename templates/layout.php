@@ -5,7 +5,7 @@
  *
  * @var $title string - заголовок страницы
  * @var $is_auth bool - статус авторизации пользователя true - авторизован, false - не авторизован
- * @var $main html - основной контент страницы
+ * @var $template html - основной контент страницы
  */
 
 ?>
@@ -112,7 +112,7 @@
 <header class="header">
     <div class="header__wrapper container">
         <div class="header__logo-wrapper">
-            <a class="header__logo-link" href="main.html">
+            <a class="header__logo-link" href="/">
                 <img class="header__logo" src="img/logo.svg" alt="Логотип readme" width="128" height="24">
             </a>
             <p class="header__topic">
@@ -210,7 +210,7 @@
 </header>
 
 <section class="page__main page__main--popular">
-    <?= $main; ?>
+    <?= $template ?>
 </section>
 
 <footer class="footer">
