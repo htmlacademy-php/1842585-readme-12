@@ -24,7 +24,9 @@ $post_page = include_template(
         "title" => "readme: публикация",
         "is_auth" => $is_auth,
         "user_name" => $user_name,
-        "template" => $post_template
+        "template" => $post_template,
+        "template_class" => "page__main--publication",
+        "type_id" => getFirstTypeId($post_types),
     ]
 );
 print($post_page);

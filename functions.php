@@ -221,3 +221,24 @@ function normalizePostTypes(array $post_types): array
 
     return $result;
 }
+
+function getFirstTypeId(array $post_types):string {
+    return $post_types[0] ? $post_types[0]["id"] : "";
+}
+
+function checkFilling(string $field_name, string $field_title):string {
+    $error_message = "";
+    if (isset($_POST[$field_name]) && $_POST[$field_name] === "") {
+        $error_message = $field_title . ". Это поле должно быть заполнено.";
+    }
+
+    return $error_message;
+}
+
+function addError(array $errors, string $error_message, string $field_name):array {
+    if ($error_message !== "") {
+        $errors[$field_name][] = $error_message;
+    }
+
+    return $errors;
+}

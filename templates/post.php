@@ -14,7 +14,7 @@
         <div class="post-details__wrapper <?= $post["type"] ?>">
             <div class="post-details__main-block post post--details">
                 <?php
-                    $template_post = include_template("/parts/" . $post["type"] . ".php", [
+                    $template_post = include_template("/parts/post/" . $post["type"] . ".php", [
                         "title" => $post["title"],
                         "content" => $post["contain"],
                         "author" => $post["user_name"],
