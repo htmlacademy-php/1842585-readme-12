@@ -242,3 +242,14 @@ function addError(array $errors, string $error_message, string $field_name):arra
 
     return $errors;
 }
+
+function checkTags($pattern, $tags, $errors):array
+{
+    foreach ($tags as $tag) {
+        if (!preg_match($pattern, $tag)) {
+            $errors = addError($errors, "Неверный формат тега " . $tag, "tags");
+        }
+    }
+
+    return $errors;
+}
