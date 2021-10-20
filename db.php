@@ -72,7 +72,7 @@ function fetchAssocData($result): array
     return $result ?? [];
 }
 
-function prepareResult($query, $types = "", $params = []): mysqli_result {
+function prepareResult($query, $types = "", $params = []):mysqli_result {
     global $connect;
 
     $stmt = mysqli_prepare($connect, $query);
@@ -92,6 +92,21 @@ function prepareResult($query, $types = "", $params = []): mysqli_result {
     return $result;
 }
 
+function preparePostResult($query, $types, $params):int|string {
+    global $connect;
+
+    $stmt = mysqli_prepare($connect, $query);
+    checkResult($stmt, $connect, "Ошибка подготовки запроса");
+
+    $result = mysqli_stmt_bind_param($stmt, $types, ...$params);
+    checkResult($result, $connect, "Ошибка установки параметров");
+
+    $result = mysqli_stmt_execute($stmt);
+    checkResult($result, $connect, "Ошибка выполнения запроса");
+
+    return mysqli_insert_id($connect);
+}
+
 function fetchPostById($post_id): array
 {
     $query = "SELECT created_at as created_date,
@@ -109,4 +124,30 @@ function fetchPostById($post_id): array
     WHERE posts.id = ?";
 
     return fetchAssocData(prepareResult($query, "i", [$post_id]));
+}
+
+function addPost($post):int|string {
+    $query = "INSERT INTO posts (
+            created_at,
+            title,
+            content,
+            author,
+            picture_url,
+            video_url,
+            website,
+            user_id,
+            type_id
+        ) VALUES (
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?
+        )";
+
+    return preparePostResult($query, "sssssssii", $post);
 }

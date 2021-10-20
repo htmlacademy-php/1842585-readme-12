@@ -11,6 +11,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $photo_link = '/uploads/';
     $uploads_dir = __DIR__ . $photo_link;
     $content = "";
+    $author = "";
+    $picture_url = "";
+    $video_url = "";
+    $website = "";
 
     $required_empty_filed = [
         "heading" => "Заголовок",
@@ -23,6 +27,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST[$field])) {
             $errors = addError($errors, checkFilling($field, $title), $field);
         }
+    }
+
+    if (isset($_POST["heading"])) {
+        $title = $_POST["heading"];
+    }
+
+    if (isset($_POST["author"])) {
+        $author = $_POST["author"];
+    }
+
+    if (isset($_POST["cite-text"])) {
+        $content = $_POST["cite-text"];
+    }
+
+    if (isset($_POST["post-text"])) {
+        $content = $_POST["post-text"];
     }
 
     if (isset($_POST["userpic-file-photo"]) || isset($_POST["photo-url"])) {
@@ -39,10 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors = addError($errors, "Неверный формат файла", $field);
             }
         } else if (isset($_POST["photo-url"])) {
-            $photo_url = filter_var($_POST["photo-url"], FILTER_VALIDATE_URL);
-            $photo_info = pathinfo($photo_url);
-            if ($photo_url && preg_match("/(jpg|jpeg|png|gif)/i", $photo_info['extension'])) {
-                $download_photo = file_get_contents($photo_url);
+            $field = "photo-url";
+            $picture_url = filter_var($_POST[$field], FILTER_VALIDATE_URL);
+            $photo_info = pathinfo($picture_url);
+            if ($picture_url && preg_match("/(jpg|jpeg|png|gif)/i", $photo_info['extension'])) {
+                $download_photo = file_get_contents($picture_url);
                  if ($download_photo) {
                      $file_name = basename($photo_info["basename"]);
                      $file_path = $uploads_dir . basename($photo_info["basename"]);
@@ -51,6 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                  } else {
                      $errors = addError($errors, "Не удалось получить изображение по ссылке", $field);
                  }
+            } else if ($_POST[$field] === "" && $file["error"] === 4) {
+                $errors = addError($errors, "Обязательно нужно выбрать либо изображение с компьютера либо указать ссылку из интернета", $field);
             } else {
                 $errors = addError($errors, "Неверная ссылка на изображение", $field);
             }
@@ -62,9 +85,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_POST["link"])) {
         $field = "link";
-        $link_url = filter_var($_POST[$field], FILTER_VALIDATE_URL);
-        if ($link_url) {
-            $content = $link_url;
+        $website = filter_var($_POST[$field], FILTER_VALIDATE_URL);
+        if ($website) {
+            $content = $website;
+        } else if ($_POST[$field] === "") {
+            $errors = addError($errors, "Не заполнено поле ссылка", $field);
         } else {
             $errors = addError($errors, "Неверная ссылка", $field);
         }
@@ -80,6 +105,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $errors = addError($errors, $result, $field);
             }
+        } else if ($_POST[$field] === "") {
+            $errors = addError($errors, "Не заполнено поле ссылка youtube", $field);
         } else {
             $errors = addError($errors, "Неверная ссылка на видео", $field);
         }
@@ -92,7 +119,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (count($errors) === 0) {
-
+        $created_at = (new DateTime('NOW'))->format('Y-m-d-H-i-s');
+        $result = addPost([$created_at, $title, $content, $author, $picture_url, $video_url, $website, 1, $type_id]);
+        $new_url = $_SERVER['HTTP_ORIGIN'] . "/post.php?post_id=$result";
+        header("Location: $new_url");
     } else if (isset($file_path)) {
         unlink($file_path);
     }
