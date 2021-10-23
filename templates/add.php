@@ -31,7 +31,7 @@
             <div class="adding-post__tab-content">
                 <section class="adding-post__<?= htmlspecialchars($current_type["icon_class"]) ?> tabs__content tabs__content--active">
                     <h2 class="visually-hidden">Форма добавления ссылки</h2>
-                    <form class="adding-post__form form" action="add.php" method="post" enctype="multipart/form-data">
+                    <form class="adding-post__form form" action="add.php?type_id=<?= htmlspecialchars($current_type['id']) ?>" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="type_id" value="<?= htmlspecialchars($current_type["id"]) ?>">
                         <?php print($part_template) ?>
                         <div class="adding-post__buttons">

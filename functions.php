@@ -222,11 +222,11 @@ function normalizePostTypes(array $post_types): array
     return $result;
 }
 
-function getFirstTypeId(array $post_types):string {
+function getFirstTypeId(array $post_types): string {
     return $post_types[0] ? $post_types[0]["id"] : "";
 }
 
-function checkFilling(string $field_name, string $field_title):string {
+function checkFilling(string $field_name, string $field_title): string {
     $error_message = "";
     if (isset($_POST[$field_name]) && $_POST[$field_name] === "") {
         $error_message = $field_title . ". Это поле должно быть заполнено.";
@@ -235,7 +235,7 @@ function checkFilling(string $field_name, string $field_title):string {
     return $error_message;
 }
 
-function addError(array $errors, string $error_message, string $field_name):array {
+function addError(array $errors, string $error_message, string $field_name): array {
     if ($error_message !== "") {
         $errors[$field_name][] = $error_message;
     }
@@ -243,7 +243,7 @@ function addError(array $errors, string $error_message, string $field_name):arra
     return $errors;
 }
 
-function checkTags($pattern, $tags, $errors):array
+function checkTags($pattern, $tags, $errors): array
 {
     foreach ($tags as $tag) {
         if (!preg_match($pattern, $tag)) {
@@ -252,4 +252,58 @@ function checkTags($pattern, $tags, $errors):array
     }
 
     return $errors;
+}
+
+function checkPictureType($pattern, $type): string {
+    $error = "";
+    if (!preg_match($pattern, $type)) {
+        $error = "Неверный формат файла";
+    }
+
+    return $error;
+}
+
+function getFilePath($full_path, $file_name): string {
+    return $full_path . basename($file_name);
+}
+
+function downloadContent($file_path, $uploads_dir, $file_name, $data, $errors): string {
+    $result = "";
+
+    if (count($errors) === 0 &&
+        file_put_contents($file_path, $data)) {
+        $result = $uploads_dir . $file_name;
+    }
+
+    return $result;
+}
+
+function getValidateURL($url, $errors): string {
+    $result = "";
+
+    if (count($errors) === 0) {
+        $result = filter_var($url, FILTER_VALIDATE_URL);
+    }
+
+    return $result;
+}
+
+function checkURL($url): string {
+    if ($url === "") {
+        return "Не заполнено поле ссылка";
+    }
+
+    return filter_var($url, FILTER_VALIDATE_URL) ? "" : "Неверная ссылка";
+}
+
+function checkYoutubeURL($url): string {
+    if ($url === "") {
+        $result = "Не заполнено поле ссылка youtube";
+    } else if (!filter_var($url, FILTER_VALIDATE_URL)) {
+        $result = "Неверная ссылка на видео";
+    } else {
+        $result = check_youtube_url($url);
+    }
+
+    return $result;
 }

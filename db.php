@@ -72,7 +72,7 @@ function fetchAssocData($result): array
     return $result ?? [];
 }
 
-function prepareResult($query, $types = "", $params = []):mysqli_result {
+function prepareResult($query, $types = "", $params = []): mysqli_result {
     global $connect;
 
     $stmt = mysqli_prepare($connect, $query);
@@ -92,7 +92,7 @@ function prepareResult($query, $types = "", $params = []):mysqli_result {
     return $result;
 }
 
-function preparePostResult($query, $types, $params):int|string {
+function preparePostResult($query, $types, $params): string {
     global $connect;
 
     $stmt = mysqli_prepare($connect, $query);
@@ -104,7 +104,7 @@ function preparePostResult($query, $types, $params):int|string {
     $result = mysqli_stmt_execute($stmt);
     checkResult($result, $connect, "Ошибка выполнения запроса");
 
-    return mysqli_insert_id($connect);
+    return (string) mysqli_insert_id($connect);
 }
 
 function fetchPostById($post_id): array
@@ -126,7 +126,7 @@ function fetchPostById($post_id): array
     return fetchAssocData(prepareResult($query, "i", [$post_id]));
 }
 
-function addPost($post):int|string {
+function addPost($post): string {
     $query = "INSERT INTO posts (
             created_at,
             title,
@@ -150,4 +150,33 @@ function addPost($post):int|string {
         )";
 
     return preparePostResult($query, "sssssssii", $post);
+}
+
+function getTagByName($name): array {
+    $query = "SELECT
+        id
+    FROM hashtags
+    WHERE name = ?";
+
+    return fetchAssocData(prepareResult($query, "s", [$name]));
+}
+
+function addNewTag($tag): string {
+    $query = "INSERT INTO hashtags (
+                name
+            ) VALUES (
+                ?
+            )";
+
+    return preparePostResult($query, "s", $tag);
+}
+
+function addPostTag($post_tag): string {
+    $query = "INSERT INTO post_hashtags (
+                post_id, hashtag_id
+            ) VALUES (
+                ?, ?
+            )";
+
+    return preparePostResult($query, "ii", $post_tag);
 }

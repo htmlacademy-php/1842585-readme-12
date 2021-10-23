@@ -1,4 +1,5 @@
 <?php
+
 require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
@@ -6,16 +7,37 @@ require_once("functions.php");
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     $type_id = $_POST["type_id"];
-    $photo_link = '/uploads/';
-    $uploads_dir = __DIR__ . $photo_link;
-    $content = "";
-    $author = "";
-    $picture_url = "";
-    $video_url = "";
-    $website = "";
-
+    $uploads_dir = '/uploads/';
+    $full_path = __DIR__ . $uploads_dir;
+    $tags = [];
+    $result = [
+        "content" => "",
+        "author" => "",
+        "picture_url" => "",
+        "video_url" => "",
+        "website" => "",
+    ];
+    $post_fields = [
+        1 => [
+            "author" => "author",
+            "content" => "cite-text",
+        ],
+        2 => [
+            "website" => "link",
+        ],
+        3 => [
+            "picture_file" => "userpic-file-photo",
+            "picture_url" => "photo-url",
+        ],
+        4 => [
+            "video-url" => "video-url",
+        ],
+        5 => [
+            "content" => "post-text",
+        ],
+    ];
+    $current_post_fields = $post_fields[(int) $type_id];
     $required_empty_filed = [
         "heading" => "Заголовок",
         "cite-text" => "Текст цитаты",
@@ -23,92 +45,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         "author" => "Автор",
     ];
 
-    foreach ($required_empty_filed as $field => $title) {
-        if (isset($_POST[$field])) {
-            $errors = addError($errors, checkFilling($field, $title), $field);
-        }
-    }
+    $title = $_POST['heading'] ?? "";
+    $errors = addError($errors, checkFilling("heading", $required_empty_filed["heading"]), "heading");
 
-    if (isset($_POST["heading"])) {
-        $title = $_POST["heading"];
-    }
-
-    if (isset($_POST["author"])) {
-        $author = $_POST["author"];
-    }
-
-    if (isset($_POST["cite-text"])) {
-        $content = $_POST["cite-text"];
-    }
-
-    if (isset($_POST["post-text"])) {
-        $content = $_POST["post-text"];
-    }
-
-    if (isset($_POST["userpic-file-photo"]) || isset($_POST["photo-url"])) {
-        $field = "userpic-file-photo";
-        $file = $_FILES[$field];
-
-        if ($file["error"] === 0) {
-            if (preg_match("/image\/(jpg|jpeg|png|gif)/i", $file["type"])) {
-                $file_name = basename($file["name"]);
-                $file_path = $uploads_dir . $file_name;
-                move_uploaded_file($file["tmp_name"], $file_path);
-                $content = $photo_link . $file_name;
-            } else {
-                $errors = addError($errors, "Неверный формат файла", $field);
+    foreach ($current_post_fields as $field => $web_name) {
+        if ($field === "picture_file") {
+            if ($_FILES[$web_name]["error"] !== 0) {
+                continue;
             }
-        } else if (isset($_POST["photo-url"])) {
-            $field = "photo-url";
-            $picture_url = filter_var($_POST[$field], FILTER_VALIDATE_URL);
+
+            $picture = $_FILES[$web_name];
+            $errors = addError($errors, checkPictureType("/image\/(jpg|jpeg|png|gif)/i", $picture["type"]), $web_name);
+            $file_path = getFilePath($full_path, $picture["name"]);
+            $result["content"] = downloadContent($file_path, $uploads_dir, $picture["name"], $picture["tmp_name"], $errors);
+        } else if ($field === "picture_url") {
+            if ($result["content"] !== "") {
+                continue;
+            }
+
+            $picture_url = filter_var($_POST[$web_name], FILTER_VALIDATE_URL);
             $photo_info = pathinfo($picture_url);
-            if ($picture_url && preg_match("/(jpg|jpeg|png|gif)/i", $photo_info['extension'])) {
-                $download_photo = file_get_contents($picture_url);
-                 if ($download_photo) {
-                     $file_name = basename($photo_info["basename"]);
-                     $file_path = $uploads_dir . basename($photo_info["basename"]);
-                     file_put_contents($file_path, $download_photo);
-                     $content = $photo_link . $file_name;
-                 } else {
-                     $errors = addError($errors, "Не удалось получить изображение по ссылке", $field);
-                 }
-            } else if ($_POST[$field] === "" && $file["error"] === 4) {
-                $errors = addError($errors, "Обязательно нужно выбрать либо изображение с компьютера либо указать ссылку из интернета", $field);
-            } else {
-                $errors = addError($errors, "Неверная ссылка на изображение", $field);
-            }
+            $errors = addError($errors, checkPictureType("/(jpg|jpeg|png|gif)/i", $photo_info["extension"]), $web_name);
+            $download_photo = file_get_contents($picture_url);
+            $file_path = getFilePath($full_path, $photo_info["basename"]);
+            $result["content"] = downloadContent($file_path, $uploads_dir, $photo_info["basename"], $download_photo, $errors);
+            $result["picture_url"] = $picture_url;
+        } else if ($field === "website") {
+            $website = $_POST[$web_name];
+            $errors = addError($errors, checkURL($website), $web_name);
+            $result["content"] = getValidateURL($website, $errors);
+            $result["website"] = $result["content"];
+        } else if ($field === "video-url") {
+            $video_url = $_POST[$web_name];
+            $errors = addError($errors, checkYoutubeURL($video_url), $web_name);
+            $result["content"] = getValidateURL($video_url, $errors);
+            $result["video_url"] = $result["content"];
         } else {
-            $errors = addError($errors, "Не удалось загрузить изображение", $field);
-        }
-
-    }
-
-    if (isset($_POST["link"])) {
-        $field = "link";
-        $website = filter_var($_POST[$field], FILTER_VALIDATE_URL);
-        if ($website) {
-            $content = $website;
-        } else if ($_POST[$field] === "") {
-            $errors = addError($errors, "Не заполнено поле ссылка", $field);
-        } else {
-            $errors = addError($errors, "Неверная ссылка", $field);
-        }
-    }
-
-    if (isset($_POST["video-url"])) {
-        $field = "video-url";
-        $video_url = filter_var($_POST[$field], FILTER_VALIDATE_URL);
-        if ($video_url) {
-            $result = check_youtube_url($video_url);
-            if ($result === true) {
-                $content = $video_url;
-            } else {
-                $errors = addError($errors, $result, $field);
-            }
-        } else if ($_POST[$field] === "") {
-            $errors = addError($errors, "Не заполнено поле ссылка youtube", $field);
-        } else {
-            $errors = addError($errors, "Неверная ссылка на видео", $field);
+            $errors = addError($errors, checkFilling($web_name, $required_empty_filed[$web_name]), $web_name);
+            $result[$field] = $_POST[$web_name] ?? "";
         }
     }
 
@@ -120,13 +94,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (count($errors) === 0) {
         $created_at = (new DateTime('NOW'))->format('Y-m-d-H-i-s');
-        $result = addPost([$created_at, $title, $content, $author, $picture_url, $video_url, $website, 1, $type_id]);
+        $result = addPost([$created_at, $title, $result["content"], $result["author"], $result["picture_url"], $result["video_url"], $result["website"], 1, $type_id]);
+
+        foreach ($tags as $tag) {
+            $current_tag = getTagByName($tag);
+            $tag_id = count($current_tag) === 0 ? addNewTag([$tag]) : $current_tag["id"];
+            addPostTag([(int) $result, (int) $tag_id]);
+        }
+
         $new_url = $_SERVER['HTTP_ORIGIN'] . "/post.php?post_id=$result";
         header("Location: $new_url");
     } else if (isset($file_path)) {
         unlink($file_path);
     }
-
 } else {
     $type_id = filter_input(INPUT_GET, 'type_id', FILTER_SANITIZE_SPECIAL_CHARS);
 }
