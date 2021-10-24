@@ -10,13 +10,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $type_id = $_POST["type_id"];
     $uploads_dir = '/uploads/';
     $full_path = __DIR__ . $uploads_dir;
-    $tags = [];
     $result = [
         "content" => "",
         "author" => "",
         "picture_url" => "",
         "video_url" => "",
         "website" => "",
+        "tags" => [],
+        "errors" => [],
     ];
     $post_fields = [
         1 => [
@@ -37,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "content" => "post-text",
         ],
     ];
-    $current_post_fields = $post_fields[(int) $type_id];
+    $current_post_fields = $post_fields[(int)$type_id];
     $required_empty_filed = [
         "heading" => "Заголовок",
         "cite-text" => "Текст цитаты",
@@ -45,68 +46,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         "author" => "Автор",
     ];
 
-    $title = $_POST['heading'] ?? "";
-    $errors = addError($errors, checkFilling("heading", $required_empty_filed["heading"]), "heading");
+    $result["title"] = $_POST['heading'] ?? "";
+    $result["errors"] = addError(
+        $result["errors"],
+        checkFilling("heading", $required_empty_filed["heading"]),
+        "heading"
+    );
 
     foreach ($current_post_fields as $field => $web_name) {
-        if ($field === "picture_file") {
-            if ($_FILES[$web_name]["error"] !== 0) {
-                continue;
+        switch ($field) {
+            case "picture_file": {
+                $result = addPictureFile($web_name, $result, $full_path, $uploads_dir);
+                break;
             }
-
-            $picture = $_FILES[$web_name];
-            $errors = addError($errors, checkPictureType("/image\/(jpg|jpeg|png|gif)/i", $picture["type"]), $web_name);
-            $file_path = getFilePath($full_path, $picture["name"]);
-            $result["content"] = downloadContent($file_path, $uploads_dir, $picture["name"], $picture["tmp_name"], $errors);
-        } else if ($field === "picture_url") {
-            if ($result["content"] !== "") {
-                continue;
+            case "picture_url": {
+                $result = addPictureURL($web_name, $result, $field, $full_path, $uploads_dir);
+                break;
             }
-
-            $picture_url = filter_var($_POST[$web_name], FILTER_VALIDATE_URL);
-            $photo_info = pathinfo($picture_url);
-            $errors = addError($errors, checkPictureType("/(jpg|jpeg|png|gif)/i", $photo_info["extension"]), $web_name);
-            $download_photo = file_get_contents($picture_url);
-            $file_path = getFilePath($full_path, $photo_info["basename"]);
-            $result["content"] = downloadContent($file_path, $uploads_dir, $photo_info["basename"], $download_photo, $errors);
-            $result["picture_url"] = $picture_url;
-        } else if ($field === "website") {
-            $website = $_POST[$web_name];
-            $errors = addError($errors, checkURL($website), $web_name);
-            $result["content"] = getValidateURL($website, $errors);
-            $result["website"] = $result["content"];
-        } else if ($field === "video-url") {
-            $video_url = $_POST[$web_name];
-            $errors = addError($errors, checkYoutubeURL($video_url), $web_name);
-            $result["content"] = getValidateURL($video_url, $errors);
-            $result["video_url"] = $result["content"];
-        } else {
-            $errors = addError($errors, checkFilling($web_name, $required_empty_filed[$web_name]), $web_name);
-            $result[$field] = $_POST[$web_name] ?? "";
+            case "website": {
+                $result = addWebsite($web_name, $result, $field);
+                break;
+            }
+            case "video-url": {
+                $result = addVideoURL($web_name, $result, $field);
+                break;
+            }
+            default: {
+                $result = addTextContent($web_name, $result, $field, $required_empty_filed);
+            }
         }
     }
 
-    if (isset($_POST["tags"]) && $_POST["tags"] !== "") {
-        $field = "tags";
-        $tags = explode(" ", $_POST["tags"]);
-        $errors = checkTags("/^#[A-Za-zА-Яа-яËё0-9]{1,19}$/", $tags, $errors);
-    }
+    $result = addTags("tags", $result);
 
-    if (count($errors) === 0) {
+    if (count($result["errors"]) === 0) {
         $created_at = (new DateTime('NOW'))->format('Y-m-d-H-i-s');
-        $result = addPost([$created_at, $title, $result["content"], $result["author"], $result["picture_url"], $result["video_url"], $result["website"], 1, $type_id]);
+        $new_post_id = addPost(
+            [
+                $created_at,
+                $result["title"],
+                $result["content"],
+                $result["author"],
+                $result["picture_url"],
+                $result["video_url"],
+                $result["website"],
+                1,
+                $type_id
+            ]
+        );
 
-        foreach ($tags as $tag) {
+        foreach ($result["tags"] as $tag) {
             $current_tag = getTagByName($tag);
             $tag_id = count($current_tag) === 0 ? addNewTag([$tag]) : $current_tag["id"];
-            addPostTag([(int) $result, (int) $tag_id]);
+            addPostTag([(int)$new_post_id, (int)$tag_id]);
         }
 
-        $new_url = $_SERVER['HTTP_ORIGIN'] . "/post.php?post_id=$result";
+        $new_url = $_SERVER['HTTP_ORIGIN'] . "/post.php?post_id=$new_post_id";
         header("Location: $new_url");
     } else if (isset($file_path)) {
-        unlink($file_path);
+            unlink($file_path);
     }
+
+    $errors = $result["errors"];
 } else {
     $type_id = filter_input(INPUT_GET, 'type_id', FILTER_SANITIZE_SPECIAL_CHARS);
 }
