@@ -20,7 +20,9 @@ $pagePopular = include_template(
         "title" => "readme: популярное",
         "is_auth" => $is_auth,
         "user_name" => $user_name,
-        "template" => $main
+        "template" => $main,
+        "template_class" => "page__main--popular",
+        "type_id" => getFirstTypeId($post_types),
     ]
 );
 print($pagePopular);

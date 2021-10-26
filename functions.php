@@ -221,3 +221,181 @@ function normalizePostTypes(array $post_types): array
 
     return $result;
 }
+
+function getFirstTypeId(array $post_types): string {
+    return $post_types[0] ? $post_types[0]["id"] : "";
+}
+
+function checkFilling(string $field_name, string $field_title): string {
+    $error_message = "";
+    if (isset($_POST[$field_name]) && $_POST[$field_name] === "") {
+        $error_message = $field_title . ". Это поле должно быть заполнено.";
+    }
+
+    return $error_message;
+}
+
+function addError(array $errors, string $error_message, string $field_name): array {
+    if ($error_message !== "") {
+        $errors[$field_name][] = $error_message;
+    }
+
+    return $errors;
+}
+
+function checkTags($pattern, $tags, $errors): array
+{
+    foreach ($tags as $tag) {
+        if (!preg_match($pattern, $tag)) {
+            $errors = addError($errors, "Неверный формат тега " . $tag, "tags");
+        }
+    }
+
+    return $errors;
+}
+
+function checkPictureType($pattern, $type): string {
+    $error = "";
+    if (!preg_match($pattern, $type)) {
+        $error = "Неверный формат файла";
+    }
+
+    return $error;
+}
+
+function getFilePath($full_path, $file_name): string {
+    return $full_path . basename($file_name);
+}
+
+function downloadPictureFile($file_path, $uploads_dir, $file_name, $temp_path, $errors): string {
+    $result = "";
+
+    if (count($errors) === 0 &&
+        move_uploaded_file($temp_path, $file_path)) {
+        $result = $uploads_dir . $file_name;
+    }
+
+    return $result;
+}
+
+function downloadContent($file_path, $uploads_dir, $file_name, $data, $errors): string {
+    $result = "";
+
+    if (count($errors) === 0 &&
+        file_put_contents($file_path, $data)) {
+        $result = $uploads_dir . $file_name;
+    }
+
+    return $result;
+}
+
+function getValidateURL($url, $errors): string {
+    $result = "";
+
+    if (count($errors) === 0) {
+        $result = filter_var($url, FILTER_VALIDATE_URL);
+    }
+
+    return $result;
+}
+
+function checkURL($url): string {
+    if ($url === "") {
+        return "Не заполнено поле ссылка";
+    }
+
+    return filter_var($url, FILTER_VALIDATE_URL) ? "" : "Неверная ссылка";
+}
+
+function checkYoutubeURL($url): string {
+    if ($url === "") {
+        $result = "Не заполнено поле ссылка youtube";
+    } else if (!filter_var($url, FILTER_VALIDATE_URL)) {
+        $result = "Неверная ссылка на видео";
+    } else {
+        $result = check_youtube_url($url);
+    }
+
+    return $result;
+}
+
+function addPictureFile($web_name, $result, $full_path, $uploads_dir): array {
+    if ($_FILES[$web_name]["error"] === 0) {
+        return $result;
+    }
+
+    $picture = $_FILES[$web_name];
+    $result["errors"] = addError(
+        $result["errors"],
+        checkPictureType("/image\/(jpg|jpeg|png|gif)/i", $picture["type"]),
+        $web_name
+    );
+    $file_path = getFilePath($full_path, $picture["name"]);
+    $result["content"] = downloadPictureFile(
+        $file_path,
+        $uploads_dir,
+        $picture["name"],
+        $picture["tmp_name"],
+        $result["errors"]
+    );
+
+    return $result;
+}
+
+function addPictureURL($web_name, $result, $field, $full_path, $uploads_dir): array {
+    if ($result["content"] !== "") {
+        return $result;
+    }
+
+    if ($_POST[$web_name] === "") {
+        $result["errors"] = addError($result["errors"], "Необходимо выбрать изображение с компьютера или указать ссылку из интернета.", $web_name);
+        return $result;
+    }
+
+    $picture_url = filter_var($_POST[$web_name], FILTER_VALIDATE_URL);
+    $photo_info = pathinfo($picture_url);
+    $result["errors"] = addError($result["errors"], checkPictureType("/(jpg|jpeg|png|gif)/i", $photo_info["extension"] ?? ""), $web_name);
+
+    if (count($result["errors"]) === 0) {
+        $download_photo = file_get_contents($picture_url);
+        $file_path = getFilePath($full_path, $photo_info["basename"]);
+        $result["content"] = downloadContent($file_path, $uploads_dir, $photo_info["basename"], $download_photo, $result["errors"]);
+        $result[$field] = $picture_url;
+    }
+
+    return $result;
+}
+
+function addWebsite($web_name, $result, $field): array {
+    $website = $_POST[$web_name];
+    $result["errors"] = addError($result["errors"], checkURL($website), $web_name);
+    $result["content"] = getValidateURL($website, $result["errors"]);
+    $result[$field] = $result["content"];
+
+    return $result;
+}
+
+function addVideoURL($web_name, $result, $field): array {
+    $video_url = $_POST[$web_name];
+    $result["errors"] = addError($result["errors"], checkYoutubeURL($video_url), $web_name);
+    $result["content"] = getValidateURL($video_url, $result["errors"]);
+    $result[$field] = $result["content"];
+
+    return $result;
+}
+
+function addTextContent($web_name, $result, $field, $required_empty_filed): array {
+    $result["errors"] = addError($result["errors"], checkFilling($web_name, $required_empty_filed[$web_name]), $web_name);
+    $result[$field] = $_POST[$web_name] ?? "";
+
+    return $result;
+}
+
+function addTags($field, $result): array {
+    if (isset($_POST[$field]) && $_POST[$field] !== "") {
+        $result[$field] = explode(" ", $_POST[$field]);
+        $result["errors"] = checkTags("/^#[A-Za-zА-Яа-яËё0-9]{1,19}$/", $result[$field], $result["errors"]);
+    }
+
+    return $result;
+}

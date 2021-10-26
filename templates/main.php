@@ -78,7 +78,7 @@
                     </a>
                 </header>
                 <?php
-                    $template_post = include_template("/parts/" . $post["type"] . ".php", [
+                    $template_post = include_template("/parts/post/" . $post["type"] . ".php", [
                         "title" => $post["title"],
                         "content" => $post["contain"],
                         "author" => $post["user_name"],

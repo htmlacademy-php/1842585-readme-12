@@ -5,7 +5,10 @@
  *
  * @var $title string - заголовок страницы
  * @var $is_auth bool - статус авторизации пользователя true - авторизован, false - не авторизован
+ * @var $user_name string - имя авторизованного пользователя
  * @var $template html - основной контент страницы
+ * @var $template_class string - класс для блока с основным контентом
+ * @var $type_id string - идентификатор первого типа поста
  */
 
 ?>
@@ -132,12 +135,11 @@
             </div>
         </form>
         <div class="header__nav-wrapper">
-            <!-- здесь должен быть PHP код, который показывает следующий тег по условию -->
             <?php if ($is_auth): ?>
                 <nav class="header__nav">
                     <ul class="header__my-nav">
                         <li class="header__my-page header__my-page--popular">
-                            <a class="header__page-link header__page-link--active" title="Популярный контент">
+                            <a class="header__page-link header__page-link--active" href="/" title="Популярный контент">
                                 <span class="visually-hidden">Популярный контент</span>
                             </a>
                         </li>
@@ -152,7 +154,6 @@
                             </a>
                         </li>
                     </ul>
-                    <!-- здесь должен быть PHP код, который показывает следующий тег по условию -->
                     <ul class="header__user-nav">
                         <li class="header__profile">
                             <a class="header__profile-link" href="#">
@@ -162,7 +163,7 @@
                                 </div>
                                 <div class="header__profile-name">
                                 <span>
-                                    <!--здесь должно быть имя пользователя-->
+                                    <?= htmlspecialchars($user_name) ?>
                                 </span>
                                     <svg class="header__link-arrow" width="10" height="6">
                                         <use xlink:href="#icon-arrow-right-ad"></use>
@@ -200,7 +201,7 @@
                             </div>
                         </li>
                         <li>
-                            <a class="header__post-button button button--transparent" href="adding-post.html">Пост</a>
+                            <a class="header__post-button button button--transparent" href="add.php?type_id=<?= htmlspecialchars($type_id) ?>">Пост</a>
                         </li>
                     </ul>
                 </nav>
@@ -209,7 +210,7 @@
     </div>
 </header>
 
-<section class="page__main page__main--popular">
+<section class="page__main <?= $template_class ?>">
     <?= $template ?>
 </section>
 
@@ -269,8 +270,8 @@
         </div>
     </div>
 </footer>
-<script src="libs/dropzone.js"></script>
-<script src="js/dropzone-settings.js"></script>
-<script src="js/main.js"></script>
+<!--<script src="libs/dropzone.js"></script>-->
+<!--<script src="js/dropzone-settings.js"></script>-->
+<script src="js/script.js"></script>
 </body>
 </html>
