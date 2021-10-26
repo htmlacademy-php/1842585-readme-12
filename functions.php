@@ -321,42 +321,46 @@ function checkYoutubeURL($url): string {
 
 function addPictureFile($web_name, $result, $full_path, $uploads_dir): array {
     if ($_FILES[$web_name]["error"] === 0) {
-        $picture = $_FILES[$web_name];
-        $result["errors"] = addError(
-            $result["errors"],
-            checkPictureType("/image\/(jpg|jpeg|png|gif)/i", $picture["type"]),
-            $web_name
-        );
-        $file_path = getFilePath($full_path, $picture["name"]);
-        $result["content"] = downloadPictureFile(
-            $file_path,
-            $uploads_dir,
-            $picture["name"],
-            $picture["tmp_name"],
-            $result["errors"]
-        );
+        return $result;
     }
+
+    $picture = $_FILES[$web_name];
+    $result["errors"] = addError(
+        $result["errors"],
+        checkPictureType("/image\/(jpg|jpeg|png|gif)/i", $picture["type"]),
+        $web_name
+    );
+    $file_path = getFilePath($full_path, $picture["name"]);
+    $result["content"] = downloadPictureFile(
+        $file_path,
+        $uploads_dir,
+        $picture["name"],
+        $picture["tmp_name"],
+        $result["errors"]
+    );
 
     return $result;
 }
 
 function addPictureURL($web_name, $result, $field, $full_path, $uploads_dir): array {
-    if ($result["content"] === "") {
-        if ($_POST[$web_name] === "") {
-            $result["errors"] = addError($result["errors"], "Необходимо выбрать изображение с компьютера или указать ссылку из интернета.", $web_name);
-            return $result;
-        }
+    if ($result["content"] !== "") {
+        return $result;
+    }
 
-        $picture_url = filter_var($_POST[$web_name], FILTER_VALIDATE_URL);
-        $photo_info = pathinfo($picture_url);
-        $result["errors"] = addError($result["errors"], checkPictureType("/(jpg|jpeg|png|gif)/i", $photo_info["extension"] ?? ""), $web_name);
+    if ($_POST[$web_name] === "") {
+        $result["errors"] = addError($result["errors"], "Необходимо выбрать изображение с компьютера или указать ссылку из интернета.", $web_name);
+        return $result;
+    }
 
-        if (count($result["errors"]) === 0) {
-            $download_photo = file_get_contents($picture_url);
-            $file_path = getFilePath($full_path, $photo_info["basename"]);
-            $result["content"] = downloadContent($file_path, $uploads_dir, $photo_info["basename"], $download_photo, $result["errors"]);
-            $result[$field] = $picture_url;
-        }
+    $picture_url = filter_var($_POST[$web_name], FILTER_VALIDATE_URL);
+    $photo_info = pathinfo($picture_url);
+    $result["errors"] = addError($result["errors"], checkPictureType("/(jpg|jpeg|png|gif)/i", $photo_info["extension"] ?? ""), $web_name);
+
+    if (count($result["errors"]) === 0) {
+        $download_photo = file_get_contents($picture_url);
+        $file_path = getFilePath($full_path, $photo_info["basename"]);
+        $result["content"] = downloadContent($file_path, $uploads_dir, $photo_info["basename"], $download_photo, $result["errors"]);
+        $result[$field] = $picture_url;
     }
 
     return $result;
