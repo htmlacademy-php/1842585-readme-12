@@ -49,21 +49,6 @@ function fetchPopularPostsByType($type_id): array {
     return fetchData(prepareResult($query, "i", [$type_id]));
 }
 
-function preparePostResult($query, $types, $params): string {
-    global $connect;
-
-    $stmt = mysqli_prepare($connect, $query);
-    checkResult($stmt, $connect, "Ошибка подготовки запроса");
-
-    $result = mysqli_stmt_bind_param($stmt, $types, ...$params);
-    checkResult($result, $connect, "Ошибка установки параметров");
-
-    $result = mysqli_stmt_execute($stmt);
-    checkResult($result, $connect, "Ошибка выполнения запроса");
-
-    return (string) mysqli_insert_id($connect);
-}
-
 function fetchPostById($post_id): array
 {
     $query = "SELECT created_at as created_date,

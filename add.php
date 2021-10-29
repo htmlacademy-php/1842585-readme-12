@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($current_post_fields as $field => $web_name) {
         switch ($field) {
             case "picture_file": {
-                $result = addPictureFile($web_name, $result, $full_path, $uploads_dir);
+                $result = addPictureFile("content", $web_name, $result, $full_path, $uploads_dir);
                 break;
             }
             case "picture_url": {
@@ -78,8 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $result = addTags("tags", $result);
+    $errors = $result["errors"];
 
-    if (count($result["errors"]) === 0) {
+    if (count($errors) === 0) {
         $created_at = (new DateTime('NOW'))->format('Y-m-d-H-i-s');
         $new_post_id = addPost(
             [
@@ -103,11 +104,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $new_url = $_SERVER['HTTP_ORIGIN'] . "/post.php?post_id=$new_post_id";
         header("Location: $new_url");
-    } else if (isset($file_path)) {
-            unlink($file_path);
+    } else if (isset($result["file_path"])) {
+            unlink($result["file_path"]);
     }
-
-    $errors = $result["errors"];
 } else {
     $type_id = filter_input(INPUT_GET, 'type_id', FILTER_SANITIZE_SPECIAL_CHARS);
 }

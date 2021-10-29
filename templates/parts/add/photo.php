@@ -69,6 +69,6 @@
         </button>
     </div>
     <div class="adding-post__file adding-post__file--photo form__file dropzone-previews">
-
+        <img class="preview" height="250" width="250" src="" alt="Превью изображения">
     </div>
 </div>

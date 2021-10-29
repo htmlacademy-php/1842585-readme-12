@@ -9,8 +9,11 @@
  * @var $template html - основной контент страницы
  * @var $template_class string - класс для блока с основным контентом
  * @var $type_id string - идентификатор первого типа поста
+ * @var $current_page string - текущая страница
  */
 
+$current_page = $_ENV["ORIG_PATH_INFO"];
+$is_reg_page = $current_page === "/registration.php";
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -135,8 +138,8 @@
             </div>
         </form>
         <div class="header__nav-wrapper">
-            <?php if ($is_auth): ?>
-                <nav class="header__nav">
+            <nav class="header__nav">
+                <?php if ($is_auth): ?>
                     <ul class="header__my-nav">
                         <li class="header__my-page header__my-page--popular">
                             <a class="header__page-link header__page-link--active" href="/" title="Популярный контент">
@@ -201,11 +204,24 @@
                             </div>
                         </li>
                         <li>
-                            <a class="header__post-button button button--transparent" href="add.php?type_id=<?= htmlspecialchars($type_id) ?>">Пост</a>
+                            <a class="header__post-button button button--transparent"
+                               href="add.php?type_id=<?= htmlspecialchars($type_id) ?>">Пост</a>
                         </li>
                     </ul>
-                </nav>
-            <?php endif; ?>
+                <?php else: ?>
+                    <ul class="header__user-nav">
+                        <li class="header__authorization">
+                            <a class="header__user-button header__authorization-button button"
+                               href="/">Вход</a>
+                        </li>
+                        <li>
+                            <a class="header__user-button <?= $is_reg_page ? "header__user-button--active" : "" ?> header__register-button button"
+                               <?= $is_reg_page ? "" : 'href="registration.php"' ?>>Регистрация</a>
+                        </li>
+                    </ul>
+                <?php endif; ?>
+            </nav>
+
         </div>
     </div>
 </header>
@@ -248,15 +264,17 @@
             </div>
             <div class="footer__my-info">
                 <ul class="footer__my-pages">
-                    <li class="footer__my-page footer__my-page--feed">
-                        <a class="footer__page-link" href="feed.html">Моя лента</a>
-                    </li>
-                    <li class="footer__my-page footer__my-page--popular">
-                        <a class="footer__page-link" href="popular.html">Популярный контент</a>
-                    </li>
-                    <li class="footer__my-page footer__my-page--messages">
-                        <a class="footer__page-link" href="messages.html">Личные сообщения</a>
-                    </li>
+                    <?php if ($is_auth): ?>
+                        <li class="footer__my-page footer__my-page--feed">
+                            <a class="footer__page-link" href="feed.html">Моя лента</a>
+                        </li>
+                        <li class="footer__my-page footer__my-page--popular">
+                            <a class="footer__page-link" href="popular.html">Популярный контент</a>
+                        </li>
+                        <li class="footer__my-page footer__my-page--messages">
+                            <a class="footer__page-link" href="messages.html">Личные сообщения</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
                 <div class="footer__copyright">
                     <a class="footer__copyright-link" href="#">
