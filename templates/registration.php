@@ -27,7 +27,7 @@
                         <div class="form__error-text">
                             <h3 class="form__error-title">Ошибки заполнения электронной почты</h3>
                             <?php foreach ($errors["email"] as $error): ?>
-                                <p class="form__error-desc"><?= $error ?></p>
+                                <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                         <div class="form__error-text">
                             <h3 class="form__error-title">Ошибки заполнения логина</h3>
                             <?php foreach ($errors["login"] as $error): ?>
-                                <p class="form__error-desc"><?= $error ?></p>
+                                <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -59,7 +59,7 @@
                         <div class="form__error-text">
                             <h3 class="form__error-title">Ошибки заполнения пароля</h3>
                             <?php foreach ($errors["password"] as $error): ?>
-                                <p class="form__error-desc"><?= $error ?></p>
+                                <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
                         <div class="form__error-text">
                             <h3 class="form__error-title">Ошибки заполнения повтора пароля</h3>
                             <?php foreach ($errors["password-repeat"] as $error): ?>
-                                <p class="form__error-desc"><?= $error ?></p>
+                                <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
                             <?php endforeach; ?>
                         </div>
                     </div>

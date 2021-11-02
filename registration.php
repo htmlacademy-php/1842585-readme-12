@@ -43,12 +43,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
             }
             case "avatar_path": {
-                $result = addPictureFile($field, $web_name, $result, $full_path, $uploads_dir);
+                $result = addPictureFile($web_name, $result);
                 break;
             }
         }
     }
 
+    $result = downloadPictureFile("avatar_path", $full_path, $uploads_dir, "userpic-file", $result);
     $errors = $result["errors"];
 
     if (count($errors) === 0) {
@@ -63,10 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]
         );
 
-        $new_url = $_SERVER['HTTP_ORIGIN'] . "/";
-        header("Location: $new_url");
-    } else if (isset($result["file_path"])) {
-        unlink($result["file_path"]);
+        redirectTo("/");
     }
 }
 
@@ -86,6 +84,7 @@ $reg_page = include_template(
         "template" => $reg_template,
         "template_class" => "page__main--registration",
         "type_id" => getFirstTypeId(normalizePostTypes(fetchPostTypes())),
+        "current_page" => "registration",
     ]
 );
 print($reg_page);

@@ -12,8 +12,7 @@
  * @var $current_page string - текущая страница
  */
 
-$current_page = $_ENV["ORIG_PATH_INFO"];
-$is_reg_page = $current_page === "/registration.php";
+$is_reg_page = $current_page === "registration";
 ?>
 <!DOCTYPE html>
 <html lang="ru">

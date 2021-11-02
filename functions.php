@@ -267,20 +267,35 @@ function getFilePath($full_path, $file_name): string {
     return $full_path . basename($file_name);
 }
 
-function downloadPictureFile($field, $file_path, $uploads_dir, $file_name, $temp_path, $result): array {
-    if (move_uploaded_file($temp_path, $file_path)) {
-        $result[$field] = $uploads_dir . $file_name;
-        $result["file_path"] = $file_path;
+function downloadPictureFile($field, $full_path, $uploads_dir, $web_name, $result): array {
+    if (!isset($result["picture"]) || count($result["errors"]) !== 0) {
+        return $result;
+    }
+
+    try {
+        $file_path = getFilePath($full_path, $result["picture"]["name"]);
+        move_uploaded_file($result["picture"]['tmp_name'], $file_path);
+        $result[$field] = $uploads_dir . $result["picture"]['name'];
+    } catch(Exception $err) {
+        $result["errors"] = addError($result["errors"], $err->getMessage(), $web_name);
     }
 
     return $result;
 }
 
-function downloadContent($field, $file_path, $uploads_dir, $file_name, $data, $result): array {
-    if (count($result["errors"]) === 0 &&
-        file_put_contents($file_path, $data)) {
+function downloadContent($field, $full_path, $uploads_dir, $web_name, $result): array {
+    if ($result["picture_url"] === "" || count($result["errors"]) !== 0) {
+        return $result;
+    }
+
+    try {
+        $file_name = $result["photo_info"]["basename"];
+        $download_photo = file_get_contents($result["picture_url"]);
+        $file_path = getFilePath($full_path, $file_name);
+        file_put_contents($file_path, $download_photo);
         $result[$field] = $uploads_dir . $file_name;
-        $result["file_path"] = $file_path;
+    } catch(Exception $err) {
+        $result["errors"] = addError($result["errors"], $err->getMessage(), $web_name);
     }
 
     return $result;
@@ -316,31 +331,23 @@ function checkYoutubeURL($url): string {
     return $result;
 }
 
-function addPictureFile($field, $web_name, $result, $full_path, $uploads_dir): array {
+function addPictureFile($web_name, $result): array {
     if ($_FILES[$web_name]["error"] !== 0) {
         return $result;
     }
 
-    $picture = $_FILES[$web_name];
+    $result["picture"] = $_FILES[$web_name];
     $result["errors"] = addError(
         $result["errors"],
-        checkPictureType("/image\/(jpg|jpeg|png|gif)/i", $picture["type"]),
+        checkPictureType("/image\/(jpg|jpeg|png|gif)/i", $result["picture"]["type"]),
         $web_name
     );
-    $file_path = getFilePath($full_path, $picture["name"]);
 
-    return downloadPictureFile(
-        $field,
-        $file_path,
-        $uploads_dir,
-        $picture["name"],
-        $picture["tmp_name"],
-        $result
-    );
+    return $result;
 }
 
-function addPictureURL($web_name, $result, $field, $full_path, $uploads_dir): array {
-    if ($result["content"] !== "") {
+function addPictureURL($web_name, $result): array {
+    if (isset($result["picture"])) {
         return $result;
     }
 
@@ -349,16 +356,9 @@ function addPictureURL($web_name, $result, $field, $full_path, $uploads_dir): ar
         return $result;
     }
 
-    $picture_url = filter_var($_POST[$web_name], FILTER_VALIDATE_URL);
-    $photo_info = pathinfo($picture_url);
-    $result["errors"] = addError($result["errors"], checkPictureType("/(jpg|jpeg|png|gif)/i", $photo_info["extension"] ?? ""), $web_name);
-
-    if (count($result["errors"]) === 0) {
-        $download_photo = file_get_contents($picture_url);
-        $file_path = getFilePath($full_path, $photo_info["basename"]);
-        $result = downloadContent("content", $file_path, $uploads_dir, $photo_info["basename"], $download_photo, $result);
-        $result[$field] = $picture_url;
-    }
+    $result["picture_url"] = filter_var($_POST[$web_name], FILTER_VALIDATE_URL);
+    $result["photo_info"] = pathinfo($result["picture_url"]);
+    $result["errors"] = addError($result["errors"], checkPictureType("/(jpg|jpeg|png|gif)/i", $result["photo_info"]["extension"] ?? ""), $web_name);
 
     return $result;
 }
@@ -470,4 +470,8 @@ function addPassword($field, $web_name, $result): array {
 
 function addPasswordRepeat($web_name, $result): array {
     return checkPassword($web_name, $result, "password", "Повтор пароля");
+}
+
+function redirectTo($page) {
+    header("Location: " . $_SERVER['HTTP_ORIGIN'] . $page);
 }

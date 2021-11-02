@@ -27,6 +27,7 @@ $post_page = include_template(
         "template" => $post_template,
         "template_class" => "page__main--publication",
         "type_id" => getFirstTypeId($post_types),
+        "current_page" => "post",
     ]
 );
 print($post_page);

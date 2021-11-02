@@ -23,6 +23,7 @@ $pagePopular = include_template(
         "template" => $main,
         "template_class" => "page__main--popular",
         "type_id" => getFirstTypeId($post_types),
+        "current_page" => "index",
     ]
 );
 print($pagePopular);
