@@ -56,11 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($current_post_fields as $field => $web_name) {
         switch ($field) {
             case "picture_file": {
-                $result = addPictureFile($web_name, $result);
+                $result = addPictureFile($web_name, $result, $uploads_dir);
                 break;
             }
             case "picture_url": {
-                $result = addPictureURL($web_name, $result);
+                $result = addPictureURL($web_name, $result, $uploads_dir);
                 break;
             }
             case "website": {
@@ -78,12 +78,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $result = addTags("tags", $result);
-    $result = downloadPictureFile("content", $full_path, $uploads_dir, "userpic-file-photo", $result);
-    $result = downloadContent("content", $full_path, $uploads_dir, "photo-url", $result);
     $errors = $result["errors"];
 
     if (count($errors) === 0) {
         $created_at = (new DateTime('NOW'))->format('Y-m-d-H-i-s');
+        addPictureFile($result["tmp_path"], $full_path, $result["file_name"]);
+        downloadContent($result["picture_url"], $full_path, $result["file_name"]);
         $new_post_id = addPost(
             [
                 $created_at,

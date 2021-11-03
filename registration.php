@@ -43,17 +43,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
             }
             case "avatar_path": {
-                $result = addPictureFile($web_name, $result);
+                $result = addPictureFile($web_name, $result, $uploads_dir);
                 break;
             }
         }
     }
 
-    $result = downloadPictureFile("avatar_path", $full_path, $uploads_dir, "userpic-file", $result);
     $errors = $result["errors"];
 
     if (count($errors) === 0) {
         $registered_at = (new DateTime('NOW'))->format('Y-m-d-H-i-s');
+        downloadFile($result["tmp_path"], $full_path, $result["file_name"]);
         $new_post_id = addUser(
             [
                 $registered_at,
