@@ -10,7 +10,7 @@ if (count($errors) > 0): ?>
         <ul class="form__invalid-list">
             <?php foreach ($errors as $error_types): ?>
                 <?php foreach ($error_types as $error): ?>
-                    <li class="form__invalid-item"><?= $error ?></li>
+                    <li class="form__invalid-item"><?= htmlspecialchars($error) ?></li>
                 <?php endforeach; ?>
             <?php endforeach; ?>
         </ul>

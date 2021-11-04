@@ -267,26 +267,19 @@ function getFilePath($full_path, $file_name): string {
     return $full_path . basename($file_name);
 }
 
-function downloadPictureFile($file_path, $uploads_dir, $file_name, $temp_path, $errors): string {
-    $result = "";
-
-    if (count($errors) === 0 &&
-        move_uploaded_file($temp_path, $file_path)) {
-        $result = $uploads_dir . $file_name;
+function downloadFile($tmp_path, $full_path, $file_name) {
+    if ($tmp_path !== "") {
+        $file_path = getFilePath($full_path, $file_name);
+        move_uploaded_file($tmp_path, $file_path);
     }
-
-    return $result;
 }
 
-function downloadContent($file_path, $uploads_dir, $file_name, $data, $errors): string {
-    $result = "";
-
-    if (count($errors) === 0 &&
-        file_put_contents($file_path, $data)) {
-        $result = $uploads_dir . $file_name;
+function downloadContent($content, $full_path, $file_name) {
+    if ($content !== "") {
+        $download_photo = file_get_contents($content);
+        $file_path = getFilePath($full_path, $file_name);
+        file_put_contents($file_path, $download_photo);
     }
-
-    return $result;
 }
 
 function getValidateURL($url, $errors): string {
@@ -319,31 +312,27 @@ function checkYoutubeURL($url): string {
     return $result;
 }
 
-function addPictureFile($web_name, $result, $full_path, $uploads_dir): array {
-    if ($_FILES[$web_name]["error"] === 0) {
+function addPictureFile($web_name, $result, $uploads_dir): array {
+    if ($_FILES[$web_name]["error"] !== 0) {
         return $result;
     }
 
-    $picture = $_FILES[$web_name];
     $result["errors"] = addError(
         $result["errors"],
-        checkPictureType("/image\/(jpg|jpeg|png|gif)/i", $picture["type"]),
+        checkPictureType("/image\/(jpg|jpeg|png|gif)/i", $result["picture"]["type"]),
         $web_name
     );
-    $file_path = getFilePath($full_path, $picture["name"]);
-    $result["content"] = downloadPictureFile(
-        $file_path,
-        $uploads_dir,
-        $picture["name"],
-        $picture["tmp_name"],
-        $result["errors"]
-    );
+
+    $file = $_FILES[$web_name];
+    $result["content"] = $uploads_dir . $file["name"];
+    $result["file_name"] = $file["name"];
+    $result["tmp_path"] = ["tmp_name"];
 
     return $result;
 }
 
-function addPictureURL($web_name, $result, $field, $full_path, $uploads_dir): array {
-    if ($result["content"] !== "") {
+function addPictureURL($web_name, $result, $uploads_dir): array {
+    if (isset($result["picture"])) {
         return $result;
     }
 
@@ -352,16 +341,11 @@ function addPictureURL($web_name, $result, $field, $full_path, $uploads_dir): ar
         return $result;
     }
 
-    $picture_url = filter_var($_POST[$web_name], FILTER_VALIDATE_URL);
-    $photo_info = pathinfo($picture_url);
+    $result["picture_url"] = filter_var($_POST[$web_name], FILTER_VALIDATE_URL);
+    $photo_info = pathinfo($result["picture_url"]);
     $result["errors"] = addError($result["errors"], checkPictureType("/(jpg|jpeg|png|gif)/i", $photo_info["extension"] ?? ""), $web_name);
-
-    if (count($result["errors"]) === 0) {
-        $download_photo = file_get_contents($picture_url);
-        $file_path = getFilePath($full_path, $photo_info["basename"]);
-        $result["content"] = downloadContent($file_path, $uploads_dir, $photo_info["basename"], $download_photo, $result["errors"]);
-        $result[$field] = $picture_url;
-    }
+    $result["file_name"] = $photo_info["basename"];
+    $result["content"] = $uploads_dir . $result["file_name"];
 
     return $result;
 }
@@ -398,4 +382,83 @@ function addTags($field, $result): array {
     }
 
     return $result;
+}
+
+function addEmail($field, $web_name, $result): array {
+    $result["errors"] = addError($result["errors"], checkFilling($web_name, "Email"), $web_name);
+    if ($_POST[$web_name] === "") {
+        return $result;
+    }
+
+    $email = filter_var($_POST[$web_name], FILTER_VALIDATE_EMAIL);
+    if (!$email) {
+        $result["errors"] = addError($result["errors"], "Неверно заполнен email", $web_name);
+        return $result;
+    }
+
+    $user = getUserByEmail($email);
+    if (count($user) > 0) {
+        $result["errors"] = addError($result["errors"], "Пользователь с таким email уже существует", $web_name);
+        return $result;
+    }
+
+    $result[$field] = $email;
+
+    return $result;
+}
+
+function addLogin($field, $web_name, $result): array {
+    $result = addTextContent($web_name, $result, $field, ["login" => "Логин"]);
+
+    if ($_POST[$web_name] === "") {
+        return $result;
+    }
+
+    $login = $_POST[$web_name];
+    $user = getUserByLogin($login);
+    if (count($user) > 0) {
+        $result["errors"] = addError($result["errors"], "Пользователь с таким логином уже существует", $web_name);
+        return $result;
+    }
+
+    $result[$field] = $login;
+
+    return $result;
+}
+
+function checkPassword($web_name, $result, $check_field, $field_title): array {
+    $result["errors"] = addError($result["errors"], checkFilling($web_name, $field_title), $web_name);
+
+    $password = $_POST[$web_name];
+
+    if ($password === "") {
+        return $result;
+    }
+
+    if ($password !== $_POST[$check_field]) {
+        $result["errors"] = addError($result["errors"], "Пароли не совпадают", $web_name);
+        return $result;
+    }
+
+    return $result;
+}
+
+function addPassword($field, $web_name, $result): array {
+    $result = checkPassword($web_name, $result, "password-repeat", "Пароль");
+
+    if (count($result["errors"]) > 0) {
+        return $result;
+    }
+
+    $result[$field] = password_hash($_POST[$web_name], PASSWORD_DEFAULT);
+
+    return $result;
+}
+
+function addPasswordRepeat($web_name, $result): array {
+    return checkPassword($web_name, $result, "password", "Повтор пароля");
+}
+
+function redirectTo($page) {
+    header("Location: $page");
 }

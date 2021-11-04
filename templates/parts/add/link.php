@@ -18,7 +18,7 @@
                 <div class="form__error-text">
                     <h3 class="form__error-title">Ошибки заполнения заголовка</h3>
                     <?php foreach ($errors["heading"] as $error): ?>
-                        <p class="form__error-desc"><?= $error ?></p>
+                        <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
                     <?php endforeach; ?>
                 </div>
             </div>
@@ -31,7 +31,7 @@
                 <div class="form__error-text">
                     <h3 class="form__error-title">Ошибка заполнения ссылки</h3>
                     <?php foreach ($errors["link"] as $error): ?>
-                        <p class="form__error-desc"><?= $error ?></p>
+                        <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
                     <?php endforeach; ?>
                 </div>
             </div>
@@ -44,7 +44,7 @@
                 <div class="form__error-text">
                     <h3 class="form__error-title">Ошибки заполнения тегов</h3>
                     <?php foreach ($errors["tags"] as $error): ?>
-                        <p class="form__error-desc"><?= $error ?></p>
+                        <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
                     <?php endforeach; ?>
                 </div>
             </div>

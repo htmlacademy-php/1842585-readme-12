@@ -11,9 +11,9 @@ VALUES ("Цитата", "quote"),
 
 -- Добавление тестовых пользователей
 INSERT INTO users (registered_at, email, login, password, avatar_path)
-VALUES ("2015-05-23T14:25:10", "test@test.com", "Лариса", MD5("123456"), "userpic-larisa-small.jpg"),
-       ("2018-08-21T14:00:56", "test1@test.com", "Виктор", MD5("321456"), "userpic-mark.jpg"),
-       ("2021-02-14T22:38:18", "test2@test.com", "Владик", MD5("654321"), "userpic.jpg");
+VALUES ("2015-05-23T14:25:10", "test@test.com", "Лариса", MD5("123456"), "img/userpic-larisa-small.jpg"),
+       ("2018-08-21T14:00:56", "test1@test.com", "Виктор", MD5("321456"), "img/userpic-mark.jpg"),
+       ("2021-02-14T22:38:18", "test2@test.com", "Владик", MD5("654321"), "img/userpic.jpg");
 
 -- Добавление постов
 INSERT INTO posts (created_at, title, content, author, user_id, type_id, views_count)

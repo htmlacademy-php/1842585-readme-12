@@ -56,11 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($current_post_fields as $field => $web_name) {
         switch ($field) {
             case "picture_file": {
-                $result = addPictureFile($web_name, $result, $full_path, $uploads_dir);
+                $result = addPictureFile($web_name, $result, $uploads_dir);
                 break;
             }
             case "picture_url": {
-                $result = addPictureURL($web_name, $result, $field, $full_path, $uploads_dir);
+                $result = addPictureURL($web_name, $result, $uploads_dir);
                 break;
             }
             case "website": {
@@ -78,9 +78,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $result = addTags("tags", $result);
+    $errors = $result["errors"];
 
-    if (count($result["errors"]) === 0) {
+    if (count($errors) === 0) {
         $created_at = (new DateTime('NOW'))->format('Y-m-d-H-i-s');
+        addPictureFile($result["tmp_path"], $full_path, $result["file_name"]);
+        downloadContent($result["picture_url"], $full_path, $result["file_name"]);
         $new_post_id = addPost(
             [
                 $created_at,
@@ -101,13 +104,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             addPostTag([(int)$new_post_id, (int)$tag_id]);
         }
 
-        $new_url = $_SERVER['HTTP_ORIGIN'] . "/post.php?post_id=$new_post_id";
-        header("Location: $new_url");
-    } else if (isset($file_path)) {
-            unlink($file_path);
+        redirectTo("/post.php?post_id=$new_post_id");
     }
-
-    $errors = $result["errors"];
 } else {
     $type_id = filter_input(INPUT_GET, 'type_id', FILTER_SANITIZE_SPECIAL_CHARS);
 }
@@ -146,6 +144,7 @@ $add_page = include_template(
         "template" => $add_template,
         "template_class" => "page__main--publication",
         "type_id" => $type_id,
+        "current_page" => "add",
     ]
 );
 print($add_page);
