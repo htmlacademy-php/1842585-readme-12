@@ -1,29 +1,35 @@
 <?php
+session_start();
 require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
 
-$is_auth = rand(0, 1);
-$user_name = 'Андрей';
-date_default_timezone_set('Europe/Moscow');
-$post_types = normalizePostTypes(fetchPostTypes());
-$current_type_id = filter_input(INPUT_GET, 'type_id', FILTER_SANITIZE_SPECIAL_CHARS);
-$popularPosts = $current_type_id ? fetchPopularPostsByType($current_type_id) : fetchPopularPosts();
+$errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $user = getUserByLogin($_POST['login']);
+
+    if (count($user) === 0) {
+        $errors["login"] = true;
+    } else if (!password_verify($user["password"], getHashPassword($_POST['password']))) {
+        $errors["password"] = true;
+    } else {
+        $_SESSION["user"] = [
+            "id" => $user["id"],
+            "registered_at" => $user["registered_at"],
+            "email" => $user["email"],
+            "login" => $user["login"],
+            "avatar_path" => $user["avatar_path"],
+        ];
+    }
+}
+
+if (isset($_SESSION["user"])) {
+    redirectTo("Location: feed.php");
+}
+
 $main = include_template("main.php", [
-    "post_types" => $post_types,
-    "posts" => normalizePosts($popularPosts, $post_types),
-    "current_type_id" => $current_type_id,
+    "errors" => $errors,
 ]);
-$pagePopular = include_template(
-    "layout.php",
-    [
-        "title" => "readme: популярное",
-        "is_auth" => $is_auth,
-        "user_name" => $user_name,
-        "template" => $main,
-        "template_class" => "page__main--popular",
-        "type_id" => getFirstTypeId($post_types),
-        "current_page" => "index",
-    ]
-);
-print($pagePopular);
+
+print($main);

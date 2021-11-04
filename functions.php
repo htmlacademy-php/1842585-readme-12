@@ -443,6 +443,10 @@ function checkPassword($web_name, $result, $check_field, $field_title): array {
     return $result;
 }
 
+function getHashPassword($password): string {
+    return password_hash($password, PASSWORD_DEFAULT);
+}
+
 function addPassword($field, $web_name, $result): array {
     $result = checkPassword($web_name, $result, "password-repeat", "Пароль");
 
@@ -450,7 +454,7 @@ function addPassword($field, $web_name, $result): array {
         return $result;
     }
 
-    $result[$field] = password_hash($_POST[$web_name], PASSWORD_DEFAULT);
+    $result[$field] = getHashPassword($_POST[$web_name]);
 
     return $result;
 }
@@ -461,4 +465,10 @@ function addPasswordRepeat($web_name, $result): array {
 
 function redirectTo($page) {
     header("Location: $page");
+}
+
+function checkAuthentication($auth_fault_url) {
+    if (!isset($_SESSION['user'])) {
+        redirectTo("Location: $auth_fault_url");
+    }
 }
