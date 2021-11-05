@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
             }
             case "avatar_path": {
-                $result = addPictureFile($web_name, $result, $uploads_dir);
+                $result = addPictureFile($web_name, "avatar_path", $result, $uploads_dir);
                 break;
             }
         }

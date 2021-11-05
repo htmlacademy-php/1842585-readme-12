@@ -4,15 +4,13 @@
  * Шаблон страницы сайта
  *
  * @var $title string - заголовок страницы
- * @var $is_auth bool - статус авторизации пользователя true - авторизован, false - не авторизован
- * @var $user_name string - имя авторизованного пользователя
+ * @var $user array - имя авторизованного пользователя
  * @var $template html - основной контент страницы
  * @var $template_class string - класс для блока с основным контентом
  * @var $type_id string - идентификатор первого типа поста
  * @var $current_page string - текущая страница
  */
 
-$is_reg_page = $current_page === "registration";
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -138,87 +136,75 @@ $is_reg_page = $current_page === "registration";
         </form>
         <div class="header__nav-wrapper">
             <nav class="header__nav">
-                <?php if ($is_auth): ?>
-                    <ul class="header__my-nav">
-                        <li class="header__my-page header__my-page--popular">
-                            <a class="header__page-link header__page-link--active" href="/" title="Популярный контент">
-                                <span class="visually-hidden">Популярный контент</span>
-                            </a>
-                        </li>
-                        <li class="header__my-page header__my-page--feed">
-                            <a class="header__page-link" href="feed.html" title="Моя лента">
-                                <span class="visually-hidden">Моя лента</span>
-                            </a>
-                        </li>
-                        <li class="header__my-page header__my-page--messages">
-                            <a class="header__page-link" href="messages.html" title="Личные сообщения">
-                                <span class="visually-hidden">Личные сообщения</span>
-                            </a>
-                        </li>
-                    </ul>
-                    <ul class="header__user-nav">
-                        <li class="header__profile">
-                            <a class="header__profile-link" href="#">
-                                <div class="header__avatar-wrapper">
-                                    <img class="header__profile-avatar" src="img/userpic-medium.jpg"
-                                         alt="Аватар профиля">
-                                </div>
-                                <div class="header__profile-name">
+
+                <ul class="header__my-nav">
+                    <li class="header__my-page header__my-page--popular">
+                        <a class="header__page-link <?= $current_page === "popular" ? "header__page-link--active" : "" ?>" href="popular.php" title="Популярный контент">
+                            <span class="visually-hidden">Популярный контент</span>
+                        </a>
+                    </li>
+                    <li class="header__my-page header__my-page--feed">
+                        <a class="header__page-link <?= $current_page === "feed" ? "header__page-link--active" : "" ?>" href="feed.php" title="Моя лента">
+                            <span class="visually-hidden">Моя лента</span>
+                        </a>
+                    </li>
+                    <li class="header__my-page header__my-page--messages">
+                        <a class="header__page-link" <?= $current_page === "message" ? "header__page-link--active" : "" ?> href="messages.php" title="Личные сообщения">
+                            <span class="visually-hidden">Личные сообщения</span>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="header__user-nav">
+                    <li class="header__profile">
+                        <a class="header__profile-link" href="#">
+                            <div class="header__avatar-wrapper">
+                                <img class="header__profile-avatar" src="<?= htmlspecialchars($user["avatar_path"]) ?>"
+                                     alt="Аватар профиля">
+                            </div>
+                            <div class="header__profile-name">
                                 <span>
-                                    <?= htmlspecialchars($user_name) ?>
+                                    <?= htmlspecialchars($user["login"]) ?>
                                 </span>
-                                    <svg class="header__link-arrow" width="10" height="6">
-                                        <use xlink:href="#icon-arrow-right-ad"></use>
-                                    </svg>
-                                </div>
-                            </a>
-                            <div class="header__tooltip-wrapper">
-                                <div class="header__profile-tooltip">
-                                    <ul class="header__profile-nav">
-                                        <li class="header__profile-nav-item">
-                                            <a class="header__profile-nav-link" href="#">
+                                <svg class="header__link-arrow" width="10" height="6">
+                                    <use xlink:href="#icon-arrow-right-ad"></use>
+                                </svg>
+                            </div>
+                        </a>
+                        <div class="header__tooltip-wrapper">
+                            <div class="header__profile-tooltip">
+                                <ul class="header__profile-nav">
+                                    <li class="header__profile-nav-item">
+                                        <a class="header__profile-nav-link" href="#">
                         <span class="header__profile-nav-text">
                             Мой профиль
                         </span>
-                                            </a>
-                                        </li>
-                                        <li class="header__profile-nav-item">
-                                            <a class="header__profile-nav-link" href="#">
+                                        </a>
+                                    </li>
+                                    <li class="header__profile-nav-item">
+                                        <a class="header__profile-nav-link" href="#">
                         <span class="header__profile-nav-text">
                             Сообщения
                             <i class="header__profile-indicator">2</i>
                         </span>
-                                            </a>
-                                        </li>
+                                        </a>
+                                    </li>
 
-                                        <li class="header__profile-nav-item">
-                                            <a class="header__profile-nav-link" href="#">
+                                    <li class="header__profile-nav-item">
+                                        <a class="header__profile-nav-link" href="#">
                         <span class="header__profile-nav-text">
                             Выход
                         </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
-                        </li>
-                        <li>
-                            <a class="header__post-button button button--transparent"
-                               href="add.php?type_id=<?= htmlspecialchars($type_id) ?>">Пост</a>
-                        </li>
-                    </ul>
-                <?php else: ?>
-                    <ul class="header__user-nav">
-                        <li class="header__authorization">
-                            <a class="header__user-button header__authorization-button button"
-                               href="/">Вход</a>
-                        </li>
-                        <li>
-                            <a class="header__user-button <?= $is_reg_page ? "header__user-button--active" : "" ?> header__register-button button"
-                               <?= $is_reg_page ? "" : 'href="registration.php"' ?>>Регистрация</a>
-                        </li>
-                    </ul>
-                <?php endif; ?>
+                        </div>
+                    </li>
+                    <li>
+                        <a class="header__post-button button button--transparent"
+                           href="add.php?type_id=<?= htmlspecialchars($type_id) ?>">Пост</a>
+                    </li>
+                </ul>
             </nav>
 
         </div>
@@ -263,17 +249,15 @@ $is_reg_page = $current_page === "registration";
             </div>
             <div class="footer__my-info">
                 <ul class="footer__my-pages">
-                    <?php if ($is_auth): ?>
-                        <li class="footer__my-page footer__my-page--feed">
-                            <a class="footer__page-link" href="feed.html">Моя лента</a>
-                        </li>
-                        <li class="footer__my-page footer__my-page--popular">
-                            <a class="footer__page-link" href="popular.html">Популярный контент</a>
-                        </li>
-                        <li class="footer__my-page footer__my-page--messages">
-                            <a class="footer__page-link" href="messages.html">Личные сообщения</a>
-                        </li>
-                    <?php endif; ?>
+                    <li class="footer__my-page footer__my-page--feed">
+                        <a class="footer__page-link" href="feed.php">Моя лента</a>
+                    </li>
+                    <li class="footer__my-page footer__my-page--popular">
+                        <a class="footer__page-link" href="popular.php">Популярный контент</a>
+                    </li>
+                    <li class="footer__my-page footer__my-page--messages">
+                        <a class="footer__page-link" href="messages.php">Личные сообщения</a>
+                    </li>
                 </ul>
                 <div class="footer__copyright">
                     <a class="footer__copyright-link" href="#">
@@ -287,8 +271,6 @@ $is_reg_page = $current_page === "registration";
         </div>
     </div>
 </footer>
-<!--<script src="libs/dropzone.js"></script>-->
-<!--<script src="js/dropzone-settings.js"></script>-->
 <script src="js/script.js"></script>
 </body>
 </html>

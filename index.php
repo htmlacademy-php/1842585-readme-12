@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (count($user) === 0) {
         $errors["login"] = true;
-    } else if (!password_verify($user["password"], getHashPassword($_POST['password']))) {
+    } else if (!password_verify($_POST['password'], $user["password"])) {
         $errors["password"] = true;
     } else {
         $_SESSION["user"] = [
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 if (isset($_SESSION["user"])) {
-    redirectTo("Location: feed.php");
+    redirectTo("/feed.php");
 }
 
 $main = include_template("main.php", [

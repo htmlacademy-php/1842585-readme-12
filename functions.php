@@ -312,21 +312,22 @@ function checkYoutubeURL($url): string {
     return $result;
 }
 
-function addPictureFile($web_name, $result, $uploads_dir): array {
+function addPictureFile($web_name, $field, $result, $uploads_dir): array {
     if ($_FILES[$web_name]["error"] !== 0) {
         return $result;
     }
 
+    $file = $_FILES[$web_name];
+
     $result["errors"] = addError(
         $result["errors"],
-        checkPictureType("/image\/(jpg|jpeg|png|gif)/i", $result["picture"]["type"]),
+        checkPictureType("/image\/(jpg|jpeg|png|gif)/i", $file["type"]),
         $web_name
     );
 
-    $file = $_FILES[$web_name];
-    $result["content"] = $uploads_dir . $file["name"];
+    $result[$field] = $uploads_dir . $file["name"];
     $result["file_name"] = $file["name"];
-    $result["tmp_path"] = ["tmp_name"];
+    $result["tmp_path"] = $file["tmp_name"];
 
     return $result;
 }
@@ -467,8 +468,10 @@ function redirectTo($page) {
     header("Location: $page");
 }
 
-function checkAuthentication($auth_fault_url) {
+function getUserAuthentication($auth_fault_url): array {
     if (!isset($_SESSION['user'])) {
         redirectTo("Location: $auth_fault_url");
     }
+
+    return $_SESSION['user'];
 }
