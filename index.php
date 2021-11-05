@@ -7,7 +7,7 @@ require_once("functions.php");
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $user = getUserByLogin($_POST['login']);
+    $user = getUserByLoginOrEmail($_POST['login']);
 
     if (count($user) === 0) {
         $errors["login"] = true;
@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 if (isset($_SESSION["user"])) {
     redirectTo("/feed.php");
+    exit();
 }
 
 $main = include_template("main.php", [

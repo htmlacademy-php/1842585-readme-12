@@ -47,7 +47,7 @@
             <ul class="popular__filters-list filters__list">
                 <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
                     <a class="filters__button filters__button--ellipse filters__button--all <?= $current_type_id === null ? "filters__button--active" : "" ?>"
-                       href="/">
+                       href="popular.php">
                         <span>Все</span>
                     </a>
                 </li>

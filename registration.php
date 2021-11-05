@@ -1,7 +1,12 @@
 <?php
+session_start();
 require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
+
+if (isset($_SESSION["user"])) {
+    redirectTo("/");
+}
 
 $errors = [];
 
@@ -71,20 +76,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $errors_template = include_template("/parts/add/errors.php", [
     "errors" => $errors,
 ]);
-$reg_template = include_template("registration.php", [
+$reg_page = include_template("registration.php", [
+    "title" => "readme: регистрация",
+    "is_auth" => false,
+    "user_name" => "",
+    "template_class" => "page__main--registration",
+    "type_id" => getFirstTypeId(normalizePostTypes(fetchPostTypes())),
+    "current_page" => "registration",
     "errors" => $errors,
     "errors_template" => $errors_template,
 ]);
-$reg_page = include_template(
-    "layout.php",
-    [
-        "title" => "readme: регистрация",
-        "is_auth" => false,
-        "user_name" => "",
-        "template" => $reg_template,
-        "template_class" => "page__main--registration",
-        "type_id" => getFirstTypeId(normalizePostTypes(fetchPostTypes())),
-        "current_page" => "registration",
-    ]
-);
 print($reg_page);
