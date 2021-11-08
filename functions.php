@@ -1,5 +1,7 @@
 <?php
 
+use JetBrains\PhpStorm\NoReturn;
+
 /**
  * Обрезает переданный текст если количество символов превышает максимально допустимое.
  *
@@ -416,7 +418,7 @@ function addLogin($field, $web_name, $result): array {
     }
 
     $login = $_POST[$web_name];
-    $user = getUserByLogin($login);
+    $user = getUserByLoginOrEmail($login);
     if (count($user) > 0) {
         $result["errors"] = addError($result["errors"], "Пользователь с таким логином уже существует", $web_name);
         return $result;
@@ -464,14 +466,11 @@ function addPasswordRepeat($web_name, $result): array {
     return checkPassword($web_name, $result, "password", "Повтор пароля");
 }
 
-function redirectTo($page) {
+#[NoReturn] function redirectTo($page) {
     header("Location: $page");
+    exit();
 }
 
-function getUserAuthentication($auth_fault_url): array {
-    if (!isset($_SESSION['user'])) {
-        redirectTo("Location: $auth_fault_url");
-    }
-
-    return $_SESSION['user'];
+function getUserAuthentication(): array {
+    return $_SESSION['user'] ?? [];
 }

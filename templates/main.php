@@ -155,7 +155,7 @@
         </section>
         <section class="authorization">
             <h2 class="visually-hidden">Авторизация</h2>
-            <form class="authorization__form form" action="/" method="post">
+            <form class="authorization__form form" action="/login.php" method="post">
                 <div class="authorization__input-wrapper form__input-wrapper">
                     <div class="form__input-section <?= isset($errors["login"]) ? "form__input-section--error" : "" ?>">
                         <input class="authorization__input authorization__input--login form__input" type="text" name="login"
