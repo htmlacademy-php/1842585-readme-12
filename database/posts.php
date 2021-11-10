@@ -68,6 +68,50 @@ function fetchPostById($post_id): array
     return fetchAssocData(prepareResult($query, "i", [$post_id]));
 }
 
+function fetchPostSubscribes($user_id): array
+{
+    $query = "SELECT
+        created_at as created_date,
+        posts.id,
+        title,
+        content,
+        author,
+        users.login,
+        type_id,
+        views_count,
+        users.avatar_path
+    FROM posts
+        INNER JOIN subscribes s
+            ON user_id = s.author_id
+        INNER JOIN users
+            ON user_id = users.id
+    WHERE s.subscribe_id = ?";
+
+    return fetchAssocData(prepareResult($query, "i", [$user_id]));
+}
+
+function fetchPostSubscribesByType($type_id, $user_id): array
+{
+    $query = "SELECT
+        created_at as created_date,
+        posts.id,
+        title,
+        content,
+        author,
+        users.login,
+        type_id,
+        views_count,
+        users.avatar_path
+    FROM posts
+        INNER JOIN subscribes s
+            ON user_id = s.author_id
+        INNER JOIN users
+            ON user_id = users.id
+    WHERE type_id = ? AND s.subscribe_id = ?";
+
+    return fetchAssocData(prepareResult($query, "ii", [$type_id, $user_id]));
+}
+
 function addPost($post): string {
     $query = "INSERT INTO posts (
             created_at,

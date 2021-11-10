@@ -1,7 +1,7 @@
 # Личный проект «Readme»
 
-* Студент: [Андрей Печенников](https://htmlacademy.ru/profile/id1842585).
-* Наставник: [Роман Шевченко](https://htmlacademy.ru/profile/id1242631).
+* Студент: [Андрей Печенников](https://htmlacademy.ru/profile/devandy).
+* Наставник: [Олег Зенькович](https://htmlacademy.ru/profile/zenoleg).
 
 ---
 

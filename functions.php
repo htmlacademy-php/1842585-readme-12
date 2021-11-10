@@ -1,5 +1,7 @@
 <?php
 
+use JetBrains\PhpStorm\NoReturn;
+
 /**
  * Обрезает переданный текст если количество символов превышает максимально допустимое.
  *
@@ -312,21 +314,22 @@ function checkYoutubeURL($url): string {
     return $result;
 }
 
-function addPictureFile($web_name, $result, $uploads_dir): array {
+function addPictureFile($web_name, $field, $result, $uploads_dir): array {
     if ($_FILES[$web_name]["error"] !== 0) {
         return $result;
     }
 
+    $file = $_FILES[$web_name];
+
     $result["errors"] = addError(
         $result["errors"],
-        checkPictureType("/image\/(jpg|jpeg|png|gif)/i", $result["picture"]["type"]),
+        checkPictureType("/image\/(jpg|jpeg|png|gif)/i", $file["type"]),
         $web_name
     );
 
-    $file = $_FILES[$web_name];
-    $result["content"] = $uploads_dir . $file["name"];
+    $result[$field] = $uploads_dir . $file["name"];
     $result["file_name"] = $file["name"];
-    $result["tmp_path"] = ["tmp_name"];
+    $result["tmp_path"] = $file["tmp_name"];
 
     return $result;
 }
@@ -415,7 +418,7 @@ function addLogin($field, $web_name, $result): array {
     }
 
     $login = $_POST[$web_name];
-    $user = getUserByLogin($login);
+    $user = getUserByLoginOrEmail($login);
     if (count($user) > 0) {
         $result["errors"] = addError($result["errors"], "Пользователь с таким логином уже существует", $web_name);
         return $result;
@@ -443,6 +446,10 @@ function checkPassword($web_name, $result, $check_field, $field_title): array {
     return $result;
 }
 
+function getHashPassword($password): string {
+    return password_hash($password, PASSWORD_DEFAULT);
+}
+
 function addPassword($field, $web_name, $result): array {
     $result = checkPassword($web_name, $result, "password-repeat", "Пароль");
 
@@ -450,7 +457,7 @@ function addPassword($field, $web_name, $result): array {
         return $result;
     }
 
-    $result[$field] = password_hash($_POST[$web_name], PASSWORD_DEFAULT);
+    $result[$field] = getHashPassword($_POST[$web_name]);
 
     return $result;
 }
@@ -459,6 +466,11 @@ function addPasswordRepeat($web_name, $result): array {
     return checkPassword($web_name, $result, "password", "Повтор пароля");
 }
 
-function redirectTo($page) {
+#[NoReturn] function redirectTo($page) {
     header("Location: $page");
+    exit();
+}
+
+function getUserAuthentication(): array {
+    return $_SESSION['user'] ?? [];
 }

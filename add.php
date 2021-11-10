@@ -1,8 +1,10 @@
 <?php
-
+session_start();
 require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
+
+$user = getUserAuthentication("/");
 
 $errors = [];
 
@@ -56,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($current_post_fields as $field => $web_name) {
         switch ($field) {
             case "picture_file": {
-                $result = addPictureFile($web_name, $result, $uploads_dir);
+                $result = addPictureFile($web_name, "content", $result, $uploads_dir);
                 break;
             }
             case "picture_url": {
@@ -82,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (count($errors) === 0) {
         $created_at = (new DateTime('NOW'))->format('Y-m-d-H-i-s');
-        addPictureFile($result["tmp_path"], $full_path, $result["file_name"]);
+        downloadFile($result["tmp_path"], $full_path, $result["file_name"]);
         downloadContent($result["picture_url"], $full_path, $result["file_name"]);
         $new_post_id = addPost(
             [
@@ -119,9 +121,6 @@ if (!isset($type_id)) {
     exit();
 }
 
-$is_auth = rand(0, 1);
-$user_name = 'Андрей';
-
 $errors_template = include_template("/parts/add/errors.php", [
     "errors" => $errors,
 ]);
@@ -139,8 +138,7 @@ $add_page = include_template(
     "layout.php",
     [
         "title" => "readme: добавление",
-        "is_auth" => $is_auth,
-        "user_name" => $user_name,
+        "user" => $user,
         "template" => $add_template,
         "template_class" => "page__main--publication",
         "type_id" => $type_id,

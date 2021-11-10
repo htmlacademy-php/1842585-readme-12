@@ -15,7 +15,7 @@ function getUserByEmail($email): array
     return fetchAssocData(prepareResult($query, "s", [$email]));
 }
 
-function getUserByLogin($login): array
+function getUserByLoginOrEmail($login): array
 {
     $query = "SELECT
         id,
@@ -25,9 +25,9 @@ function getUserByLogin($login): array
         password,
         avatar_path
     FROM users
-    WHERE login = ?";
+    WHERE login = ? OR email = ?";
 
-    return fetchAssocData(prepareResult($query, "s", [$login]));
+    return fetchAssocData(prepareResult($query, "ss", [$login, $login]));
 }
 
 function addUser($user): string {
