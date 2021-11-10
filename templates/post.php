@@ -15,10 +15,13 @@
             <div class="post-details__main-block post post--details">
                 <?php
                     $template_post = include_template("/parts/post/" . $post["type"] . ".php", [
+                        "id" => $post["id"],
                         "title" => $post["title"],
                         "content" => $post["contain"],
                         "author" => $post["user_name"],
                         "is_details" => true,
+                        "show_title" => false,
+                        "is_video_control" => false,
                     ]);
                     print($template_post);
                 ?>

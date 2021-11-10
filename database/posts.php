@@ -112,6 +112,48 @@ function fetchPostSubscribesByType($type_id, $user_id): array
     return fetchAssocData(prepareResult($query, "ii", [$type_id, $user_id]));
 }
 
+function searchPosts($search): array
+{
+    $query = "SELECT created_at as created_date,
+        posts.id,
+        title,
+        content,
+        author,
+        users.login,
+        type_id,
+        views_count,
+        users.avatar_path
+    FROM posts
+        INNER JOIN users
+            ON user_id = users.id
+    WHERE MATCH(title, content) AGAINST(?)";
+
+    return fetchData(prepareResult($query, "s", [$search]));
+}
+
+function searchPostsByHashtag($hashtag): array
+{
+    $query = "SELECT created_at as created_date,
+        posts.id,
+        title,
+        content,
+        author,
+        users.login,
+        type_id,
+        views_count,
+        users.avatar_path
+    FROM posts
+        INNER JOIN users
+            ON user_id = users.id
+        INNER JOIN post_hashtags ph
+            ON posts.id = ph.post_id
+        INNER JOIN hashtags h on ph.hashtag_id = h.id
+    WHERE MATCH(h.name) AGAINST(?)
+    ORDER BY created_at DESC";
+
+    return fetchData(prepareResult($query, "s", [$hashtag]));
+}
+
 function addPost($post): string {
     $query = "INSERT INTO posts (
             created_at,

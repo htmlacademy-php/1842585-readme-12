@@ -4,7 +4,10 @@ require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
 
-$user = getUserAuthentication("/");
+$user = getUserAuthentication();
+if (count($user) === 0) {
+    redirectTo("/");
+}
 
 date_default_timezone_set('Europe/Moscow');
 $post_types = normalizePostTypes(fetchPostTypes());
@@ -24,6 +27,7 @@ $pagePopular = include_template(
         "template_class" => "page__main--popular",
         "type_id" => getFirstTypeId($post_types),
         "current_page" => "popular",
+        "search_text" => "",
     ]
 );
 print($pagePopular);

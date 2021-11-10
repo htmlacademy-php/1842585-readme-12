@@ -16,7 +16,11 @@
                 </div>
                 <div class="post-link__info">
                     <h3><?= htmlspecialchars($title) ?></h3>
+                    <span><?= htmlspecialchars($content) ?></span>
                 </div>
+                <svg class="post-link__arrow" width="11" height="16">
+                    <use xlink:href="#icon-arrow-right-ad"></use>
+                </svg>
             </div>
         </a>
     </div>
