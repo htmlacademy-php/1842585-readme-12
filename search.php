@@ -10,7 +10,7 @@ if ($search === "" || count($user) === 0) {
     redirectTo("/");
 }
 
-$is_tag = substr($search, 0) === "#";
+$is_tag = $search[0] === "#";
 
 $post_types = normalizePostTypes(fetchPostTypes());
 $posts = $is_tag ? searchPostsByHashtag($search) : searchPosts($search);

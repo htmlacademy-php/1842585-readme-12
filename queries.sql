@@ -70,3 +70,6 @@ VALUES (2, 1);
 
 -- Полнотекстовый поиск для полей заголовок и содержимое поста в таблице постов.
 CREATE FULLTEXT INDEX posts_search ON posts(title, content);
+
+-- Полнотекстовый поиск для поля имя в таблице хэштегов.
+CREATE FULLTEXT INDEX hashtag_search ON hashtags(name);
