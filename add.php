@@ -4,7 +4,10 @@ require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
 
-$user = getUserAuthentication("/");
+$user = getUserAuthentication();
+if (count($user) === 0) {
+    redirectTo("/");
+}
 
 $errors = [];
 
@@ -143,6 +146,7 @@ $add_page = include_template(
         "template_class" => "page__main--publication",
         "type_id" => $type_id,
         "current_page" => "add",
+        "search_text" => "",
     ]
 );
 print($add_page);

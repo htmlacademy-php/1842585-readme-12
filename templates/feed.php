@@ -21,22 +21,25 @@
                         <header class="post__header post__author">
                             <a class="post__author-link" href="#" title="Автор">
                                 <div class="post__avatar-wrapper">
-                                    <img class="post__author-avatar" src="img/userpic-elvira.jpg" alt="Аватар пользователя" width="60" height="60">
+                                    <img class="post__author-avatar" src="<?= htmlspecialchars($post["avatar"]) ?>" alt="Аватар пользователя" width="60" height="60">
                                 </div>
                                 <div class="post__info">
-                                    <b class="post__author-name">Эльвира Хайпулинова</b>
-                                    <span class="post__time">15 минут назад</span>
+                                    <b class="post__author-name"><?= htmlspecialchars($post["user_name"]) ?></b>
+                                    <span class="post__time"><?= htmlspecialchars($post["time_ago"]) ?></span>
                                 </div>
                             </a>
                         </header>
                         <?php
-                        $template_post = include_template("/parts/post/" . $post["type"] . ".php", [
-                            "title" => $post["title"],
-                            "content" => $post["contain"],
-                            "author" => $post["user_name"],
-                            "is_details" => false,
-                        ]);
-                        print($template_post);
+                            $template_post = include_template("/parts/post/" . $post["type"] . ".php", [
+                                "id" => $post["id"],
+                                "title" => $post["title"],
+                                "content" => $post["contain"],
+                                "author" => $post["user_name"],
+                                "is_details" => false,
+                                "show_title" => true,
+                                "is_video_control" => true,
+                            ]);
+                            print($template_post);
                         ?>
                         <footer class="post__footer post__indicators">
                             <div class="post__buttons">
