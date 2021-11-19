@@ -159,12 +159,12 @@
                     <li class="header__profile">
                         <a class="header__profile-link" href="#">
                             <div class="header__avatar-wrapper">
-                                <img class="header__profile-avatar" src="<?= htmlspecialchars($user["avatar_path"]) ?>"
+                                <img class="header__profile-avatar" src="<?= htmlspecialchars($user["avatar"]) ?>"
                                      alt="Аватар профиля">
                             </div>
                             <div class="header__profile-name">
                                 <span>
-                                    <?= htmlspecialchars($user["login"]) ?>
+                                    <?= htmlspecialchars($user["user_name"]) ?>
                                 </span>
                                 <svg class="header__link-arrow" width="10" height="6">
                                     <use xlink:href="#icon-arrow-right-ad"></use>
@@ -175,7 +175,7 @@
                             <div class="header__profile-tooltip">
                                 <ul class="header__profile-nav">
                                     <li class="header__profile-nav-item">
-                                        <a class="header__profile-nav-link" href="#">
+                                        <a class="header__profile-nav-link" href="/profile.php?author_id=<?= htmlspecialchars($user["id"] )?>">
                         <span class="header__profile-nav-text">
                             Мой профиль
                         </span>
@@ -191,7 +191,7 @@
                                     </li>
 
                                     <li class="header__profile-nav-item">
-                                        <a class="header__profile-nav-link" href="logout.php">
+                                        <a class="header__profile-nav-link" href="/logout.php">
                         <span class="header__profile-nav-text">
                             Выход
                         </span>

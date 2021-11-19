@@ -3,8 +3,11 @@
 /**
  * Шаблон популярного контента
  * @var $post_types array<array{id: string, name: string, icon_class: string}> - массив типов постов
- * @var $posts array<array{id: string, title: string, type: string, contain: string, user_name: string, avatar: string, views_count:string, created_date:string, time_ago: string, date_title: string}> - массив постов пользователей
+ * @var $posts array<array{id: string, title: string, type: string, contain: string, user_id: string, user_name: string, avatar: string, views_count:string, created_date:string, time_ago: string, date_title: string}> - массив постов пользователей
  * @var $current_type_id string - идентификатор типа поста, если установлена сортировка
+ * @var $prev_offset
+ * @var $next_offset
+ * @var $post_count
  */
 
 ?>
@@ -91,45 +94,31 @@
                 ?>
                 <footer class="post__footer">
                     <div class="post__author">
-                        <a class="post__author-link" href="#" title="Автор">
+                        <a class="post__author-link" href="/profile.php?author_id=<?= htmlspecialchars($post["user_id"]) ?>" title="Автор">
                             <div class="post__avatar-wrapper">
                                 <img class="post__author-avatar" src="<?= htmlspecialchars($post["avatar"]) ?>"
                                      alt="Аватар пользователя">
                             </div>
                             <div class="post__info">
                                 <b class="post__author-name"><?= htmlspecialchars($post["user_name"]) ?></b>
-                                <time class="post__time" title="<?= htmlspecialchars($post["date_title"]) ?>"
-                                      datetime="<?= htmlspecialchars($post["created_date"]) ?>"><?= htmlspecialchars(
-                                        $post["time_ago"]
-                                    ) ?></time>
+                                <time class="post__time" title="<?= htmlspecialchars($post["date_title"]) ?>" datetime="<?= htmlspecialchars($post["created_date"]) ?>"><?= htmlspecialchars($post["time_ago"]) ?></time>
                             </div>
                         </a>
                     </div>
                     <div class="post__indicators">
-                        <div class="post__buttons">
-                            <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
-                                <svg class="post__indicator-icon" width="20" height="17">
-                                    <use xlink:href="#icon-heart"></use>
-                                </svg>
-                                <svg class="post__indicator-icon post__indicator-icon--like-active" width="20"
-                                     height="17">
-                                    <use xlink:href="#icon-heart-active"></use>
-                                </svg>
-                                <span>0</span>
-                                <span class="visually-hidden">количество лайков</span>
-                            </a>
-                            <a class="post__indicator post__indicator--comments button" href="#"
-                               title="Комментарии">
-                                <svg class="post__indicator-icon" width="19" height="17">
-                                    <use xlink:href="#icon-comment"></use>
-                                </svg>
-                                <span>0</span>
-                                <span class="visually-hidden">количество комментариев</span>
-                            </a>
-                        </div>
+                        <?php
+                            $template_indicators = include_template("/parts/post/indicators.php", [
+                                "post" => $post,
+                            ]);
+                            print($template_indicators);
+                        ?>
                     </div>
                 </footer>
             </article>
         <?php endforeach; ?>
+    </div>
+    <div class="popular__page-links">
+        <a class="popular__page-link popular__page-link--prev button <?= $prev_offset < 0 ? "button--gray" : "button--green" ?>" <?= $prev_offset > 0 ? 'href="/popular.php?offset="' . htmlspecialchars($prev_offset) : "" ?>>Предыдущая страница</a>
+        <a class="popular__page-link popular__page-link--next button <?= $next_offset >= $post_count ? "button--gray" : "button--green" ?>" <?= $next_offset < $post_count ? 'href="/popular.php?offset="' . htmlspecialchars($next_offset) : "" ?>>Следующая страница</a>
     </div>
 </div>

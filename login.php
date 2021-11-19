@@ -1,4 +1,7 @@
 <?php
+/**
+ * @var $connect mysqli - подключение к базе данных
+ */
 session_start();
 require_once("db.php");
 require_once("helpers.php");
@@ -7,7 +10,7 @@ require_once("functions.php");
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $user = getUserByLoginOrEmail($_POST['login']);
+    $user = getUserByLoginOrEmail($connect, $_POST['login']);
 
     if (count($user) === 0) {
         $errors["login"] = true;

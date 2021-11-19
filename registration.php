@@ -1,4 +1,7 @@
 <?php
+/**
+ * @var $connect mysqli - подключение к базе данных
+ */
 session_start();
 require_once("db.php");
 require_once("helpers.php");
@@ -60,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $registered_at = (new DateTime('NOW'))->format('Y-m-d-H-i-s');
         downloadFile($result["tmp_path"], $full_path, $result["file_name"]);
         $new_post_id = addUser(
+            $connect,
             [
                 $registered_at,
                 $result["email"],
@@ -81,7 +85,7 @@ $reg_page = include_template("registration.php", [
     "is_auth" => false,
     "user_name" => "",
     "template_class" => "page__main--registration",
-    "type_id" => getFirstTypeId(normalizePostTypes(fetchPostTypes())),
+    "type_id" => getFirstTypeId(normalizePostTypes(fetchPostTypes($connect))),
     "current_page" => "registration",
     "errors" => $errors,
     "errors_template" => $errors_template,

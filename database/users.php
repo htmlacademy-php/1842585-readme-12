@@ -1,6 +1,6 @@
 <?php
 
-function getUserByEmail($email): array
+function getUserByEmail($connect, $email): array
 {
     $query = "SELECT
         id,
@@ -12,10 +12,10 @@ function getUserByEmail($email): array
     FROM users
     WHERE email = ?";
 
-    return fetchAssocData(prepareResult($query, "s", [$email]));
+    return fetchAssocData(prepareResult($connect, $query, "s", [$email]));
 }
 
-function getUserByLoginOrEmail($login): array
+function getUserByLoginOrEmail($connect, $login): array
 {
     $query = "SELECT
         id,
@@ -27,10 +27,24 @@ function getUserByLoginOrEmail($login): array
     FROM users
     WHERE login = ? OR email = ?";
 
-    return fetchAssocData(prepareResult($query, "ss", [$login, $login]));
+    return fetchAssocData(prepareResult($connect, $query, "ss", [$login, $login]));
 }
 
-function addUser($user): string {
+function getUserById($connect, $id): array
+{
+    $query = "SELECT
+        id,
+        registered_at,
+        email,
+        login,
+        avatar_path
+    FROM users
+    WHERE id = ?";
+
+    return fetchAssocData(prepareResult($connect, $query, "i", [$id]));
+}
+
+function addUser($connect, $user): string {
     $query = "INSERT INTO users (
             registered_at,
             email,
@@ -45,5 +59,7 @@ function addUser($user): string {
             ?
         )";
 
-    return preparePostResult($query, "sssss", $user);
+    preparePostResult($connect, $query, "sssss", $user);
+
+    return getInsertId($connect);
 }
