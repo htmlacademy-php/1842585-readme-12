@@ -19,7 +19,7 @@
                 <?php foreach ($posts as $index => $post): ?>
                     <article class="feed__post post <?= htmlspecialchars($post["type"]) ?>">
                         <header class="post__header post__author">
-                            <a class="post__author-link" href="#" title="Автор">
+                            <a class="post__author-link" href="/profile.php?author_id=<?= htmlspecialchars($post["user_id"]) ?>" title="Автор">
                                 <div class="post__avatar-wrapper">
                                     <img class="post__author-avatar" src="<?= htmlspecialchars($post["avatar"]) ?>" alt="Аватар пользователя" width="60" height="60">
                                 </div>
@@ -34,7 +34,7 @@
                                 "id" => $post["id"],
                                 "title" => $post["title"],
                                 "content" => $post["contain"],
-                                "author" => $post["user_name"],
+                                "author" => $post["author"],
                                 "is_details" => false,
                                 "show_title" => true,
                                 "is_video_control" => true,

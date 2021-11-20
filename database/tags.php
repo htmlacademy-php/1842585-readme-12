@@ -1,5 +1,30 @@
 <?php
 
+function getPostTags($connect, $post_id): array {
+    $query = "SELECT
+        ph.id,
+        ph.post_id,
+        h.name
+    FROM post_hashtags ph
+    INNER JOIN hashtags h
+        ON ph.hashtag_id = h.id
+    WHERE post_id = ?";
+
+    return fetchData(prepareResult($connect, $query, "s", [$post_id]));
+}
+
+function getPostsTags($connect): array {
+    $query = "SELECT
+        ph.id,
+        ph.post_id,
+        h.name
+    FROM post_hashtags ph
+    INNER JOIN hashtags h
+        ON ph.hashtag_id = h.id";
+
+    return fetchData(prepareResult($connect, $query));
+}
+
 function getTagByName($connect, $name): array {
     $query = "SELECT
         id

@@ -7,13 +7,13 @@ require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
 
-$user = normalizeUser(getUserAuthentication());
+$user = getUserAuthentication();
 if (count($user) === 0) {
     redirectTo("/");
 }
 
 $current_type_id = filter_input(INPUT_GET, 'type_id', FILTER_SANITIZE_SPECIAL_CHARS);
-$offset = (int) (filter_input(INPUT_GET, 'type_id', FILTER_SANITIZE_SPECIAL_CHARS) ?? 0);
+$offset = (int) (filter_input(INPUT_GET, 'offset', FILTER_SANITIZE_SPECIAL_CHARS) ?? 0);
 
 date_default_timezone_set('Europe/Moscow');
 $post_types = normalizePostTypes(fetchPostTypes($connect));
@@ -27,7 +27,7 @@ $popular = include_template("popular.php", [
     "posts" => normalizePosts($popularPosts, $post_types, $users_likes),
     "prev_offset" => $offset - $limit,
     "next_offset" => $offset + $limit,
-    "post_count" => getPostsCount($connect)["count"],
+    "post_count" => $current_type_id ? getPostsCountByType($connect, $current_type_id)["count"] : getPostsCount($connect)["count"],
     "current_type_id" => $current_type_id,
 ]);
 $pagePopular = include_template(

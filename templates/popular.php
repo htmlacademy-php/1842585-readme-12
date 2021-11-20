@@ -85,7 +85,7 @@
                         "id" => $post["id"],
                         "title" => $post["title"],
                         "content" => $post["contain"],
-                        "author" => $post["user_name"],
+                        "author" => $post["author"],
                         "is_details" => false,
                         "show_title" => false,
                         "is_video_control" => false,
@@ -118,7 +118,9 @@
         <?php endforeach; ?>
     </div>
     <div class="popular__page-links">
-        <a class="popular__page-link popular__page-link--prev button <?= $prev_offset < 0 ? "button--gray" : "button--green" ?>" <?= $prev_offset > 0 ? 'href="/popular.php?offset="' . htmlspecialchars($prev_offset) : "" ?>>Предыдущая страница</a>
-        <a class="popular__page-link popular__page-link--next button <?= $next_offset >= $post_count ? "button--gray" : "button--green" ?>" <?= $next_offset < $post_count ? 'href="/popular.php?offset="' . htmlspecialchars($next_offset) : "" ?>>Следующая страница</a>
+        <a class="popular__page-link popular__page-link--prev button <?= $prev_offset < 0 ? "button--gray" : "button--green" ?>"
+            <?= $prev_offset >= 0 ? "href=/popular.php?offset=" . htmlspecialchars($prev_offset) : "" ?>>Предыдущая страница</a>
+        <a class="popular__page-link popular__page-link--next button <?= $next_offset >= $post_count ? "button--gray" : "button--green" ?>"
+            <?= $next_offset < $post_count ? "href=/popular.php?offset=" . htmlspecialchars($next_offset) : "" ?>>Следующая страница</a>
     </div>
 </div>

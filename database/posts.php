@@ -238,7 +238,8 @@ function getPostsByUserId($connect, $user_id): array
         type_id,
         views_count,
         users.avatar_path,
-        posts.user_id";
+        posts.user_id
+    ORDER BY posts.created_at";
 
     return fetchData(prepareResult($connect, $query, "i", [$user_id]));
 }
@@ -309,7 +310,7 @@ function searchPostsByHashtag($connect, $hashtag): array
             ON posts.id = pc.post_id
     WHERE MATCH(h.name) AGAINST(?)
     GROUP BY
-        posts.created_at,
+        created_date,
         posts.id,
         title,
         posts.content,
@@ -319,7 +320,7 @@ function searchPostsByHashtag($connect, $hashtag): array
         views_count,
         users.avatar_path,
         posts.user_id
-    ORDER BY created_at DESC";
+    ORDER BY created_date DESC";
 
     return fetchData(prepareResult($connect, $query, "s", [$hashtag]));
 }
@@ -339,6 +340,15 @@ function getPostsCount($connect): array {
     FROM posts";
 
     return fetchAssocData(prepareResult($connect, $query));
+}
+
+function getPostsCountByType($connect, $type_id): array {
+    $query = "SELECT
+        COUNT(id) AS count
+    FROM posts
+    WHERE type_id = ?";
+
+    return fetchAssocData(prepareResult($connect, $query, "i", [$type_id]));
 }
 
 function addPost($connect, $post): string {
@@ -365,6 +375,16 @@ function addPost($connect, $post): string {
         )";
 
     preparePostResult($connect, $query, "sssssssii", $post);
+
+    return getInsertId($connect);
+}
+
+function updatePostViews($connect, $post_id): string {
+    $query = "UPDATE posts
+    SET views_count = views_count + 1
+    WHERE id = ?";
+
+    preparePostResult($connect, $query, "i", [$post_id]);
 
     return getInsertId($connect);
 }

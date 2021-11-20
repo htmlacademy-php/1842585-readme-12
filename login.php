@@ -17,13 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else if (!password_verify($_POST['password'], $user["password"])) {
         $errors["password"] = true;
     } else {
-        $_SESSION["user"] = [
-            "id" => $user["id"],
-            "registered_at" => $user["registered_at"],
-            "email" => $user["email"],
-            "login" => $user["login"],
-            "avatar_path" => $user["avatar_path"],
-        ];
+        $_SESSION["user"] = normalizeUser($user);
     }
 }
 

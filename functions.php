@@ -204,6 +204,8 @@ function normalizeUser(array $user): array {
         "user_name" => $user["login"],
         "avatar" => $user["avatar_path"],
         "registered_date" => $user["registered_at"],
+        "subscribers_count" => $user["subscribers_count"],
+        "posts_count" => $user["posts_count"],
         "time_ago" => getTimeAgo($registered_at, "на сайте"),
         "date_title" => date_format($registered_at, "d.m.Y H:i"),
     ];
@@ -282,6 +284,55 @@ function normalizeComments(array $comments): array {
 
     return $result;
 }
+
+function normalizeSubscription(array $subscription): array {
+    if ($subscription === []) {
+        return $subscription;
+    }
+
+    $subscribe_at = date_create($subscription["subscribe_at"]);
+
+    return [
+        "id" => (string) $subscription["id"],
+        "author_id" => (string) $subscription["author_id"],
+        "subscribe_at" => $subscription["subscribe_at"],
+        "time_ago" => getTimeAgo($subscribe_at),
+        "date_title" => date_format($subscribe_at, "d.m.Y H:i"),
+    ];
+}
+
+function normalizeSubscriptions(array $subscriptions): array {
+    $result = [];
+
+    foreach ($subscriptions as $subscription) {
+        $result[] = normalizeSubscription($subscription);
+    }
+
+    return $result;
+}
+
+function normalizeHashtag(array $hashtag): array {
+    if ($hashtag === []) {
+        return $hashtag;
+    }
+
+    return [
+        "id" => (string) $hashtag["id"],
+        "post_id" => (string) $hashtag["post_id"],
+        "name" => $hashtag["name"],
+    ];
+}
+
+function normalizeHashtags(array $hashtags): array {
+    $result = [];
+
+    foreach ($hashtags as $hashtag) {
+        $result[] = normalizeHashtag($hashtag);
+    }
+
+    return $result;
+}
+
 /**
  * Функция переопределяет имена полей в ассоциативном массиве.
  *
@@ -488,7 +539,7 @@ function addTags($field, $result): array {
     return $result;
 }
 
-function addEmail($field, $web_name, $result): array {
+function addEmail($field, $web_name, $result, $connect): array {
     $result["errors"] = addError($result["errors"], checkFilling($web_name, "Email"), $web_name);
     if ($_POST[$web_name] === "") {
         return $result;
@@ -511,7 +562,7 @@ function addEmail($field, $web_name, $result): array {
     return $result;
 }
 
-function addLogin($field, $web_name, $result): array {
+function addLogin($field, $web_name, $result, $connect): array {
     $result = addTextContent($web_name, $result, $field, ["login" => "Логин"]);
 
     if ($_POST[$web_name] === "") {

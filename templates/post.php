@@ -5,8 +5,10 @@
  * @var $post array{id: string, title: string, type: string, contain: string, user_id:string, user_name: string, avatar: string, views_count:string, created_date:string, time_ago: string, date_title: string} - пост пользователя
  * @var $user array - информация об авторизованном пользователе
  * @var $user_info string - шаблон информации о пользователе
+ * @var $user_profile string - шаблон информации о пользователе
  * @var $comments array - комментарии к данному посту
  * @var $show_all_comments - показать все комментарии
+ * @var $hashtags - хэштеги поста
  * @var $errors array - ошибки заполнения комментария
  */
 
@@ -23,7 +25,7 @@
                         "id" => $post["id"],
                         "title" => $post["title"],
                         "content" => $post["contain"],
-                        "author" => $post["user_name"],
+                        "author" => $post["author"],
                         "is_details" => true,
                         "show_title" => false,
                         "is_video_control" => false,
@@ -37,15 +39,12 @@
                         ]);
                         print($template_indicators);
                     ?>
-                    <span class="post__view">500 просмотров</span>
+                    <span class="post__view"><?= htmlspecialchars($post["views_count"]) ?></span>
                 </div>
                 <ul class="post__tags">
-                    <li><a href="#">#nature</a></li>
-                    <li><a href="#">#globe</a></li>
-                    <li><a href="#">#photooftheday</a></li>
-                    <li><a href="#">#canon</a></li>
-                    <li><a href="#">#landscape</a></li>
-                    <li><a href="#">#щикарныйвид</a></li>
+                    <?php foreach ($hashtags as $hashtag): ?>
+                        <li><a href="/search.php?search=<?= urlencode($hashtag["name"]) ?>"><?= htmlspecialchars($hashtag["name"]) ?></a></li>
+                    <?php endforeach; ?>
                 </ul>
                 <div class="comments">
                     <form class="comments__form form" action="/post.php" method="post">
@@ -100,27 +99,10 @@
                 </div>
             </div>
             <div class="post-details__user user">
-                <div class="post-details__user-info user__info">
-                    <div class="post-details__avatar user__avatar">
-                        <a class="post-details__avatar-link user__avatar-link" href="/profile.php?user_id=<?= htmlspecialchars($post["user_id"]) ?>">
-                            <img class="post-details__picture user__picture"
-                                 src="<?= htmlspecialchars($post["avatar"]) ?>"
-                                 alt="Аватар пользователя">
-                        </a>
-                    </div>
-                    <div class="post-details__name-wrapper user__name-wrapper">
-                        <a class="post-details__name user__name" href="/profile.php?user_id=<?= htmlspecialchars($post["user_id"]) ?>">
-                            <span><?= htmlspecialchars($post["user_name"]) ?></span>
-                        </a>
-                        <time class="post-details__time user__time"
-                              title="<?= htmlspecialchars($post["date_title"]) ?>" datetime="<?= htmlspecialchars(
-                            $post["created_date"]
-                        ) ?>"><?= htmlspecialchars(
-                            $post["time_ago"]
-                        ) ?></time>
-                    </div>
-                </div>
-                <?php print($user_info); ?>
+                <?php
+                    print($user_profile);
+                    print($user_info);
+                ?>
             </div>
         </div>
     </section>

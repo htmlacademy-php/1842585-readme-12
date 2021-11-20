@@ -7,7 +7,7 @@ require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
 
-$user = normalizeUser(getUserAuthentication());
+$user = getUserAuthentication();
 if (count($user) === 0) {
     redirectTo("/");
 }
@@ -98,11 +98,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $created_at,
                 $result["title"],
                 $result["content"],
-                $result["author"],
+                $result["author"] ?? $user["user_name"],
                 $result["picture_url"],
                 $result["video_url"],
                 $result["website"],
-                1,
+                $user["id"],
                 $type_id
             ]
         );

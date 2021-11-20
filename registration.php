@@ -35,11 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($reg_fields as $field => $web_name) {
         switch ($field) {
             case "email": {
-                $result = addEmail($field, $web_name, $result);
+                $result = addEmail($field, $web_name, $result, $connect);
                 break;
             }
             case "login": {
-                $result = addLogin($field, $web_name, $result);
+                $result = addLogin($field, $web_name, $result, $connect);
                 break;
             }
             case "password": {

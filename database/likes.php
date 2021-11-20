@@ -30,7 +30,8 @@ function getLikesByUserId($connect, $user_id): array
             ON u.id = l.user_id
         JOIN posts p
             ON p.id = l.post_id
-    WHERE p.user_id = ?";
+    WHERE p.user_id = ?
+    ORDER BY l.like_at DESC";
 
     return fetchData(prepareResult($connect, $query,"i" , [$user_id]));
 }

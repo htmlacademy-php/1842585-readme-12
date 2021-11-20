@@ -34,7 +34,7 @@
                     <?php foreach ($posts as $index => $post): ?>
                         <article class="search__post post <?= htmlspecialchars($post["type"]) ?>">
                             <header class="post__header post__author">
-                                <a class="post__author-link" href="#" title="Автор">
+                                <a class="post__author-link" href="/profile.php?author_id=<?= htmlspecialchars($post["user_id"]) ?>" title="Автор">
                                     <div class="post__avatar-wrapper">
                                         <img class="post__author-avatar" src="<?= htmlspecialchars($post["avatar"]) ?>"
                                              alt="Аватар пользователя" width="60" height="60">
@@ -50,7 +50,7 @@
                                     "id" => $post["id"],
                                     "title" => $post["title"],
                                     "content" => $post["contain"],
-                                    "author" => $post["user_name"],
+                                    "author" => $post["author"],
                                     "is_details" => false,
                                     "show_title" => true,
                                     "is_video_control" => true,
@@ -58,27 +58,12 @@
                                 print($template_post);
                             ?>
                             <footer class="post__footer post__indicators">
-                                <div class="post__buttons">
-                                    <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
-                                        <svg class="post__indicator-icon" width="20" height="17">
-                                            <use xlink:href="#icon-heart"></use>
-                                        </svg>
-                                        <svg class="post__indicator-icon post__indicator-icon--like-active" width="20"
-                                             height="17">
-                                            <use xlink:href="#icon-heart-active"></use>
-                                        </svg>
-                                        <span>250</span>
-                                        <span class="visually-hidden">количество лайков</span>
-                                    </a>
-                                    <a class="post__indicator post__indicator--comments button" href="#"
-                                       title="Комментарии">
-                                        <svg class="post__indicator-icon" width="19" height="17">
-                                            <use xlink:href="#icon-comment"></use>
-                                        </svg>
-                                        <span>25</span>
-                                        <span class="visually-hidden">количество комментариев</span>
-                                    </a>
-                                </div>
+                                <?php
+                                    $template_indicators = include_template("/parts/post/indicators.php", [
+                                        "post" => $post,
+                                    ]);
+                                    print($template_indicators);
+                                ?>
                             </footer>
                         </article>
                     <?php endforeach; ?>

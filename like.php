@@ -7,7 +7,7 @@ require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
 
-$user = normalizeUser(getUserAuthentication());
+$user = getUserAuthentication();
 if (count($user) === 0) {
     redirectTo("/");
 }

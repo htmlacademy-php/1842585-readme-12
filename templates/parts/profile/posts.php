@@ -2,6 +2,7 @@
 /**
  * Шаблон постов пользователя
  * @var $content array<array{id: string, title: string, type: string, contain: string, user_name: string, avatar: string, views_count:string, created_date:string, time_ago: string, date_title: string}> - посты опубликованные пользователем профиля
+ * @var $hashtags array - хэштеги постов
  */
 
 ?>
@@ -19,7 +20,7 @@
                     "id" => $post["id"],
                     "title" => $post["title"],
                     "content" => $post["contain"],
-                    "author" => $post["user_name"],
+                    "author" => $post["author"],
                     "is_details" => false,
                     "show_title" => false,
                     "is_video_control" => false,
@@ -37,12 +38,15 @@
                     <time class="post__time" datetime="<?= htmlspecialchars($post["created_date"]) ?>"><?= htmlspecialchars($post["time_ago"]) ?></time>
                 </div>
                 <ul class="post__tags">
-                    <li><a href="#">#nature</a></li>
-                    <li><a href="#">#globe</a></li>
-                    <li><a href="#">#photooftheday</a></li>
-                    <li><a href="#">#canon</a></li>
-                    <li><a href="#">#landscape</a></li>
-                    <li><a href="#">#щикарныйвид</a></li>
+                    <?php
+                        $posts_hashtags = array_filter($hashtags, function($value) use ($post) {
+                            return $value["post_id"] === $post["id"];
+                        });
+
+                        foreach ($posts_hashtags as $hashtag):
+                    ?>
+                            <li><a href="/search.php?search=<?= urlencode($hashtag["name"]) ?>"><?= htmlspecialchars($hashtag["name"]) ?></a></li>
+                    <?php endforeach; ?>
                 </ul>
             </footer>
             <div class="comments">
