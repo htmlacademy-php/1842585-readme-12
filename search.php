@@ -1,4 +1,7 @@
 <?php
+/**
+ * @var $connect mysqli - подключение к базе данных
+ */
 session_start();
 require_once("db.php");
 require_once("helpers.php");
@@ -12,12 +15,13 @@ if ($search === "" || count($user) === 0) {
 
 $is_tag = $search[0] === "#";
 
-$post_types = normalizePostTypes(fetchPostTypes());
-$posts = $is_tag ? searchPostsByHashtag($search) : searchPosts($search);
+$post_types = normalizePostTypes(fetchPostTypes($connect));
+$users_likes = getUserLikes($connect, $user["id"]);
+$posts = $is_tag ? searchPostsByHashtag($connect, $search) : searchPosts($connect, $search);
 
 $search_template = include_template("search.php", [
     "search" => $search,
-    "posts" => normalizePosts($posts, $post_types),
+    "posts" => normalizePosts($posts, $post_types, $users_likes),
 ]);
 $search_page = include_template(
     "layout.php",

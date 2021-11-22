@@ -42,6 +42,7 @@ CREATE TABLE posts
   picture_url VARCHAR(1000),
   video_url   VARCHAR(1000),
   website     VARCHAR(1000),
+  preview     VARCHAR(1000),
   views_count INT UNSIGNED DEFAULT 0,
   user_id     INT          NOT NULL,
   type_id     INT          NOT NULL,
@@ -90,6 +91,7 @@ CREATE TABLE likes
   id      INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,
   post_id INT NOT NULL,
+  like_at DATETIME NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users (id),
   FOREIGN KEY (post_id) REFERENCES posts (id)
 );
@@ -105,6 +107,7 @@ CREATE TABLE subscribes
   id           INT AUTO_INCREMENT PRIMARY KEY,
   author_id    INT NOT NULL,
   subscribe_id INT NOT NULL,
+  subscribe_at DATETIME NOT NULL,
   FOREIGN KEY (author_id) REFERENCES users (id),
   FOREIGN KEY (subscribe_id) REFERENCES users (id)
 );

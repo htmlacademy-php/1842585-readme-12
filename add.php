@@ -1,4 +1,7 @@
 <?php
+/**
+ * @var $connect mysqli - подключение к базе данных
+ */
 session_start();
 require_once("db.php");
 require_once("helpers.php");
@@ -90,23 +93,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         downloadFile($result["tmp_path"], $full_path, $result["file_name"]);
         downloadContent($result["picture_url"], $full_path, $result["file_name"]);
         $new_post_id = addPost(
+            $connect,
             [
                 $created_at,
                 $result["title"],
                 $result["content"],
-                $result["author"],
+                $result["author"] ?? $user["user_name"],
                 $result["picture_url"],
                 $result["video_url"],
                 $result["website"],
-                1,
+                $user["id"],
                 $type_id
             ]
         );
 
         foreach ($result["tags"] as $tag) {
-            $current_tag = getTagByName($tag);
-            $tag_id = count($current_tag) === 0 ? addNewTag([$tag]) : $current_tag["id"];
-            addPostTag([(int)$new_post_id, (int)$tag_id]);
+            $current_tag = getTagByName($connect, $tag);
+            $tag_id = count($current_tag) === 0 ? addNewTag($connect, [$tag]) : $current_tag["id"];
+            addPostTag($connect, [(int)$new_post_id, (int)$tag_id]);
         }
 
         redirectTo("/post.php?post_id=$new_post_id");
@@ -115,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $type_id = filter_input(INPUT_GET, 'type_id', FILTER_SANITIZE_SPECIAL_CHARS);
 }
 
-$post_types = normalizePostTypes(fetchPostTypes());
+$post_types = normalizePostTypes(fetchPostTypes($connect));
 $current_post_type = $post_types[array_search($type_id, array_column($post_types, "id"), true)];
 
 if (!isset($type_id)) {

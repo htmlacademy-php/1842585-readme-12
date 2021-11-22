@@ -1,6 +1,7 @@
 <?php
-
-use JetBrains\PhpStorm\NoReturn;
+/**
+ * @var $connect mysqli - подключение к базе данных
+ */
 
 /**
  * Обрезает переданный текст если количество символов превышает максимально допустимое.
@@ -61,9 +62,10 @@ function truncateContent(string $content, int $maxLength = 300): array
  * result = "19 минут назад"
  *
  * @param DateTime $created_date - дата создания поста.
+ * @param string $additional_text - дополнительный текст в конце строки
  * @return string "19 минут назад"
  */
-function getTimeAgo(DateTime $created_date): string
+function getTimeAgo(DateTime $created_date,  string $additional_text = "назад"): string
 {
     $current_date = date_create();
     $diff = date_diff($current_date, $created_date);
@@ -90,7 +92,11 @@ function getTimeAgo(DateTime $created_date): string
 
     $dateType = get_noun_plural_form($date_count, ...$format);
 
-    return $date_count . " " . $dateType . " назад";
+    return $date_count . " " . $dateType . " " . $additional_text;
+}
+
+function filter_post_likes($like, $post_id): bool {
+    return $like["post_id"] === $post_id;
 }
 
 /**
@@ -147,18 +153,18 @@ function getTimeAgo(DateTime $created_date): string
  * @param array $post_types<array{id: string, name: string, icon_class: string}>
  * @return array<array{id: string, title: string, type: string, contain: string, user_name: string, avatar: string, views_count:string, created_date:string, time_ago: string, date_title: string}>
  */
-function normalizePosts(array $posts, array $post_types): array
+function normalizePosts(array $posts, array $post_types, array $user_likes): array
 {
     $result = [];
 
     foreach ($posts as $post) {
-        $result[] = normalizePost($post, $post_types);
+        $result[] = normalizePost($post, $post_types, $user_likes);
     }
 
     return $result;
 }
 
-function normalizePost(array $post, array $post_types): array {
+function normalizePost(array $post, array $post_types, array $user_likes): array {
     if ($post === []) {
         return $post;
     }
@@ -171,14 +177,160 @@ function normalizePost(array $post, array $post_types): array {
         "title" => $post["title"],
         "contain" => $post["content"],
         "author" => $post["author"],
+        "user_id" => $post["user_id"],
         "user_name" => $post["login"],
         "avatar" => $post["avatar_path"],
         "views_count" => $post["views_count"],
+        "comments_count" => $post["comments_count"],
         "created_date" => $post["created_date"],
         "type" => "post-" . $post_types[$type_key]["icon_class"],
         "time_ago" => getTimeAgo($created_date),
         "date_title" => date_format($created_date, "d.m.Y H:i"),
+        "likes_count" => $post["likes_count"],
+        "is_liked" => in_array($post["id"], array_column($user_likes, "post_id"), true),
     ];
+}
+
+function normalizeUser(array $user): array {
+    if ($user === []) {
+        return $user;
+    }
+
+    $registered_at = date_create($user["registered_at"]);
+
+    return [
+        "id" => (string) $user["id"],
+        "email" => $user["email"],
+        "user_name" => $user["login"],
+        "avatar" => $user["avatar_path"],
+        "registered_date" => $user["registered_at"],
+        "subscribers_count" => $user["subscribers_count"],
+        "posts_count" => $user["posts_count"],
+        "time_ago" => getTimeAgo($registered_at, "на сайте"),
+        "date_title" => date_format($registered_at, "d.m.Y H:i"),
+    ];
+}
+
+function normalizeUsers(array $users): array {
+    $result = [];
+
+    foreach ($users as $user) {
+        $result[] = normalizeUser($user);
+    }
+
+    return $result;
+}
+
+function normalizeLike(array $like, array $post_types): array {
+    if ($like === []) {
+        return $like;
+    }
+
+    $like_at = date_create($like["like_at"]);
+    $type_key = array_search((string) $like["type_id"], array_column($post_types, "id"), true);
+
+    return [
+        "id" => (string) $like["id"],
+        "user_id" => (string) $like["user_id"],
+        "user_name" => $like["login"],
+        "avatar" => $like["avatar_path"],
+        "like_at" => $like["like_at"],
+        "post_id" => (string) $like["post_id"],
+        "post_type" => "post-mini--" . $post_types[$type_key]["icon_class"],
+        "post_content" => $like["content"],
+        "preview" => $like["preview"],
+        "post_title" => $like["title"],
+        "time_ago" => getTimeAgo($like_at),
+        "date_title" => date_format($like_at, "d.m.Y H:i"),
+    ];
+}
+
+function normalizeLikes(array $likes, array $post_types): array {
+    $result = [];
+
+    foreach ($likes as $like) {
+        $result[] = normalizeLike($like, $post_types);
+    }
+
+    return $result;
+}
+
+function normalizeComment(array $comment): array {
+    if ($comment === []) {
+        return $comment;
+    }
+
+    $comment_at = date_create($comment["created_at"]);
+
+    return [
+        "id" => (string) $comment["id"],
+        "user_id" => (string) $comment["user_id"],
+        "user_name" => $comment["login"],
+        "avatar" => $comment["avatar_path"],
+        "comment_at" => $comment["created_at"],
+        "post_id" => (string) $comment["post_id"],
+        "comment" => $comment["content"],
+        "time_ago" => getTimeAgo($comment_at),
+        "date_title" => date_format($comment_at, "d.m.Y H:i"),
+    ];
+}
+
+function normalizeComments(array $comments): array {
+    $result = [];
+
+    foreach ($comments as $comment) {
+        $result[] = normalizeComment($comment);
+    }
+
+    return $result;
+}
+
+function normalizeSubscription(array $subscription): array {
+    if ($subscription === []) {
+        return $subscription;
+    }
+
+    $subscribe_at = date_create($subscription["subscribe_at"]);
+
+    return [
+        "id" => (string) $subscription["id"],
+        "author_id" => (string) $subscription["author_id"],
+        "subscribe_at" => $subscription["subscribe_at"],
+        "time_ago" => getTimeAgo($subscribe_at),
+        "date_title" => date_format($subscribe_at, "d.m.Y H:i"),
+    ];
+}
+
+function normalizeSubscriptions(array $subscriptions): array {
+    $result = [];
+
+    foreach ($subscriptions as $subscription) {
+        $result[] = normalizeSubscription($subscription);
+    }
+
+    return $result;
+}
+
+function normalizeHashtag(array $hashtag): array {
+    if ($hashtag === []) {
+        return $hashtag;
+    }
+
+    return [
+        "id" => (string) $hashtag["id"],
+        "post_id" => (string) $hashtag["post_id"],
+        "name" => $hashtag["name"],
+    ];
+}
+
+function normalizeHashtags(array $hashtags): array {
+    $result = [];
+
+    foreach ($hashtags as $hashtag) {
+        $result[] = normalizeHashtag($hashtag);
+    }
+
+    return $result;
 }
 
 /**
@@ -387,7 +539,7 @@ function addTags($field, $result): array {
     return $result;
 }
 
-function addEmail($field, $web_name, $result): array {
+function addEmail($field, $web_name, $result, $connect): array {
     $result["errors"] = addError($result["errors"], checkFilling($web_name, "Email"), $web_name);
     if ($_POST[$web_name] === "") {
         return $result;
@@ -399,7 +551,7 @@ function addEmail($field, $web_name, $result): array {
         return $result;
     }
 
-    $user = getUserByEmail($email);
+    $user = getUserByEmail($connect, $email);
     if (count($user) > 0) {
         $result["errors"] = addError($result["errors"], "Пользователь с таким email уже существует", $web_name);
         return $result;
@@ -410,7 +562,7 @@ function addEmail($field, $web_name, $result): array {
     return $result;
 }
 
-function addLogin($field, $web_name, $result): array {
+function addLogin($field, $web_name, $result, $connect): array {
     $result = addTextContent($web_name, $result, $field, ["login" => "Логин"]);
 
     if ($_POST[$web_name] === "") {
@@ -418,7 +570,7 @@ function addLogin($field, $web_name, $result): array {
     }
 
     $login = $_POST[$web_name];
-    $user = getUserByLoginOrEmail($login);
+    $user = getUserByLoginOrEmail($connect, $login);
     if (count($user) > 0) {
         $result["errors"] = addError($result["errors"], "Пользователь с таким логином уже существует", $web_name);
         return $result;
@@ -466,7 +618,7 @@ function addPasswordRepeat($web_name, $result): array {
     return checkPassword($web_name, $result, "password", "Повтор пароля");
 }
 
-#[NoReturn] function redirectTo($page) {
+function redirectTo($page) {
     header("Location: $page");
     exit();
 }

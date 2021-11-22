@@ -1,160 +1,357 @@
 <?php
 
 // Запрос для типов постов
-function fetchPostTypes(): array
+function fetchPostTypes($connect): array
 {
     $query = "SELECT id, name, icon_class from content_types";
 
-    return fetchData(prepareResult($query));
+    return fetchData(prepareResult($connect, $query));
 }
 
 // Получаем шесть самых популярных постов и их авторов, а так же типы постов
-function fetchPopularPosts(): array
+function fetchPopularPosts($connect, $offset): array
 {
-    $query = "SELECT created_at as created_date,
+    $query = "SELECT
+        posts.created_at as created_date,
         posts.id,
         title,
-        content,
+        posts.content,
         author,
         users.login,
         type_id,
         views_count,
-        users.avatar_path
+        users.avatar_path,
+        posts.user_id,
+        COUNT(DISTINCT(l.id)) AS likes_count,
+        COUNT(DISTINCT(pc.id)) AS comments_count
     FROM posts
         INNER JOIN users
             ON user_id = users.id
+        LEFT JOIN likes l
+            ON posts.id = l.post_id
+        LEFT JOIN post_comments pc
+            ON posts.id = pc.post_id
+    GROUP BY
+        posts.created_at,
+        posts.id,
+        posts.content,
+        title,
+        author,
+        users.login,
+        type_id,
+        views_count,
+        users.avatar_path,
+        posts.user_id
     ORDER BY views_count DESC
-    LIMIT 6";
+    LIMIT 6 OFFSET ?";
 
-    return fetchData(prepareResult($query));
+    return fetchData(prepareResult($connect, $query, "i", [$offset]));
 }
 
-function fetchPopularPostsByType($type_id): array {
-    $query = "SELECT created_at as created_date,
+function fetchPopularPostsByType($connect, $type_id, $offset): array {
+    $query = "SELECT
+        posts.created_at as created_date,
         posts.id,
         title,
-        content,
+        posts.content,
         author,
         users.login,
         type_id,
         views_count,
-        users.avatar_path
+        users.avatar_path,
+        posts.user_id,
+        COUNT(DISTINCT(l.id)) AS likes_count,
+        COUNT(DISTINCT(pc.id)) AS comments_count
     FROM posts
         INNER JOIN users
             ON user_id = users.id
+        LEFT JOIN likes l
+            ON posts.id = l.post_id
+        LEFT JOIN post_comments pc
+            ON posts.id = pc.post_id
     WHERE type_id = ?
+    GROUP BY
+        posts.created_at,
+        posts.id,
+        title,
+        posts.content,
+        author,
+        users.login,
+        type_id,
+        views_count,
+        users.avatar_path,
+        posts.user_id
     ORDER BY views_count DESC
-    LIMIT 6";
+    LIMIT 6 OFFSET ?";
 
-    return fetchData(prepareResult($query, "i", [$type_id]));
+    return fetchData(prepareResult($connect, $query, "ii", [$type_id, $offset]));
 }
 
-function fetchPostById($post_id): array
+function fetchPostById($connect, $post_id): array
 {
-    $query = "SELECT created_at as created_date,
+    $query = "SELECT
+        posts.created_at as created_date,
         posts.id,
         title,
-        content,
+        posts.content,
         author,
         users.login,
         type_id,
         views_count,
-        users.avatar_path
+        users.avatar_path,
+        posts.user_id,
+        COUNT(DISTINCT(l.id)) AS likes_count,
+        COUNT(DISTINCT(pc.id)) AS comments_count
     FROM posts
         INNER JOIN users
             ON user_id = users.id
-    WHERE posts.id = ?";
-
-    return fetchAssocData(prepareResult($query, "i", [$post_id]));
-}
-
-function fetchPostSubscribes($user_id): array
-{
-    $query = "SELECT
-        created_at as created_date,
+        LEFT JOIN likes l
+            ON posts.id = l.post_id
+        LEFT JOIN post_comments pc
+            ON posts.id = pc.post_id
+    WHERE posts.id = ?
+    GROUP BY
+        posts.created_at,
         posts.id,
         title,
-        content,
+        posts.content,
         author,
         users.login,
         type_id,
         views_count,
-        users.avatar_path
+        users.avatar_path,
+        posts.user_id";
+
+    return fetchAssocData(prepareResult($connect, $query, "i", [$post_id]));
+}
+
+function fetchPostSubscribes($connect, $user_id): array
+{
+    $query = "SELECT
+        posts.created_at as created_date,
+        posts.id,
+        title,
+        posts.content,
+        author,
+        users.login,
+        type_id,
+        views_count,
+        users.avatar_path,
+        posts.user_id,
+        COUNT(DISTINCT(l.id)) AS likes_count,
+        COUNT(DISTINCT(pc.id)) AS comments_count
     FROM posts
         INNER JOIN subscribes s
             ON user_id = s.author_id
         INNER JOIN users
             ON user_id = users.id
-    WHERE s.subscribe_id = ?";
-
-    return fetchAssocData(prepareResult($query, "i", [$user_id]));
-}
-
-function fetchPostSubscribesByType($type_id, $user_id): array
-{
-    $query = "SELECT
-        created_at as created_date,
+        LEFT JOIN likes l
+            ON posts.id = l.post_id
+        LEFT JOIN post_comments pc
+            ON posts.id = pc.post_id
+    WHERE s.subscribe_id = ?
+    GROUP BY
+        posts.created_at,
         posts.id,
         title,
-        content,
+        posts.content,
         author,
         users.login,
         type_id,
         views_count,
-        users.avatar_path
+        users.avatar_path,
+        posts.user_id";
+
+    return fetchData(prepareResult($connect, $query, "i", [$user_id]));
+}
+
+function fetchPostSubscribesByType($connect, $type_id, $user_id): array
+{
+    $query = "SELECT
+        posts.created_at as created_date,
+        posts.id,
+        title,
+        posts.content,
+        author,
+        users.login,
+        type_id,
+        views_count,
+        users.avatar_path,
+        posts.user_id,
+        COUNT(DISTINCT(l.id)) AS likes_count,
+        COUNT(DISTINCT(pc.id)) AS comments_count
     FROM posts
         INNER JOIN subscribes s
             ON user_id = s.author_id
         INNER JOIN users
             ON user_id = users.id
-    WHERE type_id = ? AND s.subscribe_id = ?";
-
-    return fetchAssocData(prepareResult($query, "ii", [$type_id, $user_id]));
-}
-
-function searchPosts($search): array
-{
-    $query = "SELECT created_at as created_date,
+        LEFT JOIN likes l
+            ON posts.id = l.post_id
+        LEFT JOIN post_comments pc
+            ON posts.id = pc.post_id
+    WHERE type_id = ? AND s.subscribe_id = ?
+    GROUP BY
+        posts.created_at,
         posts.id,
         title,
-        content,
+        posts.content,
         author,
         users.login,
         type_id,
         views_count,
-        users.avatar_path
+        users.avatar_path,
+        posts.user_id";
+
+    return fetchData(prepareResult($connect, $query, "ii", [$type_id, $user_id]));
+}
+
+function getPostsByUserId($connect, $user_id): array
+{
+    $query = "SELECT
+        posts.created_at as created_date,
+        posts.id,
+        title,
+        posts.content,
+        author,
+        users.login,
+        type_id,
+        views_count,
+        users.avatar_path,
+        posts.user_id,
+        COUNT(DISTINCT(l.id)) AS likes_count,
+        COUNT(DISTINCT(pc.id)) AS comments_count
     FROM posts
         INNER JOIN users
             ON user_id = users.id
-    WHERE MATCH(title, content) AGAINST(?)";
-
-    return fetchData(prepareResult($query, "s", [$search]));
-}
-
-function searchPostsByHashtag($hashtag): array
-{
-    $query = "SELECT created_at as created_date,
+        LEFT JOIN likes l
+            ON posts.id = l.post_id
+        LEFT JOIN post_comments pc
+            ON posts.id = pc.post_id
+    WHERE posts.user_id = ?
+    GROUP BY
+        posts.created_at,
         posts.id,
         title,
-        content,
+        posts.content,
         author,
         users.login,
         type_id,
         views_count,
-        users.avatar_path
+        users.avatar_path,
+        posts.user_id
+    ORDER BY posts.created_at";
+
+    return fetchData(prepareResult($connect, $query, "i", [$user_id]));
+}
+
+function searchPosts($connect, $search): array
+{
+    $query = "SELECT
+        posts.created_at as created_date,
+        posts.id,
+        title,
+        posts.content,
+        author,
+        users.login,
+        type_id,
+        views_count,
+        users.avatar_path,
+        posts.user_id,
+        COUNT(DISTINCT(l.id)) AS likes_count,
+        COUNT(DISTINCT(pc.id)) AS comments_count
+    FROM posts
+        INNER JOIN users
+            ON user_id = users.id
+        LEFT JOIN likes l
+            ON posts.id = l.post_id
+        LEFT JOIN post_comments pc
+            ON posts.id = pc.post_id
+    WHERE MATCH(title, posts.content) AGAINST(?)
+    GROUP BY
+        posts.created_at,
+        posts.id,
+        title,
+        posts.content,
+        author,
+        users.login,
+        type_id,
+        views_count,
+        users.avatar_path,
+        posts.user_id";
+
+    return fetchData(prepareResult($connect, $query, "s", [$search]));
+}
+
+function searchPostsByHashtag($connect, $hashtag): array
+{
+    $query = "SELECT
+        posts.created_at as created_date,
+        posts.id,
+        title,
+        posts.content,
+        author,
+        users.login,
+        type_id,
+        views_count,
+        users.avatar_path,
+        posts.user_id,
+        COUNT(DISTINCT(l.id)) AS likes_count,
+        COUNT(DISTINCT(pc.id)) AS comments_count
     FROM posts
         INNER JOIN users
             ON user_id = users.id
         INNER JOIN post_hashtags ph
             ON posts.id = ph.post_id
-        INNER JOIN hashtags h on ph.hashtag_id = h.id
+        INNER JOIN hashtags h
+            ON ph.hashtag_id = h.id
+        LEFT JOIN likes l
+            ON posts.id = l.post_id
+        LEFT JOIN post_comments pc
+            ON posts.id = pc.post_id
     WHERE MATCH(h.name) AGAINST(?)
-    ORDER BY created_at DESC";
+    GROUP BY
+        created_date,
+        posts.id,
+        title,
+        posts.content,
+        author,
+        users.login,
+        type_id,
+        views_count,
+        users.avatar_path,
+        posts.user_id
+    ORDER BY created_date DESC";
 
-    return fetchData(prepareResult($query, "s", [$hashtag]));
+    return fetchData(prepareResult($connect, $query, "s", [$hashtag]));
 }
 
-function addPost($post): string {
+function getPostsCountByUserId($connect, $user_id): array {
+    $query = "SELECT
+        COUNT(id) AS count
+    FROM posts
+    WHERE user_id = ?";
+
+    return fetchAssocData(prepareResult($connect, $query, "i", [$user_id]));
+}
+
+function getPostsCount($connect): array {
+    $query = "SELECT
+        COUNT(id) AS count
+    FROM posts";
+
+    return fetchAssocData(prepareResult($connect, $query));
+}
+
+function getPostsCountByType($connect, $type_id): array {
+    $query = "SELECT
+        COUNT(id) AS count
+    FROM posts
+    WHERE type_id = ?";
+
+    return fetchAssocData(prepareResult($connect, $query, "i", [$type_id]));
+}
+
+function addPost($connect, $post): string {
     $query = "INSERT INTO posts (
             created_at,
             title,
@@ -177,5 +374,17 @@ function addPost($post): string {
             ?
         )";
 
-    return preparePostResult($query, "sssssssii", $post);
+    preparePostResult($connect, $query, "sssssssii", $post);
+
+    return getInsertId($connect);
+}
+
+function updatePostViews($connect, $post_id): string {
+    $query = "UPDATE posts
+    SET views_count = views_count + 1
+    WHERE id = ?";
+
+    preparePostResult($connect, $query, "i", [$post_id]);
+
+    return getInsertId($connect);
 }
