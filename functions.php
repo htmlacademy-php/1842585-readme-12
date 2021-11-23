@@ -487,7 +487,7 @@ function addPictureFile($web_name, $field, $result, $uploads_dir): array {
 }
 
 function addPictureURL($web_name, $result, $uploads_dir): array {
-    if (isset($result["picture"])) {
+    if (isset($result["file_name"])) {
         return $result;
     }
 
