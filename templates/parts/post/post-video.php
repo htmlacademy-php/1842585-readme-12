@@ -18,9 +18,6 @@ if ($is_details):
         <div class="post-video__block">
             <div class="post-video__preview">
                 <?= embed_youtube_cover(htmlspecialchars($content)) ?>
-                <img src="img/coast-medium.jpg"
-                     alt="Превью к видео <?= htmlspecialchars($title) ?>" width="360"
-                     height="188">
             </div>
 
             <?php if ($is_video_control): ?>

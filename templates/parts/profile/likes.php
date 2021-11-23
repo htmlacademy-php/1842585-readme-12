@@ -30,7 +30,7 @@
                     <a class="post-mini__link" href="/post.php?post_id=<?= htmlspecialchars($like["post_id"]) ?>" title="Перейти на публикацию">
                         <?php
                             $post_preview = include_template("/parts/post/" . $like["post_type"] . ".php", [
-                                "preview" => $like["preview"],
+                                "content" => $like["post_content"],
                             ]);
                             print($post_preview);
                         ?>
