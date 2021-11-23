@@ -206,6 +206,7 @@ function normalizeUser(array $user): array {
         "registered_date" => $user["registered_at"],
         "subscribers_count" => $user["subscribers_count"],
         "posts_count" => $user["posts_count"],
+        "posts_viewed" => [],
         "time_ago" => getTimeAgo($registered_at, "на сайте"),
         "date_title" => date_format($registered_at, "d.m.Y H:i"),
     ];

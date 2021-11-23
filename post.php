@@ -15,8 +15,9 @@ if (count($user) === 0) {
 $post_types = normalizePostTypes(fetchPostTypes($connect));
 $users_likes = getUserLikes($connect, $user["id"]);
 $post_id = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_SPECIAL_CHARS) ?? $_POST["post_id"];
-if ($post_id !== "" && $_SERVER['REQUEST_METHOD'] === 'GET') {
+if ($post_id !== "" && $_SERVER['REQUEST_METHOD'] === 'GET' && !in_array($post_id, $user["posts_viewed"], true)) {
     updatePostViews($connect, $post_id);
+    $_SESSION['user']["posts_viewed"][] = $post_id;
 }
 $show_all_comments = (bool) filter_input(INPUT_GET, 'show_all_comments', FILTER_SANITIZE_SPECIAL_CHARS);
 $post = normalizePost(fetchPostById($connect, $post_id), $post_types, $users_likes);
