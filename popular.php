@@ -34,6 +34,18 @@ $users_likes = getUserLikes($connect, $user["id"]);
 $limit = 6;
 $popularPosts = $current_type_id ? fetchPopularPostsByType($connect, $current_type_id, $offset, $sort_field, $sort_direction) : fetchPopularPosts($connect, $offset, $sort_field, $sort_direction);
 
+$current_type_params = $current_type_id ? "type_id=" . htmlspecialchars($current_type_id) . "&" : "";
+$current_offset_params = $offset === 0 ? "" : "offset=" . htmlspecialchars($offset) . "&";
+$current_sort_params = "sort_field=" . htmlspecialchars($sort_field) . "&sort_direction=" . htmlspecialchars($sort_direction);
+
+if ($offset > count($popularPosts)) {
+    $offset = count($popularPosts);
+    $current_offset_params = $offset === 0 ? "" : "offset=" . htmlspecialchars($offset) . "&";
+    redirectTo("/popular.php?" . $current_type_params . $current_offset_params . $current_sort_params);
+}
+
+
+
 $popular = include_template("popular.php", [
     "post_types" => $post_types,
     "posts" => normalizePosts($popularPosts, $post_types, $users_likes),
@@ -44,6 +56,10 @@ $popular = include_template("popular.php", [
     "sort_field" => $sort_field,
     "sort_direction" => $sort_direction,
     "next_sort_direction" => $next_sort_direction,
+    "offset" => $offset,
+    "current_type_params" => $current_type_params,
+    "current_offset_params" => $current_offset_params,
+    "current_sort_params" => $current_sort_params,
 ]);
 $pagePopular = include_template(
     "layout.php",
