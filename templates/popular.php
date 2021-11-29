@@ -8,6 +8,9 @@
  * @var $prev_offset
  * @var $next_offset
  * @var $post_count
+ * @var $sort_field
+ * @var $sort_direction
+ * @var $next_sort_direction
  */
 
 ?>
@@ -19,24 +22,24 @@
         <div class="popular__sorting sorting">
             <b class="popular__sorting-caption sorting__caption">Сортировка:</b>
             <ul class="popular__sorting-list sorting__list">
-                <li class="sorting__item sorting__item--popular">
-                    <a class="sorting__link sorting__link--active" href="#">
+                <li class="sorting__item <?= $sort_field === "views_count" ? "sorting__item--popular" : "" ?>">
+                    <a class="sorting__link <?= $sort_direction === "ASC" ? "sorting__link--reverse" : "" ?> <?= $sort_field === "views_count" ? "sorting__link--active" : "" ?>" href="/popular.php?sort_field=views_count&sort_direction=<?= htmlspecialchars($next_sort_direction) ?>">
                         <span>Популярность</span>
                         <svg class="sorting__icon" width="10" height="12">
                             <use xlink:href="#icon-sort"></use>
                         </svg>
                     </a>
                 </li>
-                <li class="sorting__item">
-                    <a class="sorting__link" href="#">
+                <li class="sorting__item <?= $sort_field === "likes_count" ? "sorting__item--popular" : "" ?>">
+                    <a class="sorting__link <?= $sort_direction === "ASC" ? "sorting__link--reverse" : "" ?> <?= $sort_field === "likes_count" ? "sorting__link--active" : "" ?>" href="/popular.php?sort_field=likes_count&sort_direction=<?= htmlspecialchars($next_sort_direction) ?>">
                         <span>Лайки</span>
                         <svg class="sorting__icon" width="10" height="12">
                             <use xlink:href="#icon-sort"></use>
                         </svg>
                     </a>
                 </li>
-                <li class="sorting__item">
-                    <a class="sorting__link" href="#">
+                <li class="sorting__item <?= $sort_field === "created_date" ? "sorting__item--popular" : "" ?>">
+                    <a class="sorting__link <?= $sort_direction === "ASC" ? "sorting__link--reverse" : "" ?> <?= $sort_field === "created_date" ? "sorting__link--active" : "" ?>" href="/popular.php?sort_field=created_date&sort_direction=<?= htmlspecialchars($next_sort_direction) ?>">
                         <span>Дата</span>
                         <svg class="sorting__icon" width="10" height="12">
                             <use xlink:href="#icon-sort"></use>

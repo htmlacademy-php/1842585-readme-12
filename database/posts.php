@@ -9,7 +9,7 @@ function fetchPostTypes($connect): array
 }
 
 // Получаем шесть самых популярных постов и их авторов, а так же типы постов
-function fetchPopularPosts($connect, $offset): array
+function fetchPopularPosts($connect, $offset, $sort_field, $sort_direction): array
 {
     $query = "SELECT
         posts.created_at as created_date,
@@ -42,13 +42,13 @@ function fetchPopularPosts($connect, $offset): array
         views_count,
         users.avatar_path,
         posts.user_id
-    ORDER BY views_count DESC
+    ORDER BY " . $sort_field . " " . $sort_direction . "
     LIMIT 6 OFFSET ?";
 
     return fetchData(prepareResult($connect, $query, "i", [$offset]));
 }
 
-function fetchPopularPostsByType($connect, $type_id, $offset): array {
+function fetchPopularPostsByType($connect, $type_id, $offset, $sort_field, $sort_direction): array {
     $query = "SELECT
         posts.created_at as created_date,
         posts.id,
@@ -81,7 +81,7 @@ function fetchPopularPostsByType($connect, $type_id, $offset): array {
         views_count,
         users.avatar_path,
         posts.user_id
-    ORDER BY views_count DESC
+    ORDER BY " . $sort_field . " " . $sort_direction . "
     LIMIT 6 OFFSET ?";
 
     return fetchData(prepareResult($connect, $query, "ii", [$type_id, $offset]));
@@ -349,6 +349,12 @@ function getPostsCountByType($connect, $type_id): array {
     WHERE type_id = ?";
 
     return fetchAssocData(prepareResult($connect, $query, "i", [$type_id]));
+}
+
+function getPostsColumns($connect): array {
+    $query = "SHOW COLUMNS FROM posts";
+
+    return fetchData(prepareResult($connect, $query));
 }
 
 function addPost($connect, $post): string {
