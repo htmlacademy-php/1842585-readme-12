@@ -18,7 +18,9 @@ function getMessagesByRecipient($connect, $user_id, $recipient_id): array
         ON m.user_id = u.id
     INNER JOIN users ur
         ON m.recipient_id = ur.id
-    WHERE (m.user_id = ? AND m.recipient_id = ?) OR (m.user_id = ? AND m.recipient_id = ?)";
+    WHERE (m.user_id = ? AND m.recipient_id = ?) OR (m.user_id = ? AND m.recipient_id = ?)
+    ORDER BY
+        m.created_at";
 
     return fetchData(prepareResult($connect, $query, "iiii", [$user_id, $recipient_id, $recipient_id, $user_id]));
 }

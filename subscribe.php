@@ -35,22 +35,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $current_data,
             ]
         );
-        $text_message = "подписался на вас";
+
+        $message_id = addMessage(
+            $connect,
+            [
+                $current_data,
+                "подписался на вас",
+                $user["id"],
+                $author_id,
+            ]
+        );
     }
     else {
         $result = deleteSubscription($connect, $subscription["id"]);
-        $text_message = "отписался от вас";
+        $message_id = 1;
     }
-
-    $message_id = addMessage(
-        $connect,
-        [
-            $current_data,
-            $text_message,
-            $user["id"],
-            $author_id,
-        ]
-    );
 
     if ($result && $message_id) {
         mysqli_commit($connect);
