@@ -70,6 +70,7 @@ $page_profile = include_template(
         "type_id" => getFirstTypeId($post_types),
         "current_page" => "profile",
         "search_text" => "",
+        "unread_count" => getAllUnreadMessages($connect, $user["id"])["count"],
     ]
 );
 

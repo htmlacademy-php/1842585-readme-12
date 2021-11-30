@@ -68,7 +68,7 @@
                         $post_class = htmlspecialchars($post_type["icon_class"]);
                         print($post_class . $active_class);
                         ?> button"
-                           href="/popular.php?type_id=<?= $post_type["id"] . "&" . $current_offset_params . $current_sort_params  ?>">
+                           href="/popular.php?type_id=<?= $post_type["id"]?>">
                             <span class="visually-hidden"><?= htmlspecialchars($post_type["name"]) ?></span>
                             <svg class="filters__icon" width="22" height="18">
                                 <use xlink:href="#icon-filter-<?= htmlspecialchars($post_type["icon_class"]) ?>"></use>

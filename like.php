@@ -35,15 +35,19 @@ if (count($like) === 0) {
         ]
     );
 
-    $message_id = addMessage(
-        $connect,
-        [
-            $current_data,
-            "поставил вам лайк",
-            $user["id"],
-            $author_id,
-        ]
-    );
+    if ($user["id"] === $author_id) {
+        $message_id = true;
+    } else {
+        $message_id = addMessage(
+            $connect,
+            [
+                $current_data,
+                "поставил вам лайк",
+                $user["id"],
+                $author_id,
+            ]
+        );
+    }
 
     if ($result && $message_id) {
         mysqli_commit($connect);

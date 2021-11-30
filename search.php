@@ -33,6 +33,7 @@ $search_page = include_template(
         "type_id" => getFirstTypeId($post_types),
         "current_page" => "search",
         "search_text" => $search,
+        "unread_count" => getAllUnreadMessages($connect, $user["id"])["count"],
     ]
 );
 

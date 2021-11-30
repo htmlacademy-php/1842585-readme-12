@@ -153,6 +153,7 @@ $add_page = include_template(
         "type_id" => $type_id,
         "current_page" => "add",
         "search_text" => "",
+        "unread_count" => getAllUnreadMessages($connect, $user["id"])["count"],
     ]
 );
 print($add_page);

@@ -94,6 +94,7 @@ $post_page = include_template(
         "type_id" => getFirstTypeId($post_types),
         "current_page" => "post",
         "search_text" => "",
+        "unread_count" => getAllUnreadMessages($connect, $user["id"])["count"],
     ]
 );
 print($post_page);

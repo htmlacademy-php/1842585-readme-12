@@ -339,6 +339,39 @@ function normalizeHashtags(array $hashtags): array {
     return $result;
 }
 
+function normalizeMessage(array $message): array {
+    if ($message === []) {
+        return $message;
+    }
+
+    $created_at = date_create($message["created_at"]);
+
+    return [
+        "id" => (string) $message["id"],
+        "created_date" => (string) $message["created_at"],
+        "content" => $message["content"],
+        "user_id" => (string) $message["user_id"],
+        "user_name" => $message["login"],
+        "avatar" => $message["avatar_path"],
+        "recipient_id" => (string) $message["recipient_id"],
+        "recipient_name" => $message["recipient_login"],
+        "recipient_avatar" => $message["avatar_path_recipient"],
+        "unread_count" => $message["unread_count"],
+        "time_ago" => getTimeAgo($created_at),
+        "date_title" => date_format($created_at, "d.m.Y H:i"),
+    ];
+}
+
+function normalizeMessages(array $messages): array {
+    $result = [];
+
+    foreach ($messages as $message) {
+        $result[] = normalizeMessage($message);
+    }
+
+    return $result;
+}
+
 /**
  * Функция переопределяет имена полей в ассоциативном массиве.
  *
