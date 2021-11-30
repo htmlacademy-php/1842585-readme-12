@@ -12,6 +12,9 @@
  * @var $sort_direction
  * @var $next_sort_direction
  * @var $offset
+ * @var $current_type_params
+ * @var $current_offset_params
+ * @var $current_sort_params
  */
 
 ?>
@@ -39,8 +42,8 @@
                         </svg>
                     </a>
                 </li>
-                <li class="sorting__item <?= $sort_field === "created_date" ? "sorting__item--popular" : "" ?>">
-                    <a class="sorting__link <?= $sort_direction === "ASC" ? "sorting__link--reverse" : "" ?> <?= $sort_field === "created_date" ? "sorting__link--active" : "" ?>" href="/popular.php?<?= $current_type_params . $current_offset_params ?>sort_field=created_date&sort_direction=<?= htmlspecialchars($next_sort_direction) ?>">
+                <li class="sorting__item <?= $sort_field === "created_at" ? "sorting__item--popular" : "" ?>">
+                    <a class="sorting__link <?= $sort_direction === "ASC" ? "sorting__link--reverse" : "" ?> <?= $sort_field === "created_at" ? "sorting__link--active" : "" ?>" href="/popular.php?<?= $current_type_params . $current_offset_params ?>sort_field=created_at&sort_direction=<?= htmlspecialchars($next_sort_direction) ?>">
                         <span>Дата</span>
                         <svg class="sorting__icon" width="10" height="12">
                             <use xlink:href="#icon-sort"></use>
@@ -98,16 +101,12 @@
                 ?>
                 <footer class="post__footer">
                     <div class="post__author">
-                        <a class="post__author-link" href="/profile.php?author_id=<?= htmlspecialchars($post["user_id"]) ?>" title="Автор">
-                            <div class="post__avatar-wrapper">
-                                <img class="post__author-avatar" src="<?= htmlspecialchars($post["avatar"]) ?>"
-                                     alt="Аватар пользователя">
-                            </div>
-                            <div class="post__info">
-                                <b class="post__author-name"><?= htmlspecialchars($post["user_name"]) ?></b>
-                                <time class="post__time" title="<?= htmlspecialchars($post["date_title"]) ?>" datetime="<?= htmlspecialchars($post["created_date"]) ?>"><?= htmlspecialchars($post["time_ago"]) ?></time>
-                            </div>
-                        </a>
+                        <?php
+                            $template_author_post = include_template("/parts/post/post-author.php", [
+                                "post" => $post,
+                            ]);
+                            print($template_author_post);
+                        ?>
                     </div>
                     <div class="post__indicators">
                         <?php

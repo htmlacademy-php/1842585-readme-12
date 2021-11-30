@@ -23,7 +23,7 @@ if (!in_array($sort_direction, ["DESC", "ASC"])) {
 
 $next_sort_direction = $sort_direction === "DESC" ? "ASC" : "DESC";
 
-if (!in_array($sort_field, ["views_count", "likes_count", "created_date"])) {
+if (!in_array($sort_field, ["views_count", "likes_count", "created_at"])) {
     $sort_field = "views_count";
 }
 
@@ -37,14 +37,6 @@ $popularPosts = $current_type_id ? fetchPopularPostsByType($connect, $current_ty
 $current_type_params = $current_type_id ? "type_id=" . htmlspecialchars($current_type_id) . "&" : "";
 $current_offset_params = $offset === 0 ? "" : "offset=" . htmlspecialchars($offset) . "&";
 $current_sort_params = "sort_field=" . htmlspecialchars($sort_field) . "&sort_direction=" . htmlspecialchars($sort_direction);
-
-if ($offset > count($popularPosts)) {
-    $offset = count($popularPosts);
-    $current_offset_params = $offset === 0 ? "" : "offset=" . htmlspecialchars($offset) . "&";
-    redirectTo("/popular.php?" . $current_type_params . $current_offset_params . $current_sort_params);
-}
-
-
 
 $popular = include_template("popular.php", [
     "post_types" => $post_types,

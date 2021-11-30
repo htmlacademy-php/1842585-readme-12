@@ -103,7 +103,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $result["video_url"],
                 $result["website"],
                 $user["id"],
-                $type_id
+                $type_id,
+                null,
+                null,
             ]
         );
 

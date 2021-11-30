@@ -169,7 +169,7 @@ function normalizePost(array $post, array $post_types, array $user_likes): array
         return $post;
     }
 
-    $created_date = date_create($post["created_date"]);
+    $created_date = date_create($post["created_at"]);
     $type_key = array_search((string) $post["type_id"], array_column($post_types, "id"), true);
 
     return [
@@ -182,12 +182,17 @@ function normalizePost(array $post, array $post_types, array $user_likes): array
         "avatar" => $post["avatar_path"],
         "views_count" => $post["views_count"],
         "comments_count" => $post["comments_count"],
-        "created_date" => $post["created_date"],
+        "created_date" => $post["created_at"],
         "type" => "post-" . $post_types[$type_key]["icon_class"],
         "time_ago" => getTimeAgo($created_date),
         "date_title" => date_format($created_date, "d.m.Y H:i"),
         "likes_count" => $post["likes_count"],
         "is_liked" => in_array($post["id"], array_column($user_likes, "post_id"), true),
+        "login_origin" => $post["login_origin"],
+        "avatar_origin" => $post["avatar_path_origin"],
+        "reposts_count" => $post["reposts_count"],
+        "user_id_origin" => $post["user_id_original"],
+        "post_id_origin" => $post["post_id_original"],
     ];
 }
 
