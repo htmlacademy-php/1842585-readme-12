@@ -1,11 +1,13 @@
 <?php
 /**
  * @var $connect mysqli - подключение к базе данных
+ * @var $mailer
  */
 session_start();
 require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
+require_once("mailer.php");
 
 $user = getUserAuthentication();
 if (count($user) === 0) {
@@ -45,6 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $author_id,
             ]
         );
+
+        $emailText = "<h4>Здравствуйте, " . $author["login"] . "</h4>
+        <p>На вас подписался новый пользователь " . $user["user_name"] . "</p>
+        <p>Вот ссылка на его профиль: <a href=" . getProfileLink($user["id"]) . ">" . $user["user_name"] . "</a></p>";
+
+        sendEmail($mailer, $user["email"], "У вас новый подписчик", $author["email"], $emailText);
     }
     else {
         $result = deleteSubscription($connect, $subscription["id"]);

@@ -1,11 +1,13 @@
 <?php
 /**
  * @var $connect mysqli - подключение к базе данных
+ * @var $mailer
  */
 session_start();
 require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
+require_once("mailer.php");
 
 $user = getUserAuthentication();
 if (count($user) === 0) {
@@ -113,6 +115,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $current_tag = getTagByName($connect, $tag);
             $tag_id = count($current_tag) === 0 ? addNewTag($connect, [$tag]) : $current_tag["id"];
             addPostTag($connect, [(int)$new_post_id, (int)$tag_id]);
+        }
+
+        $subscribers = getSubscribersByUserId($connect, $user["id"]);
+        $subject = "Новая публикация от пользователя " . $user["user_name"];
+        $text = "<p>Пользователь " . $user["user_name"] . " только что опубликовал новую запись " . $result["title"] . ".</p>
+        <p>Посмотрите её на странице пользователя: <a href=" . getProfileLink($user["id"]) . ">" . $user["user_name"] . "</a></p>";
+
+        foreach ($subscribers as $subscriber) {
+            $emailText = "<h4>Здравствуйте, " . $subscriber["login"] . ".</h4>" . $text;
+            sendEmail($mailer, $user["email"], $subject, $subscriber["email"], $emailText);
         }
 
         redirectTo("/post.php?post_id=$new_post_id");
