@@ -9,6 +9,7 @@ require_once("helpers.php");
 require_once("functions.php");
 require_once("config.php");
 require_once("mailer.php");
+require_once("mail-templates.php");
 
 $user = getUserAuthentication();
 if (count($user) === 0) {
@@ -119,13 +120,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $subscribers = getSubscribersByUserId($connect, $user["id"]);
-        $subject = "Новая публикация от пользователя " . $user["user_name"];
-        $text = "<p>Пользователь " . $user["user_name"] . " только что опубликовал новую запись " . $result["title"] . ".</p>
-        <p>Посмотрите её на странице пользователя: <a href=" . getProfileLink($user["id"]) . ">" . $user["user_name"] . "</a></p>";
 
         foreach ($subscribers as $subscriber) {
-            $emailText = "<h4>Здравствуйте, " . $subscriber["login"] . ".</h4>" . $text;
-            sendEmail($mailer, $user["email"], $subject, $subscriber["email"], $emailText);
+            sendEmail(
+                $mailer,
+                $user["email"],
+                getPublicationSubject($user["user_name"]),
+                $subscriber["email"],
+                getPublicationTextTemplate($user["user_name"], $user["id"], $result["title"], $subscriber["login"])
+            );
         }
 
         redirectTo("/post.php?post_id=$new_post_id");

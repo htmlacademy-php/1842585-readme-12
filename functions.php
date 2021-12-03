@@ -665,7 +665,3 @@ function redirectTo($page) {
 function getUserAuthentication(): array {
     return $_SESSION['user'] ?? [];
 }
-
-function getProfileLink(string $user_id): string {
-    return $_SERVER["HTTP_ORIGIN"] . "/profile.php?author_id=" . htmlspecialchars($user_id);
-}

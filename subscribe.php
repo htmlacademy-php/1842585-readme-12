@@ -9,6 +9,7 @@ require_once("helpers.php");
 require_once("functions.php");
 require_once("config.php");
 require_once("mailer.php");
+require_once("mail-templates.php");
 
 $user = getUserAuthentication();
 if (count($user) === 0) {
@@ -49,11 +50,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]
         );
 
-        $emailText = "<h4>Здравствуйте, " . $author["login"] . "</h4>
-        <p>На вас подписался новый пользователь " . $user["user_name"] . "</p>
-        <p>Вот ссылка на его профиль: <a href=" . getProfileLink($user["id"]) . ">" . $user["user_name"] . "</a></p>";
-
-        sendEmail($mailer, $user["email"], "У вас новый подписчик", $author["email"], $emailText);
+        sendEmail(
+            $mailer,
+            $user["email"],
+            getSubscriptionSubject(),
+            $author["email"],
+            getSubscriptionTextTemplate($author["login"], $user["user_name"], $user["id"])
+        );
     }
     else {
         $result = deleteSubscription($connect, $subscription["id"]);
