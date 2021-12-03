@@ -1,7 +1,11 @@
 # Личный проект «Readme»
 
 * Студент: [Андрей Печенников](https://htmlacademy.ru/profile/devandy).
-* Наставник: [Олег Зенькович](https://htmlacademy.ru/profile/zenoleg).
+* Наставник: [Владислав Зайко](https://htmlacademy.ru/profile/id1318369).
+
+---
+
+**Версия PHP >= 8.0.2**
 
 ---
 
