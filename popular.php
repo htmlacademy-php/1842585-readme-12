@@ -6,6 +6,7 @@ session_start();
 require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
+require_once("config.php");
 
 $user = getUserAuthentication();
 if (count($user) === 0) {
@@ -27,7 +28,6 @@ if (!in_array($sort_field, ["views_count", "likes_count", "created_at"])) {
     $sort_field = "views_count";
 }
 
-date_default_timezone_set('Europe/Moscow');
 $post_types = normalizePostTypes(fetchPostTypes($connect));
 $users_likes = getUserLikes($connect, $user["id"]);
 
