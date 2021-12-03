@@ -47,7 +47,7 @@ CREATE TABLE posts
   user_id           INT          NOT NULL,
   type_id           INT          NOT NULL,
   user_id_original  INT,
-  is_repost         BOOLEAN DEFAULT FALSE,
+  post_id_original  INT,
   FOREIGN KEY (user_id) REFERENCES users (id),
   FOREIGN KEY (type_id) REFERENCES content_types (id)
 );
