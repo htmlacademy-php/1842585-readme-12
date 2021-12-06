@@ -127,6 +127,7 @@ CREATE TABLE messages
   content      VARCHAR(1000) NOT NULL,
   user_id      INT           NOT NULL,
   recipient_id INT           NOT NULL,
+  is_read      BOOLEAN       DEFAULT FALSE,
   FOREIGN KEY (user_id) REFERENCES users (id),
   FOREIGN KEY (recipient_id) REFERENCES users (id)
 );
