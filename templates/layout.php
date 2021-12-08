@@ -10,6 +10,7 @@
  * @var $type_id string - идентификатор первого типа поста
  * @var $current_page string - текущая страница
  * @var $search_text - текст строки поиска
+ * @var $unread_count
  */
 
 ?>
@@ -182,10 +183,12 @@
                                         </a>
                                     </li>
                                     <li class="header__profile-nav-item">
-                                        <a class="header__profile-nav-link" href="#">
+                                        <a class="header__profile-nav-link" href="/messages.php">
                         <span class="header__profile-nav-text">
                             Сообщения
-                            <i class="header__profile-indicator">2</i>
+                            <?php if ($unread_count): ?>
+                                <i class="header__profile-indicator"><?= htmlspecialchars($unread_count) ?></i>
+                            <?php endif; ?>
                         </span>
                                         </a>
                                     </li>

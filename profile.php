@@ -6,6 +6,7 @@ session_start();
 require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
+require_once("config.php");
 
 $user = getUserAuthentication();
 $author_id = filter_input(INPUT_GET, 'author_id', FILTER_SANITIZE_SPECIAL_CHARS, FILTER_NULL_ON_FAILURE);
@@ -70,6 +71,7 @@ $page_profile = include_template(
         "type_id" => getFirstTypeId($post_types),
         "current_page" => "profile",
         "search_text" => "",
+        "unread_count" => getAllUnreadMessages($connect, $user["id"])["count"],
     ]
 );
 

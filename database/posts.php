@@ -9,21 +9,26 @@ function fetchPostTypes($connect): array
 }
 
 // Получаем шесть самых популярных постов и их авторов, а так же типы постов
-function fetchPopularPosts($connect, $offset): array
+function fetchPopularPosts($connect, $offset, $sort_field, $sort_direction): array
 {
     $query = "SELECT
-        posts.created_at as created_date,
+        posts.created_at,
         posts.id,
-        title,
+        posts.title,
         posts.content,
-        author,
+        posts.author,
         users.login,
-        type_id,
-        views_count,
+        posts.type_id,
+        posts.views_count,
         users.avatar_path,
         posts.user_id,
+        uspr.login as login_origin,
+        uspr.avatar_path as avatar_path_origin,
+        posts.user_id_original,
+        posts.post_id_original,
         COUNT(DISTINCT(l.id)) AS likes_count,
-        COUNT(DISTINCT(pc.id)) AS comments_count
+        COUNT(DISTINCT(pc.id)) AS comments_count,
+        COUNT(DISTINCT(pr.id)) AS reposts_count
     FROM posts
         INNER JOIN users
             ON user_id = users.id
@@ -31,37 +36,50 @@ function fetchPopularPosts($connect, $offset): array
             ON posts.id = l.post_id
         LEFT JOIN post_comments pc
             ON posts.id = pc.post_id
+        LEFT JOIN posts pr
+            ON posts.id = pr.post_id_original
+        LEFT JOIN users uspr
+            ON posts.user_id_original = uspr.id
     GROUP BY
-        posts.created_at,
-        posts.id,
-        posts.content,
+        created_at,
+        id,
+        content,
         title,
         author,
-        users.login,
+        login,
         type_id,
         views_count,
-        users.avatar_path,
-        posts.user_id
-    ORDER BY views_count DESC
+        avatar_path,
+        user_id,
+        login_origin,
+        avatar_path_origin,
+        user_id_original,
+        post_id_original
+    ORDER BY " . $sort_field . " " . $sort_direction . "
     LIMIT 6 OFFSET ?";
 
     return fetchData(prepareResult($connect, $query, "i", [$offset]));
 }
 
-function fetchPopularPostsByType($connect, $type_id, $offset): array {
+function fetchPopularPostsByType($connect, $type_id, $offset, $sort_field, $sort_direction): array {
     $query = "SELECT
-        posts.created_at as created_date,
+        posts.created_at,
         posts.id,
-        title,
+        posts.title,
         posts.content,
-        author,
+        posts.author,
         users.login,
-        type_id,
-        views_count,
+        posts.type_id,
+        posts.views_count,
         users.avatar_path,
         posts.user_id,
+        uspr.login as login_origin,
+        uspr.avatar_path as avatar_path_origin,
+        posts.user_id_original,
+        posts.post_id_original,
         COUNT(DISTINCT(l.id)) AS likes_count,
-        COUNT(DISTINCT(pc.id)) AS comments_count
+        COUNT(DISTINCT(pc.id)) AS comments_count,
+        COUNT(DISTINCT(pr.id)) AS reposts_count
     FROM posts
         INNER JOIN users
             ON user_id = users.id
@@ -69,19 +87,27 @@ function fetchPopularPostsByType($connect, $type_id, $offset): array {
             ON posts.id = l.post_id
         LEFT JOIN post_comments pc
             ON posts.id = pc.post_id
-    WHERE type_id = ?
+        LEFT JOIN posts pr
+            ON posts.id = pr.post_id_original
+        LEFT JOIN users uspr
+            ON posts.user_id_original = uspr.id
+    WHERE posts.type_id = ?
     GROUP BY
-        posts.created_at,
-        posts.id,
+        created_at,
+        id,
+        content,
         title,
-        posts.content,
         author,
-        users.login,
+        login,
         type_id,
         views_count,
-        users.avatar_path,
-        posts.user_id
-    ORDER BY views_count DESC
+        avatar_path,
+        user_id,
+        login_origin,
+        avatar_path_origin,
+        user_id_original,
+        post_id_original
+    ORDER BY " . $sort_field . " " . $sort_direction . "
     LIMIT 6 OFFSET ?";
 
     return fetchData(prepareResult($connect, $query, "ii", [$type_id, $offset]));
@@ -90,18 +116,23 @@ function fetchPopularPostsByType($connect, $type_id, $offset): array {
 function fetchPostById($connect, $post_id): array
 {
     $query = "SELECT
-        posts.created_at as created_date,
+        posts.created_at,
         posts.id,
-        title,
+        posts.title,
         posts.content,
-        author,
+        posts.author,
         users.login,
-        type_id,
-        views_count,
+        posts.type_id,
+        posts.views_count,
         users.avatar_path,
         posts.user_id,
+        uspr.login as login_origin,
+        uspr.avatar_path as avatar_path_origin,
+        posts.user_id_original,
+        posts.post_id_original,
         COUNT(DISTINCT(l.id)) AS likes_count,
-        COUNT(DISTINCT(pc.id)) AS comments_count
+        COUNT(DISTINCT(pc.id)) AS comments_count,
+        COUNT(DISTINCT(pr.id)) AS reposts_count
     FROM posts
         INNER JOIN users
             ON user_id = users.id
@@ -109,18 +140,26 @@ function fetchPostById($connect, $post_id): array
             ON posts.id = l.post_id
         LEFT JOIN post_comments pc
             ON posts.id = pc.post_id
+        LEFT JOIN posts pr
+            ON posts.id = pr.post_id_original
+        LEFT JOIN users uspr
+            ON posts.user_id_original = uspr.id
     WHERE posts.id = ?
     GROUP BY
-        posts.created_at,
-        posts.id,
+        created_at,
+        id,
+        content,
         title,
-        posts.content,
         author,
-        users.login,
+        login,
         type_id,
         views_count,
-        users.avatar_path,
-        posts.user_id";
+        avatar_path,
+        user_id,
+        login_origin,
+        avatar_path_origin,
+        user_id_original,
+        post_id_original";
 
     return fetchAssocData(prepareResult($connect, $query, "i", [$post_id]));
 }
@@ -128,18 +167,23 @@ function fetchPostById($connect, $post_id): array
 function fetchPostSubscribes($connect, $user_id): array
 {
     $query = "SELECT
-        posts.created_at as created_date,
+        posts.created_at,
         posts.id,
-        title,
+        posts.title,
         posts.content,
-        author,
+        posts.author,
         users.login,
-        type_id,
-        views_count,
+        posts.type_id,
+        posts.views_count,
         users.avatar_path,
         posts.user_id,
+        uspr.login as login_origin,
+        uspr.avatar_path as avatar_path_origin,
+        posts.user_id_original,
+        posts.post_id_original,
         COUNT(DISTINCT(l.id)) AS likes_count,
-        COUNT(DISTINCT(pc.id)) AS comments_count
+        COUNT(DISTINCT(pc.id)) AS comments_count,
+        COUNT(DISTINCT(pr.id)) AS reposts_count
     FROM posts
         INNER JOIN subscribes s
             ON user_id = s.author_id
@@ -149,18 +193,26 @@ function fetchPostSubscribes($connect, $user_id): array
             ON posts.id = l.post_id
         LEFT JOIN post_comments pc
             ON posts.id = pc.post_id
+        LEFT JOIN posts pr
+            ON posts.id = pr.post_id_original
+        LEFT JOIN users uspr
+            ON posts.user_id_original = uspr.id
     WHERE s.subscribe_id = ?
     GROUP BY
-        posts.created_at,
-        posts.id,
+        created_at,
+        id,
+        content,
         title,
-        posts.content,
         author,
-        users.login,
+        login,
         type_id,
         views_count,
-        users.avatar_path,
-        posts.user_id";
+        avatar_path,
+        user_id,
+        login_origin,
+        avatar_path_origin,
+        user_id_original,
+        post_id_original";
 
     return fetchData(prepareResult($connect, $query, "i", [$user_id]));
 }
@@ -168,18 +220,23 @@ function fetchPostSubscribes($connect, $user_id): array
 function fetchPostSubscribesByType($connect, $type_id, $user_id): array
 {
     $query = "SELECT
-        posts.created_at as created_date,
+        posts.created_at,
         posts.id,
-        title,
+        posts.title,
         posts.content,
-        author,
+        posts.author,
         users.login,
-        type_id,
-        views_count,
+        posts.type_id,
+        posts.views_count,
         users.avatar_path,
         posts.user_id,
+        uspr.login as login_origin,
+        uspr.avatar_path as avatar_path_origin,
+        posts.user_id_original,
+        posts.post_id_original,
         COUNT(DISTINCT(l.id)) AS likes_count,
-        COUNT(DISTINCT(pc.id)) AS comments_count
+        COUNT(DISTINCT(pc.id)) AS comments_count,
+        COUNT(DISTINCT(pr.id)) AS reposts_count
     FROM posts
         INNER JOIN subscribes s
             ON user_id = s.author_id
@@ -189,18 +246,26 @@ function fetchPostSubscribesByType($connect, $type_id, $user_id): array
             ON posts.id = l.post_id
         LEFT JOIN post_comments pc
             ON posts.id = pc.post_id
-    WHERE type_id = ? AND s.subscribe_id = ?
+        LEFT JOIN posts pr
+            ON posts.id = pr.post_id_original
+        LEFT JOIN users uspr
+            ON posts.user_id_original = uspr.id
+    WHERE posts.type_id = ? AND s.subscribe_id = ?
     GROUP BY
-        posts.created_at,
-        posts.id,
+        created_at,
+        id,
+        content,
         title,
-        posts.content,
         author,
-        users.login,
+        login,
         type_id,
         views_count,
-        users.avatar_path,
-        posts.user_id";
+        avatar_path,
+        user_id,
+        login_origin,
+        avatar_path_origin,
+        user_id_original,
+        post_id_original";
 
     return fetchData(prepareResult($connect, $query, "ii", [$type_id, $user_id]));
 }
@@ -208,18 +273,23 @@ function fetchPostSubscribesByType($connect, $type_id, $user_id): array
 function getPostsByUserId($connect, $user_id): array
 {
     $query = "SELECT
-        posts.created_at as created_date,
+        posts.created_at,
         posts.id,
-        title,
+        posts.title,
         posts.content,
-        author,
+        posts.author,
         users.login,
-        type_id,
-        views_count,
+        posts.type_id,
+        posts.views_count,
         users.avatar_path,
         posts.user_id,
+        uspr.login as login_origin,
+        uspr.avatar_path as avatar_path_origin,
+        posts.user_id_original,
+        posts.post_id_original,
         COUNT(DISTINCT(l.id)) AS likes_count,
-        COUNT(DISTINCT(pc.id)) AS comments_count
+        COUNT(DISTINCT(pc.id)) AS comments_count,
+        COUNT(DISTINCT(pr.id)) AS reposts_count
     FROM posts
         INNER JOIN users
             ON user_id = users.id
@@ -227,18 +297,26 @@ function getPostsByUserId($connect, $user_id): array
             ON posts.id = l.post_id
         LEFT JOIN post_comments pc
             ON posts.id = pc.post_id
+        LEFT JOIN posts pr
+            ON posts.id = pr.post_id_original
+        LEFT JOIN users uspr
+            ON posts.user_id_original = uspr.id
     WHERE posts.user_id = ?
     GROUP BY
-        posts.created_at,
-        posts.id,
+        created_at,
+        id,
+        content,
         title,
-        posts.content,
         author,
-        users.login,
+        login,
         type_id,
         views_count,
-        users.avatar_path,
-        posts.user_id
+        avatar_path,
+        user_id,
+        login_origin,
+        avatar_path_origin,
+        user_id_original,
+        post_id_original
     ORDER BY posts.created_at";
 
     return fetchData(prepareResult($connect, $query, "i", [$user_id]));
@@ -247,18 +325,23 @@ function getPostsByUserId($connect, $user_id): array
 function searchPosts($connect, $search): array
 {
     $query = "SELECT
-        posts.created_at as created_date,
+        posts.created_at,
         posts.id,
-        title,
+        posts.title,
         posts.content,
-        author,
+        posts.author,
         users.login,
-        type_id,
-        views_count,
+        posts.type_id,
+        posts.views_count,
         users.avatar_path,
         posts.user_id,
+        uspr.login as login_origin,
+        uspr.avatar_path as avatar_path_origin,
+        posts.user_id_original,
+        posts.post_id_original,
         COUNT(DISTINCT(l.id)) AS likes_count,
-        COUNT(DISTINCT(pc.id)) AS comments_count
+        COUNT(DISTINCT(pc.id)) AS comments_count,
+        COUNT(DISTINCT(pr.id)) AS reposts_count
     FROM posts
         INNER JOIN users
             ON user_id = users.id
@@ -266,18 +349,26 @@ function searchPosts($connect, $search): array
             ON posts.id = l.post_id
         LEFT JOIN post_comments pc
             ON posts.id = pc.post_id
-    WHERE MATCH(title, posts.content) AGAINST(?)
+        LEFT JOIN posts pr
+            ON posts.id = pr.post_id_original
+        LEFT JOIN users uspr
+            ON posts.user_id_original = uspr.id
+    WHERE MATCH(posts.title, posts.content) AGAINST(?)
     GROUP BY
-        posts.created_at,
-        posts.id,
+        created_at,
+        id,
+        content,
         title,
-        posts.content,
         author,
-        users.login,
+        login,
         type_id,
         views_count,
-        users.avatar_path,
-        posts.user_id";
+        avatar_path,
+        user_id,
+        login_origin,
+        avatar_path_origin,
+        user_id_original,
+        post_id_original";
 
     return fetchData(prepareResult($connect, $query, "s", [$search]));
 }
@@ -285,18 +376,23 @@ function searchPosts($connect, $search): array
 function searchPostsByHashtag($connect, $hashtag): array
 {
     $query = "SELECT
-        posts.created_at as created_date,
+        posts.created_at,
         posts.id,
-        title,
+        posts.title,
         posts.content,
-        author,
+        posts.author,
         users.login,
-        type_id,
-        views_count,
+        posts.type_id,
+        posts.views_count,
         users.avatar_path,
         posts.user_id,
+        uspr.login as login_origin,
+        uspr.avatar_path as avatar_path_origin,
+        posts.user_id_original,
+        posts.post_id_original,
         COUNT(DISTINCT(l.id)) AS likes_count,
-        COUNT(DISTINCT(pc.id)) AS comments_count
+        COUNT(DISTINCT(pc.id)) AS comments_count,
+        COUNT(DISTINCT(pr.id)) AS reposts_count
     FROM posts
         INNER JOIN users
             ON user_id = users.id
@@ -308,19 +404,27 @@ function searchPostsByHashtag($connect, $hashtag): array
             ON posts.id = l.post_id
         LEFT JOIN post_comments pc
             ON posts.id = pc.post_id
+        LEFT JOIN posts pr
+            ON posts.id = pr.post_id_original
+        LEFT JOIN users uspr
+            ON posts.user_id_original = uspr.id
     WHERE MATCH(h.name) AGAINST(?)
     GROUP BY
-        created_date,
-        posts.id,
+        created_at,
+        id,
+        content,
         title,
-        posts.content,
         author,
-        users.login,
+        login,
         type_id,
         views_count,
-        users.avatar_path,
-        posts.user_id
-    ORDER BY created_date DESC";
+        avatar_path,
+        user_id,
+        login_origin,
+        avatar_path_origin,
+        user_id_original,
+        post_id_original
+    ORDER BY created_at DESC";
 
     return fetchData(prepareResult($connect, $query, "s", [$hashtag]));
 }
@@ -351,6 +455,15 @@ function getPostsCountByType($connect, $type_id): array {
     return fetchAssocData(prepareResult($connect, $query, "i", [$type_id]));
 }
 
+function getPostsRepost($connect, $user_id, $user_id_original, $post_id_original): array {
+    $query = "SELECT
+        id AS count
+    FROM posts
+    WHERE user_id = ? AND user_id_original = ? AND post_id_original = ?";
+
+    return fetchAssocData(prepareResult($connect, $query, "iii", [$user_id, $user_id_original, $post_id_original]));
+}
+
 function addPost($connect, $post): string {
     $query = "INSERT INTO posts (
             created_at,
@@ -361,8 +474,12 @@ function addPost($connect, $post): string {
             video_url,
             website,
             user_id,
-            type_id
+            type_id,
+            post_id_original,
+            user_id_original
         ) VALUES (
+            ?,
+            ?,
             ?,
             ?,
             ?,
@@ -374,7 +491,7 @@ function addPost($connect, $post): string {
             ?
         )";
 
-    preparePostResult($connect, $query, "sssssssii", $post);
+    preparePostResult($connect, $query, "sssssssiiii", $post);
 
     return getInsertId($connect);
 }

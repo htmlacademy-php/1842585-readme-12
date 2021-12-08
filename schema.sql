@@ -35,17 +35,19 @@ CREATE TABLE hashtags
 CREATE TABLE posts
 (
   id          INT AUTO_INCREMENT PRIMARY KEY,
-  created_at  DATETIME     NOT NULL,
-  title       VARCHAR(200) NOT NULL,
-  content     VARCHAR(1000),
-  author      VARCHAR(128),
-  picture_url VARCHAR(1000),
-  video_url   VARCHAR(1000),
-  website     VARCHAR(1000),
-  preview     VARCHAR(1000),
-  views_count INT UNSIGNED DEFAULT 0,
-  user_id     INT          NOT NULL,
-  type_id     INT          NOT NULL,
+  created_at        DATETIME     NOT NULL,
+  title             VARCHAR(200) NOT NULL,
+  content           VARCHAR(1000),
+  author            VARCHAR(128),
+  picture_url       VARCHAR(1000),
+  video_url         VARCHAR(1000),
+  website           VARCHAR(1000),
+  preview           VARCHAR(1000),
+  views_count       INT UNSIGNED DEFAULT 0,
+  user_id           INT          NOT NULL,
+  type_id           INT          NOT NULL,
+  user_id_original  INT,
+  post_id_original  INT,
   FOREIGN KEY (user_id) REFERENCES users (id),
   FOREIGN KEY (type_id) REFERENCES content_types (id)
 );
@@ -125,6 +127,7 @@ CREATE TABLE messages
   content      VARCHAR(1000) NOT NULL,
   user_id      INT           NOT NULL,
   recipient_id INT           NOT NULL,
+  is_read      BOOLEAN       DEFAULT FALSE,
   FOREIGN KEY (user_id) REFERENCES users (id),
   FOREIGN KEY (recipient_id) REFERENCES users (id)
 );

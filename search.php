@@ -6,6 +6,7 @@ session_start();
 require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
+require_once("config.php");
 
 $user = getUserAuthentication();
 $search = trim($_GET["search"] ?? "");
@@ -33,6 +34,7 @@ $search_page = include_template(
         "type_id" => getFirstTypeId($post_types),
         "current_page" => "search",
         "search_text" => $search,
+        "unread_count" => getAllUnreadMessages($connect, $user["id"])["count"],
     ]
 );
 

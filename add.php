@@ -1,11 +1,15 @@
 <?php
 /**
  * @var $connect mysqli - подключение к базе данных
+ * @var $mailer
  */
 session_start();
 require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
+require_once("config.php");
+require_once("mailer.php");
+require_once("mail-templates.php");
 
 $user = getUserAuthentication();
 if (count($user) === 0) {
@@ -22,6 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         "content" => "",
         "author" => "",
         "picture_url" => "",
+        "tmp_path" => "",
+        "file_name" => "",
         "video_url" => "",
         "website" => "",
         "tags" => [],
@@ -103,7 +109,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $result["video_url"],
                 $result["website"],
                 $user["id"],
-                $type_id
+                $type_id,
+                null,
+                null,
             ]
         );
 
@@ -111,6 +119,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $current_tag = getTagByName($connect, $tag);
             $tag_id = count($current_tag) === 0 ? addNewTag($connect, [$tag]) : $current_tag["id"];
             addPostTag($connect, [(int)$new_post_id, (int)$tag_id]);
+        }
+
+        $subscribers = getSubscribersByUserId($connect, $user["id"]);
+
+        foreach ($subscribers as $subscriber) {
+            sendEmail(
+                $mailer,
+                $user["email"],
+                getPublicationSubject($user["user_name"]),
+                $subscriber["email"],
+                getPublicationTextTemplate($user["user_name"], $user["id"], $result["title"], $subscriber["login"])
+            );
         }
 
         redirectTo("/post.php?post_id=$new_post_id");
@@ -151,6 +171,7 @@ $add_page = include_template(
         "type_id" => $type_id,
         "current_page" => "add",
         "search_text" => "",
+        "unread_count" => getAllUnreadMessages($connect, $user["id"])["count"],
     ]
 );
 print($add_page);

@@ -34,16 +34,12 @@
                     <?php foreach ($posts as $index => $post): ?>
                         <article class="search__post post <?= htmlspecialchars($post["type"]) ?>">
                             <header class="post__header post__author">
-                                <a class="post__author-link" href="/profile.php?author_id=<?= htmlspecialchars($post["user_id"]) ?>" title="Автор">
-                                    <div class="post__avatar-wrapper">
-                                        <img class="post__author-avatar" src="<?= htmlspecialchars($post["avatar"]) ?>"
-                                             alt="Аватар пользователя" width="60" height="60">
-                                    </div>
-                                    <div class="post__info">
-                                        <b class="post__author-name"><?= htmlspecialchars($post["user_name"]) ?></b>
-                                        <span class="post__time"><?= htmlspecialchars($post["time_ago"]) ?></span>
-                                    </div>
-                                </a>
+                                <?php
+                                    $template_author_post = include_template("/parts/post/post-author.php", [
+                                        "post" => $post,
+                                    ]);
+                                    print($template_author_post);
+                                ?>
                             </header>
                             <?php
                                 $template_post = include_template("/parts/post/" . $post["type"] . ".php", [

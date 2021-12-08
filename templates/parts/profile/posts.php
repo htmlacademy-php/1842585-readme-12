@@ -11,6 +11,16 @@
     <?php foreach ($content as $post): ?>
         <article class="profile__post post <?= htmlspecialchars($post["type"]) ?>">
             <header class="post__header">
+                <?php if ($post["user_id_origin"]): ?>
+                    <div class="post__author">
+                        <?php
+                            $template_author_post = include_template("/parts/post/post-author.php", [
+                                "post" => $post,
+                            ]);
+                            print($template_author_post);
+                        ?>
+                    </div>
+                <?php endif; ?>
                 <a href="/post.php?post_id=<?= htmlspecialchars($post["id"]) ?>">
                     <h2><?= $post["title"] ?></h2>
                 </a>

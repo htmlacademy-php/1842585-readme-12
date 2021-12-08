@@ -25,6 +25,8 @@
 <?php if(!$is_current_user): ?>
     <form class="<?= htmlspecialchars($template_class) ?>__user-buttons user__buttons" method="post" action="/subscribe.php?author_id=<?= htmlspecialchars($author_id) ?>">
         <button class="<?= htmlspecialchars($template_class) ?>__user-button user__button user__button--subscription button button--main"><?= $is_subscribe ? "Отписаться" : "Подписаться" ?></button>
-        <a class="<?= htmlspecialchars($template_class) ?>__user-button user__button user__button--writing button button--green" href="#">Сообщение</a>
+        <?php if ($is_subscribe): ?>
+            <a class="<?= htmlspecialchars($template_class) ?>__user-button user__button user__button--writing button button--green" href="/messages.php?recipient_id=<?= htmlspecialchars($author_id) ?>">Сообщение</a>
+        <?php endif; ?>
     </form>
 <?php endif; ?>

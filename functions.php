@@ -169,7 +169,7 @@ function normalizePost(array $post, array $post_types, array $user_likes): array
         return $post;
     }
 
-    $created_date = date_create($post["created_date"]);
+    $created_date = date_create($post["created_at"]);
     $type_key = array_search((string) $post["type_id"], array_column($post_types, "id"), true);
 
     return [
@@ -182,12 +182,17 @@ function normalizePost(array $post, array $post_types, array $user_likes): array
         "avatar" => $post["avatar_path"],
         "views_count" => $post["views_count"],
         "comments_count" => $post["comments_count"],
-        "created_date" => $post["created_date"],
+        "created_date" => $post["created_at"],
         "type" => "post-" . $post_types[$type_key]["icon_class"],
         "time_ago" => getTimeAgo($created_date),
         "date_title" => date_format($created_date, "d.m.Y H:i"),
         "likes_count" => $post["likes_count"],
         "is_liked" => in_array($post["id"], array_column($user_likes, "post_id"), true),
+        "login_origin" => $post["login_origin"],
+        "avatar_origin" => $post["avatar_path_origin"],
+        "reposts_count" => $post["reposts_count"],
+        "user_id_origin" => $post["user_id_original"],
+        "post_id_origin" => $post["post_id_original"],
     ];
 }
 
@@ -206,6 +211,7 @@ function normalizeUser(array $user): array {
         "registered_date" => $user["registered_at"],
         "subscribers_count" => $user["subscribers_count"],
         "posts_count" => $user["posts_count"],
+        "posts_viewed" => [],
         "time_ago" => getTimeAgo($registered_at, "на сайте"),
         "date_title" => date_format($registered_at, "d.m.Y H:i"),
     ];
@@ -328,6 +334,39 @@ function normalizeHashtags(array $hashtags): array {
 
     foreach ($hashtags as $hashtag) {
         $result[] = normalizeHashtag($hashtag);
+    }
+
+    return $result;
+}
+
+function normalizeMessage(array $message): array {
+    if ($message === []) {
+        return $message;
+    }
+
+    $created_at = date_create($message["created_at"]);
+
+    return [
+        "id" => (string) $message["id"],
+        "created_date" => (string) $message["created_at"],
+        "content" => $message["content"],
+        "user_id" => (string) $message["user_id"],
+        "user_name" => $message["login"],
+        "avatar" => $message["avatar_path"],
+        "recipient_id" => (string) $message["recipient_id"],
+        "recipient_name" => $message["recipient_login"],
+        "recipient_avatar" => $message["avatar_path_recipient"],
+        "unread_count" => $message["unread_count"],
+        "time_ago" => getTimeAgo($created_at),
+        "date_title" => date_format($created_at, "d.m.Y H:i"),
+    ];
+}
+
+function normalizeMessages(array $messages): array {
+    $result = [];
+
+    foreach ($messages as $message) {
+        $result[] = normalizeMessage($message);
     }
 
     return $result;
@@ -487,7 +526,7 @@ function addPictureFile($web_name, $field, $result, $uploads_dir): array {
 }
 
 function addPictureURL($web_name, $result, $uploads_dir): array {
-    if (isset($result["picture"])) {
+    if (isset($result["file_name"])) {
         return $result;
     }
 

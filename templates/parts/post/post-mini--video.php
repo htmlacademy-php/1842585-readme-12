@@ -1,13 +1,13 @@
 <?php
 /**
  * Шаблон превью поста с видео
- * @var $preview string
+ * @var $content string
  */
 
 ?>
 
 <div class="post-mini__image-wrapper">
-    <img class="post-mini__image" src="<?= htmlspecialchars($preview) ?>" width="109" height="109" alt="Превью публикации">
+    <?= embed_youtube_cover(htmlspecialchars($content)) ?>
     <span class="post-mini__play-big">
         <svg class="post-mini__play-big-icon" width="12" height="13">
             <use xlink:href="#icon-video-play-big"></use>

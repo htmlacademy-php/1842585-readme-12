@@ -6,6 +6,7 @@ session_start();
 require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
+require_once("config.php");
 
 $user = getUserAuthentication();
 if (count($user) === 0) {
@@ -15,8 +16,9 @@ if (count($user) === 0) {
 $post_types = normalizePostTypes(fetchPostTypes($connect));
 $users_likes = getUserLikes($connect, $user["id"]);
 $post_id = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_SPECIAL_CHARS) ?? $_POST["post_id"];
-if ($post_id !== "" && $_SERVER['REQUEST_METHOD'] === 'GET') {
+if ($post_id !== "" && $_SERVER['REQUEST_METHOD'] === 'GET' && !in_array($post_id, $user["posts_viewed"], true)) {
     updatePostViews($connect, $post_id);
+    $_SESSION['user']["posts_viewed"][] = $post_id;
 }
 $show_all_comments = (bool) filter_input(INPUT_GET, 'show_all_comments', FILTER_SANITIZE_SPECIAL_CHARS);
 $post = normalizePost(fetchPostById($connect, $post_id), $post_types, $users_likes);
@@ -93,6 +95,7 @@ $post_page = include_template(
         "type_id" => getFirstTypeId($post_types),
         "current_page" => "post",
         "search_text" => "",
+        "unread_count" => getAllUnreadMessages($connect, $user["id"])["count"],
     ]
 );
 print($post_page);

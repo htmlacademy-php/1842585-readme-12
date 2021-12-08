@@ -6,6 +6,7 @@ session_start();
 require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
+require_once("config.php");
 
 if (count(getUserAuthentication()) > 0) {
     redirectTo("/");
@@ -22,6 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         "login" => "",
         "password" => "",
         "avatar_path" => "",
+        "tmp_path" => "",
+        "file_name" => "",
         "errors" => [],
     ];
     $reg_fields = [

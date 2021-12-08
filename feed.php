@@ -6,6 +6,7 @@ session_start();
 require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
+require_once("config.php");
 
 $user = getUserAuthentication();
 if (count($user) === 0) {
@@ -32,6 +33,7 @@ $pageFeed = include_template(
         "type_id" => getFirstTypeId($post_types),
         "current_page" => "feed",
         "search_text" => "",
+        "unread_count" => getAllUnreadMessages($connect, $user["id"])["count"],
     ]
 );
 print($pageFeed);

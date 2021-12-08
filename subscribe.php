@@ -1,11 +1,15 @@
 <?php
 /**
  * @var $connect mysqli - подключение к базе данных
+ * @var $mailer
  */
 session_start();
 require_once("db.php");
 require_once("helpers.php");
 require_once("functions.php");
+require_once("config.php");
+require_once("mailer.php");
+require_once("mail-templates.php");
 
 $user = getUserAuthentication();
 if (count($user) === 0) {
@@ -35,22 +39,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $current_data,
             ]
         );
-        $text_message = "подписался на вас";
+
+        $message_id = addMessage(
+            $connect,
+            [
+                $current_data,
+                "подписался на вас",
+                $user["id"],
+                $author_id,
+            ]
+        );
+
+        sendEmail(
+            $mailer,
+            $user["email"],
+            getSubscriptionSubject(),
+            $author["email"],
+            getSubscriptionTextTemplate($author["login"], $user["user_name"], $user["id"])
+        );
     }
     else {
         $result = deleteSubscription($connect, $subscription["id"]);
-        $text_message = "отписался от вас";
+        $message_id = 1;
     }
-
-    $message_id = addMessage(
-        $connect,
-        [
-            $current_data,
-            $text_message,
-            $user["id"],
-            $author_id,
-        ]
-    );
 
     if ($result && $message_id) {
         mysqli_commit($connect);
