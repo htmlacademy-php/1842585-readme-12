@@ -23,6 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         "login" => "",
         "password" => "",
         "avatar_path" => "",
+        "tmp_path" => "",
+        "file_name" => "",
         "errors" => [],
     ];
     $reg_fields = [

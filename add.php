@@ -26,6 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         "content" => "",
         "author" => "",
         "picture_url" => "",
+        "tmp_path" => "",
+        "file_name" => "",
         "video_url" => "",
         "website" => "",
         "tags" => [],
