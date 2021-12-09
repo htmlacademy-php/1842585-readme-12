@@ -1,17 +1,5 @@
 <?php
 
-function getLikes($connect): array
-{
-    $query = "SELECT
-       id,
-       user_id,
-       post_id,
-       like_at
-    FROM likes";
-
-    return fetchData(prepareResult($connect, $query));
-}
-
 function getLikesByUserId($connect, $user_id): array
 {
     $query = "SELECT
@@ -46,17 +34,6 @@ function getUserLikes($connect, $user_id): array
     WHERE user_id = ?";
 
     return fetchData(prepareResult($connect, $query,"i" , [$user_id]));
-}
-
-function getLikesCountByUserId($connect, $user_id): array {
-    $query = "SELECT
-       COUNT(l.id) AS likes_count
-    FROM likes l
-        JOIN posts p
-            ON p.id = l.post_id
-    WHERE p.user_id = ?";
-
-    return fetchAssocData(prepareResult($connect, $query,"i" , [$user_id]));
 }
 
 function getUserLike($connect, $user_id, $post_id): array {

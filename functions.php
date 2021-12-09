@@ -95,10 +95,6 @@ function getTimeAgo(DateTime $created_date,  string $additional_text = "наза
     return $date_count . " " . $dateType . " " . $additional_text;
 }
 
-function filter_post_likes($like, $post_id): bool {
-    return $like["post_id"] === $post_id;
-}
-
 /**
  * Функция добавляет дату создания, время существования и заголовок каждому посту в массиве,
  * так же переопределяет имена полей в ассоциативном массиве и задает тип поста.

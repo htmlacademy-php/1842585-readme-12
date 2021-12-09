@@ -78,7 +78,7 @@ function getLastMessagesEveryRecipient($connect, $user_id): array
     return fetchData(prepareResult($connect, $query, "ii", [$user_id, $user_id]));
 }
 
-function getAllUnreadMessages($connect, $user_id)
+function getAllUnreadMessages($connect, $user_id): array
 {
     $query = "SELECT
         COUNT(m.id) as count
