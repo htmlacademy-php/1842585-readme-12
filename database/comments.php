@@ -1,18 +1,5 @@
 <?php
 
-function getPostsCommentsByUserId($connect, $user_id): array
-{
-    $query = "SELECT
-       id,
-       created_at,
-       content,
-       user_id,
-       post_id
-    FROM post_comments";
-
-    return fetchData(prepareResult($connect, $query));
-}
-
 function getCommentsByPostId($connect, $post_id): array {
     $query = "SELECT
         pc.id,
