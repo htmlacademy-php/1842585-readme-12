@@ -18,9 +18,11 @@
                 <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                 <div class="form__error-text">
                     <h3 class="form__error-title">Ошибки заполнения заголовка</h3>
-                    <?php foreach ($errors["heading"] as $error): ?>
-                        <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
-                    <?php endforeach; ?>
+                    <?php if (isset($errors["heading"])): ?>
+                        <?php foreach ($errors["heading"] as $error): ?>
+                            <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -31,9 +33,11 @@
                 <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                 <div class="form__error-text">
                     <h3 class="form__error-title">Ошибки заполнения ссылки на изображение</h3>
-                    <?php foreach ($errors["photo-url"] as $error): ?>
-                        <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
-                    <?php endforeach; ?>
+                    <?php if (isset($errors["photo-url"])): ?>
+                        <?php foreach ($errors["photo-url"] as $error): ?>
+                            <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -44,9 +48,11 @@
                 <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                 <div class="form__error-text">
                     <h3 class="form__error-title">Ошибки заполнения тегов</h3>
-                    <?php foreach ($errors["tags"] as $error): ?>
-                        <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
-                    <?php endforeach; ?>
+                    <?php if (isset($errors["tags"])): ?>
+                        <?php foreach ($errors["tags"] as $error): ?>
+                            <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
