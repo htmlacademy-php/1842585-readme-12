@@ -126,6 +126,9 @@ function fetchPostById($connect, $post_id): array
         posts.views_count,
         users.avatar_path,
         posts.user_id,
+        posts.picture_url,
+        posts.video_url,
+        posts.website,
         uspr.login as login_origin,
         uspr.avatar_path as avatar_path_origin,
         posts.user_id_original,
@@ -159,7 +162,10 @@ function fetchPostById($connect, $post_id): array
         login_origin,
         avatar_path_origin,
         user_id_original,
-        post_id_original";
+        post_id_original,
+        picture_url,
+        video_url,
+        website";
 
     return fetchAssocData(prepareResult($connect, $query, "i", [$post_id]));
 }

@@ -154,9 +154,11 @@
                             </button>
                             <div class="form__error-text">
                                 <h3 class="form__error-title">Ошибки заполнения электронной почты</h3>
-                                <?php foreach ($errors["email"] as $error): ?>
-                                    <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
-                                <?php endforeach; ?>
+                                <?php if (isset($errors["email"])): ?>
+                                    <?php foreach ($errors["email"] as $error): ?>
+                                        <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -171,9 +173,11 @@
                             </button>
                             <div class="form__error-text">
                                 <h3 class="form__error-title">Ошибки заполнения логина</h3>
-                                <?php foreach ($errors["login"] as $error): ?>
-                                    <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
-                                <?php endforeach; ?>
+                                <?php if (isset($errors["login"])): ?>
+                                    <?php foreach ($errors["login"] as $error): ?>
+                                        <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -188,9 +192,11 @@
                             </button>
                             <div class="form__error-text">
                                 <h3 class="form__error-title">Ошибки заполнения пароля</h3>
-                                <?php foreach ($errors["password"] as $error): ?>
-                                    <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
-                                <?php endforeach; ?>
+                                <?php if (isset($errors["password"])): ?>
+                                    <?php foreach ($errors["password"] as $error): ?>
+                                        <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -205,9 +211,11 @@
                             </button>
                             <div class="form__error-text">
                                 <h3 class="form__error-title">Ошибки заполнения повтора пароля</h3>
-                                <?php foreach ($errors["password-repeat"] as $error): ?>
-                                    <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
-                                <?php endforeach; ?>
+                                <?php if (isset($errors["password-repeat"])): ?>
+                                    <?php foreach ($errors["password-repeat"] as $error): ?>
+                                        <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>

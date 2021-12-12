@@ -522,7 +522,7 @@ function addPictureFile($web_name, $field, $result, $uploads_dir): array {
 }
 
 function addPictureURL($web_name, $result, $uploads_dir): array {
-    if (isset($result["file_name"])) {
+    if ($result["file_name"] !== "") {
         return $result;
     }
 
@@ -568,7 +568,7 @@ function addTextContent($web_name, $result, $field, $required_empty_filed): arra
 function addTags($field, $result): array {
     if (isset($_POST[$field]) && $_POST[$field] !== "") {
         $result[$field] = explode(" ", $_POST[$field]);
-        $result["errors"] = checkTags("/^#[A-Za-zА-Яа-яËё0-9]{1,19}$/", $result[$field], $result["errors"]);
+        $result["errors"] = checkTags("/^#[A-Za-zА-Яа-яËё0-9]{1,19}$/u", $result[$field], $result["errors"]);
     }
 
     return $result;
