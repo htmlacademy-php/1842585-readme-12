@@ -3,10 +3,6 @@
  * @var $connect mysqli - подключение к базе данных
  */
 
-use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\NoReturn;
-use JetBrains\PhpStorm\Pure;
-
 /**
  * Обрезает переданный текст если количество символов превышает максимально допустимое.
  *
@@ -36,7 +32,6 @@ use JetBrains\PhpStorm\Pure;
  *  content => string - обработанный текст
  *  truncated => bool - true если текст был обрезан]
  */
-#[ArrayShape(["content" => "string", "truncated" => "bool"])]
 function truncateContent(string $content, int $maxLength = 300): array
 {
     $resultLength = 0;
@@ -70,7 +65,7 @@ function truncateContent(string $content, int $maxLength = 300): array
  * @param string $additional_text - дополнительный текст в конце строки
  * @return string "19 минут назад"
  */
-#[Pure] function getTimeAgo(DateTime $created_date, string $additional_text = "назад"): string
+function getTimeAgo(DateTime $created_date, string $additional_text = "назад"): string
 {
     $current_date = date_create();
     $diff = date_diff($current_date, $created_date);
@@ -165,6 +160,13 @@ function normalizePosts(array $posts, array $post_types, array $user_likes): arr
     return $result;
 }
 
+/**
+ * Функция-адаптер для поста
+ * @param array $post
+ * @param array $post_types
+ * @param array $user_likes
+ * @return array
+ */
 function normalizePost(array $post, array $post_types, array $user_likes): array
 {
     if ($post === []) {
@@ -198,6 +200,11 @@ function normalizePost(array $post, array $post_types, array $user_likes): array
     ];
 }
 
+/**
+ * Функция-адаптер для пользователя
+ * @param array $user
+ * @return array
+ */
 function normalizeUser(array $user): array
 {
     if ($user === []) {
@@ -220,6 +227,11 @@ function normalizeUser(array $user): array
     ];
 }
 
+/**
+ * Функция-адаптер для массива пользователей
+ * @param array $users
+ * @return array
+ */
 function normalizeUsers(array $users): array
 {
     $result = [];
@@ -231,6 +243,12 @@ function normalizeUsers(array $users): array
     return $result;
 }
 
+/**
+ * Функция-адаптер для лайка
+ * @param array $like
+ * @param array $post_types
+ * @return array
+ */
 function normalizeLike(array $like, array $post_types): array
 {
     if ($like === []) {
@@ -256,6 +274,12 @@ function normalizeLike(array $like, array $post_types): array
     ];
 }
 
+/**
+ * Функция-адаптер для массива лайков
+ * @param array $likes
+ * @param array $post_types
+ * @return array
+ */
 function normalizeLikes(array $likes, array $post_types): array
 {
     $result = [];
@@ -267,6 +291,11 @@ function normalizeLikes(array $likes, array $post_types): array
     return $result;
 }
 
+/**
+ * Функция-адаптер для комментария
+ * @param array $comment
+ * @return array
+ */
 function normalizeComment(array $comment): array
 {
     if ($comment === []) {
@@ -288,6 +317,11 @@ function normalizeComment(array $comment): array
     ];
 }
 
+/**
+ * Функция-адаптер для массива комментариев
+ * @param array $comments
+ * @return array
+ */
 function normalizeComments(array $comments): array
 {
     $result = [];
@@ -299,6 +333,11 @@ function normalizeComments(array $comments): array
     return $result;
 }
 
+/**
+ * Функция-адаптер для подписки
+ * @param array $subscription
+ * @return array
+ */
 function normalizeSubscription(array $subscription): array
 {
     if ($subscription === []) {
@@ -316,6 +355,11 @@ function normalizeSubscription(array $subscription): array
     ];
 }
 
+/**
+ * Функция-адаптер для массива подписок
+ * @param array $subscriptions
+ * @return array
+ */
 function normalizeSubscriptions(array $subscriptions): array
 {
     $result = [];
@@ -327,6 +371,11 @@ function normalizeSubscriptions(array $subscriptions): array
     return $result;
 }
 
+/**
+ * Функция-адаптер хештега
+ * @param array $hashtag
+ * @return array
+ */
 function normalizeHashtag(array $hashtag): array
 {
     if ($hashtag === []) {
@@ -340,7 +389,12 @@ function normalizeHashtag(array $hashtag): array
     ];
 }
 
-#[Pure] function normalizeHashtags(array $hashtags): array
+/**
+ * Функция-адаптер для массива хештегов
+ * @param array $hashtags
+ * @return array
+ */
+function normalizeHashtags(array $hashtags): array
 {
     $result = [];
 
@@ -351,6 +405,11 @@ function normalizeHashtag(array $hashtag): array
     return $result;
 }
 
+/**
+ * Функция-адаптер для сообщения
+ * @param array $message
+ * @return array
+ */
 function normalizeMessage(array $message): array
 {
     if ($message === []) {
@@ -375,6 +434,11 @@ function normalizeMessage(array $message): array
     ];
 }
 
+/**
+ * Функция-адаптер для массива сообщений
+ * @param array $messages
+ * @return array
+ */
 function normalizeMessages(array $messages): array
 {
     $result = [];
@@ -429,11 +493,22 @@ function normalizePostTypes(array $post_types): array
     return $result;
 }
 
+/**
+ * Функция для получения первого типа постов из массива
+ * @param array $post_types
+ * @return string
+ */
 function getFirstTypeId(array $post_types): string
 {
     return $post_types[0] ? $post_types[0]["id"] : "";
 }
 
+/**
+ * Функция для проверки заполнения поля
+ * @param string $field_name
+ * @param string $field_title
+ * @return string
+ */
 function checkFilling(string $field_name, string $field_title): string
 {
     $error_message = "";
@@ -444,6 +519,13 @@ function checkFilling(string $field_name, string $field_title): string
     return $error_message;
 }
 
+/**
+ * Функция для проверки заполнения длины поля
+ * @param string $text
+ * @param string $field_title
+ * @param int $length
+ * @return string
+ */
 function checkLength(string $text, string $field_title, int $length): string
 {
     $error_message = "";
@@ -454,6 +536,13 @@ function checkLength(string $text, string $field_title, int $length): string
     return $error_message;
 }
 
+/**
+ * Функция добавления ошибки заполнения формы
+ * @param array $errors
+ * @param string $error_message
+ * @param string $field_name
+ * @return array
+ */
 function addError(array $errors, string $error_message, string $field_name): array
 {
     if ($error_message !== "") {
@@ -463,6 +552,13 @@ function addError(array $errors, string $error_message, string $field_name): arr
     return $errors;
 }
 
+/**
+ * Функция для проверки правильного заполнения тегов
+ * @param $pattern
+ * @param $tags
+ * @param $errors
+ * @return array
+ */
 function checkTags($pattern, $tags, $errors): array
 {
     foreach ($tags as $tag) {
@@ -474,6 +570,12 @@ function checkTags($pattern, $tags, $errors): array
     return $errors;
 }
 
+/**
+ * Функция для проверки типа загружаемого изображения
+ * @param $pattern
+ * @param $type
+ * @return string
+ */
 function checkPictureType($pattern, $type): string
 {
     $error = "";
@@ -484,11 +586,24 @@ function checkPictureType($pattern, $type): string
     return $error;
 }
 
+/**
+ * Функция для получения полного пути хранения изображения
+ * @param $full_path
+ * @param $file_name
+ * @return string
+ */
 function getFilePath($full_path, $file_name): string
 {
     return $full_path . basename($file_name);
 }
 
+/**
+ * Функция для загрузки изображения переданного с компьютера
+ * @param $tmp_path
+ * @param $full_path
+ * @param $file_name
+ * @return void
+ */
 function downloadFile($tmp_path, $full_path, $file_name)
 {
     if ($tmp_path !== "") {
@@ -497,6 +612,13 @@ function downloadFile($tmp_path, $full_path, $file_name)
     }
 }
 
+/**
+ * Функция для загрузки изображения переданного по ссылке из интернета
+ * @param $content
+ * @param $full_path
+ * @param $file_name
+ * @return void
+ */
 function downloadContent($content, $full_path, $file_name)
 {
     if ($content !== "") {
@@ -506,6 +628,12 @@ function downloadContent($content, $full_path, $file_name)
     }
 }
 
+/**
+ * Функция для проверки правильного URL-адреса
+ * @param $url
+ * @param $errors
+ * @return string
+ */
 function getValidateURL($url, $errors): string
 {
     $result = "";
@@ -517,6 +645,11 @@ function getValidateURL($url, $errors): string
     return $result;
 }
 
+/**
+ * Функция для проверки правильного URL-адреса
+ * @param $url
+ * @return string
+ */
 function checkURL($url): string
 {
     if ($url === "") {
@@ -526,6 +659,11 @@ function checkURL($url): string
     return filter_var($url, FILTER_VALIDATE_URL) ? "" : "Неверная ссылка";
 }
 
+/**
+ * Функция для проверки правильного URL-адреса youtube
+ * @param $url
+ * @return string
+ */
 function checkYoutubeURL($url): string
 {
     if ($url === "") {
@@ -539,6 +677,14 @@ function checkYoutubeURL($url): string
     return $result;
 }
 
+/**
+ * Функция для обработки изображения загруженного с компьютера
+ * @param $web_name
+ * @param $field
+ * @param $result
+ * @param $uploads_dir
+ * @return array
+ */
 function addPictureFile($web_name, $field, $result, $uploads_dir): array
 {
     if ($_FILES[$web_name]["error"] !== 0) {
@@ -560,6 +706,13 @@ function addPictureFile($web_name, $field, $result, $uploads_dir): array
     return $result;
 }
 
+/**
+ * Функция для обработки изображения загруженного по ссылке из интернета
+ * @param $web_name
+ * @param $result
+ * @param $uploads_dir
+ * @return array
+ */
 function addPictureURL($web_name, $result, $uploads_dir): array
 {
     if ($result["file_name"] !== "") {
@@ -591,6 +744,13 @@ function addPictureURL($web_name, $result, $uploads_dir): array
     return $result;
 }
 
+/**
+ * Функция для обработки URL-адреса
+ * @param $web_name
+ * @param $result
+ * @param $field
+ * @return array
+ */
 function addWebsite($web_name, $result, $field): array
 {
     $result[$field] = $_POST[$web_name];
@@ -601,6 +761,13 @@ function addWebsite($web_name, $result, $field): array
     return $result;
 }
 
+/**
+ * Функция для обработки видео-ссылки
+ * @param $web_name
+ * @param $result
+ * @param $field
+ * @return array
+ */
 function addVideoURL($web_name, $result, $field): array
 {
     $result[$field] = $_POST[$web_name];
@@ -611,7 +778,16 @@ function addVideoURL($web_name, $result, $field): array
     return $result;
 }
 
-function addTextContent($web_name, $result, $field, $required_empty_filed, $length = 1000): array
+/**
+ * Функция для обработки текста
+ * @param $web_name
+ * @param $result
+ * @param $field
+ * @param $required_empty_filed
+ * @param int $length
+ * @return array
+ */
+function addTextContent($web_name, $result, $field, $required_empty_filed, int $length = 1000): array
 {
     $result["errors"] = addError(
         $result["errors"],
@@ -629,6 +805,12 @@ function addTextContent($web_name, $result, $field, $required_empty_filed, $leng
     return $result;
 }
 
+/**
+ * Функция для обработки тегов
+ * @param $field
+ * @param $result
+ * @return array
+ */
 function addTags($field, $result): array
 {
     if (isset($_POST[$field]) && $_POST[$field] !== "") {
@@ -639,6 +821,14 @@ function addTags($field, $result): array
     return $result;
 }
 
+/**
+ * Функция для обработки email
+ * @param $field
+ * @param $web_name
+ * @param $result
+ * @param $connect
+ * @return array
+ */
 function addEmail($field, $web_name, $result, $connect): array
 {
     $result["errors"] = addError($result["errors"], checkFilling($web_name, "Email"), $web_name);
@@ -665,6 +855,14 @@ function addEmail($field, $web_name, $result, $connect): array
     return $result;
 }
 
+/**
+ * Функция для обработки логина
+ * @param $field
+ * @param $web_name
+ * @param $result
+ * @param $connect
+ * @return array
+ */
 function addLogin($field, $web_name, $result, $connect): array
 {
     $result = addTextContent($web_name, $result, $field, ["login" => "Логин"], 128);
@@ -685,6 +883,14 @@ function addLogin($field, $web_name, $result, $connect): array
     return $result;
 }
 
+/**
+ * Функция для проверки пароля
+ * @param $web_name
+ * @param $result
+ * @param $check_field
+ * @param $field_title
+ * @return array
+ */
 function checkPassword($web_name, $result, $check_field, $field_title): array
 {
     $result["errors"] = addError($result["errors"], checkFilling($web_name, $field_title), $web_name);
@@ -703,11 +909,23 @@ function checkPassword($web_name, $result, $check_field, $field_title): array
     return $result;
 }
 
+/**
+ * Функция для получения хеша пароля
+ * @param $password
+ * @return string
+ */
 function getHashPassword($password): string
 {
     return password_hash($password, PASSWORD_DEFAULT);
 }
 
+/**
+ * Функция для обработки пароля
+ * @param $field
+ * @param $web_name
+ * @param $result
+ * @return array
+ */
 function addPassword($field, $web_name, $result): array
 {
     $result = checkPassword($web_name, $result, "password-repeat", "Пароль");
@@ -721,22 +939,42 @@ function addPassword($field, $web_name, $result): array
     return $result;
 }
 
+/**
+ * Функция для обработки повтора пароля
+ * @param $web_name
+ * @param $result
+ * @return array
+ */
 function addPasswordRepeat($web_name, $result): array
 {
     return checkPassword($web_name, $result, "password", "Повтор пароля");
 }
 
-#[NoReturn] function redirectTo($page)
+/**
+ * Функция для перенаправления на другую страницу
+ * @param $page
+ * @return void
+ */
+function redirectTo($page)
 {
     header("Location: $page");
     exit();
 }
 
+/**
+ * Функция для получения текущего авторизованного пользователя
+ * @return array
+ */
 function getUserAuthentication(): array
 {
     return $_SESSION['user'] ?? [];
 }
 
+/**
+ * Функция для конвертации массива тегов в строку
+ * @param $tags
+ * @return string
+ */
 function getTagsString($tags): string
 {
     return implode(" ", $tags);
