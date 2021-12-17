@@ -29,9 +29,13 @@
                 <li class="sorting__item <?= $sort_field === "views_count" ? "sorting__item--popular" : "" ?>">
                     <a class="sorting__link <?= $sort_direction === "ASC" ? "sorting__link--reverse" : "" ?>
                                             <?= $sort_field === "views_count" ? "sorting__link--active" : "" ?>"
-                       href="/popular.php?<?= htmlspecialchars($current_type_params) .
-                                                htmlspecialchars($current_offset_params) ?>
-                       sort_field=views_count&sort_direction=<?= htmlspecialchars($next_sort_direction) ?>">
+                       href="<?= getSaveURL(
+                           "/popular.php?",
+                           $current_type_params,
+                           $current_offset_params,
+                           "sort_field=views_count&sort_direction=",
+                           $next_sort_direction,
+                       ) ?>">
                         <span>Популярность</span>
                         <svg class="sorting__icon" width="10" height="12">
                             <use xlink:href="#icon-sort"></use>
@@ -41,9 +45,13 @@
                 <li class="sorting__item <?= $sort_field === "likes_count" ? "sorting__item--popular" : "" ?>">
                     <a class="sorting__link <?= $sort_direction === "ASC" ? "sorting__link--reverse" : "" ?>
                                             <?= $sort_field === "likes_count" ? "sorting__link--active" : "" ?>"
-                       href="/popular.php?<?= htmlspecialchars($current_type_params) .
-                                                htmlspecialchars($current_offset_params) ?>
-                        sort_field=likes_count&sort_direction=<?= htmlspecialchars($next_sort_direction) ?>">
+                       href="<?= getSaveURL(
+                           "/popular.php?",
+                           $current_type_params,
+                           $current_offset_params,
+                           "sort_field=likes_count&sort_direction=",
+                           $next_sort_direction,
+                       ) ?>">
                         <span>Лайки</span>
                         <svg class="sorting__icon" width="10" height="12">
                             <use xlink:href="#icon-sort"></use>
@@ -53,9 +61,13 @@
                 <li class="sorting__item <?= $sort_field === "created_at" ? "sorting__item--popular" : "" ?>">
                     <a class="sorting__link <?= $sort_direction === "ASC" ? "sorting__link--reverse" : "" ?>
                                             <?= $sort_field === "created_at" ? "sorting__link--active" : "" ?>"
-                       href="/popular.php?<?= htmlspecialchars($current_type_params) .
-                                                htmlspecialchars($current_offset_params) ?>
-                        sort_field=created_at&sort_direction=<?= htmlspecialchars($next_sort_direction) ?>">
+                       href="<?= getSaveURL(
+                           "/popular.php?",
+                           $current_type_params,
+                           $current_offset_params,
+                           "sort_field=created_at&sort_direction=",
+                           $next_sort_direction
+                       ) ?>">
                         <span>Дата</span>
                         <svg class="sorting__icon" width="10" height="12">
                             <use xlink:href="#icon-sort"></use>
@@ -70,8 +82,8 @@
                 <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
                     <a class="filters__button filters__button--ellipse filters__button--all
                         <?= $current_type_id === null ? "filters__button--active" : "" ?>"
-                       href="/popular.php?<?= htmlspecialchars($current_offset_params) .
-                                                htmlspecialchars($current_sort_params) ?>">
+                       href="/popular.php?
+                       <?= urlencode($current_offset_params) . urlencode($current_sort_params) ?>">
                         <span>Все</span>
                     </a>
                 </li>
@@ -137,13 +149,29 @@
     <div class="popular__page-links">
         <a class="popular__page-link popular__page-link--prev button
             <?= $prev_offset < 0 ? "button--gray" : "button--green" ?>"
-            <?= $prev_offset >= 0 ? "href=/popular.php?" .  htmlspecialchars($current_type_params) . "offset=" .
-                htmlspecialchars($prev_offset) . "&" .
-                htmlspecialchars($current_sort_params) : "" ?>>Предыдущая страница</a>
+            <?= $prev_offset >= 0 ? getSaveURL(
+                "href=/popular.php?",
+                $current_type_params,
+                "offset=",
+                $prev_offset,
+                "&",
+                $current_sort_params,
+            ) : "" ?>
+        >
+            Предыдущая страница
+        </a>
         <a class="popular__page-link popular__page-link--next button
             <?= $next_offset >= $post_count ? "button--gray" : "button--green" ?>"
-            <?= $next_offset < $post_count ? "href=/popular.php?" . htmlspecialchars($current_type_params). "offset=" .
-                htmlspecialchars($next_offset) . "&" .
-                htmlspecialchars($current_sort_params) : "" ?>>Следующая страница</a>
+            <?= $next_offset < $post_count ? getSaveURL(
+                "href=/popular.php?",
+                $current_type_params,
+                "offset=",
+                $next_offset,
+                "&",
+                $current_sort_params,
+            ) : "" ?>
+        >
+            Следующая страница
+        </a>
     </div>
 </div>

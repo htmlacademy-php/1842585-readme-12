@@ -979,3 +979,13 @@ function getTagsString($tags): string
 {
     return implode(" ", $tags);
 }
+
+/**
+ * Обработка параметров URL-адреса
+ * @param ...$params
+ * @return string
+ */
+function getSaveURL(...$params): string
+{
+    return implode("", $params);
+}
