@@ -13,20 +13,19 @@ if (count(getUserAuthentication()) > 0) {
 }
 
 $errors = [];
+$result = [
+    "email" => "",
+    "login" => "",
+    "password" => "",
+    "avatar_path" => "",
+    "tmp_path" => "",
+    "file_name" => "",
+    "errors" => [],
+];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     $uploads_dir = '/uploads/';
     $full_path = __DIR__ . $uploads_dir;
-    $result = [
-        "email" => "",
-        "login" => "",
-        "password" => "",
-        "avatar_path" => "",
-        "tmp_path" => "",
-        "file_name" => "",
-        "errors" => [],
-    ];
     $reg_fields = [
         "email" => "email",
         "login" => "login",
@@ -90,6 +89,7 @@ $reg_page = include_template("registration.php", [
     "template_class" => "page__main--registration",
     "type_id" => getFirstTypeId(normalizePostTypes(fetchPostTypes($connect))),
     "current_page" => "registration",
+    "result" => $result,
     "errors" => $errors,
     "errors_template" => $errors_template,
 ]);

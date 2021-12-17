@@ -7,6 +7,7 @@
  * @var $template_class string - класс для блока с основным контентом
  * @var $type_id string - идентификатор первого типа поста
  * @var $current_page string - текущая страница
+ * @var $result - данные предыдущего заполнения формы
  * @var $errors - ошибки отправки формы
  * @var $errors_template - шаблон всех ошибок
  */
@@ -147,15 +148,25 @@
                         <label class="registration__label form__label" for="registration-email">Электронная почта <span
                                 class="form__input-required">*</span></label>
                         <div
-                            class="form__input-section <?= isset($errors["email"]) ? "form__input-section--error" : "" ?>">
-                            <input class="registration__input form__input" id="registration-email" type="email"
-                                   name="email" placeholder="Укажите эл.почту">
-                            <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
+                            class="form__input-section
+                            <?= isset($errors["email"]) ? "form__input-section--error" : "" ?>">
+                            <input
+                                class="registration__input form__input"
+                                id="registration-email"
+                                type="email"
+                                name="email"
+                                value="<?= htmlspecialchars($result["email"]) ?>"
+                                placeholder="Укажите эл.почту"
+                            >
+                            <button
+                                class="form__error-button button"
+                                type="button"
+                            >!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
                             <div class="form__error-text">
                                 <h3 class="form__error-title">Ошибки заполнения электронной почты</h3>
-                                <?php if (isset($errors["email"])): ?>
-                                    <?php foreach ($errors["email"] as $error): ?>
+                                <?php if (isset($errors["email"])) : ?>
+                                    <?php foreach ($errors["email"] as $error) : ?>
                                         <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
@@ -166,15 +177,25 @@
                         <label class="registration__label form__label" for="registration-login">Логин <span
                                 class="form__input-required">*</span></label>
                         <div
-                            class="form__input-section <?= isset($errors["login"]) ? "form__input-section--error" : "" ?>">
-                            <input class="registration__input form__input" id="registration-login" type="text"
-                                   name="login" placeholder="Укажите логин">
-                            <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
+                            class="form__input-section
+                            <?= isset($errors["login"]) ? "form__input-section--error" : "" ?>">
+                            <input
+                                class="registration__input form__input"
+                                id="registration-login"
+                                type="text"
+                                name="login"
+                                value="<?= htmlspecialchars($result["login"]) ?>"
+                                placeholder="Укажите логин"
+                            >
+                            <button
+                                class="form__error-button button"
+                                type="button"
+                            >!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
                             <div class="form__error-text">
                                 <h3 class="form__error-title">Ошибки заполнения логина</h3>
-                                <?php if (isset($errors["login"])): ?>
-                                    <?php foreach ($errors["login"] as $error): ?>
+                                <?php if (isset($errors["login"])) : ?>
+                                    <?php foreach ($errors["login"] as $error) : ?>
                                         <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
@@ -185,15 +206,19 @@
                         <label class="registration__label form__label" for="registration-password">Пароль<span
                                 class="form__input-required">*</span></label>
                         <div
-                            class="form__input-section <?= isset($errors["password"]) ? "form__input-section--error" : "" ?>">
+                            class="form__input-section
+                            <?= isset($errors["password"]) ? "form__input-section--error" : "" ?>">
                             <input class="registration__input form__input" id="registration-password" type="password"
                                    name="password" placeholder="Придумайте пароль">
-                            <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
+                            <button
+                                class="form__error-button button"
+                                type="button"
+                            >!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
                             <div class="form__error-text">
                                 <h3 class="form__error-title">Ошибки заполнения пароля</h3>
-                                <?php if (isset($errors["password"])): ?>
-                                    <?php foreach ($errors["password"] as $error): ?>
+                                <?php if (isset($errors["password"])) : ?>
+                                    <?php foreach ($errors["password"] as $error) : ?>
                                         <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
@@ -204,15 +229,19 @@
                         <label class="registration__label form__label" for="registration-password-repeat">Повтор
                             пароля<span class="form__input-required">*</span></label>
                         <div
-                            class="form__input-section  <?= isset($errors["password-repeat"]) ? "form__input-section--error" : "" ?>">
+                            class="form__input-section
+                            <?= isset($errors["password-repeat"]) ? "form__input-section--error" : "" ?>">
                             <input class="registration__input form__input" id="registration-password-repeat"
                                    type="password" name="password-repeat" placeholder="Повторите пароль">
-                            <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
+                            <button
+                                class="form__error-button button"
+                                type="button"
+                            >!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
                             <div class="form__error-text">
                                 <h3 class="form__error-title">Ошибки заполнения повтора пароля</h3>
-                                <?php if (isset($errors["password-repeat"])): ?>
-                                    <?php foreach ($errors["password-repeat"] as $error): ?>
+                                <?php if (isset($errors["password-repeat"])) : ?>
+                                    <?php foreach ($errors["password-repeat"] as $error) : ?>
                                         <p class="form__error-desc"><?= htmlspecialchars($error) ?></p>
                                     <?php endforeach; ?>
                                 <?php endif; ?>

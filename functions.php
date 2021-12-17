@@ -65,7 +65,7 @@ function truncateContent(string $content, int $maxLength = 300): array
  * @param string $additional_text - дополнительный текст в конце строки
  * @return string "19 минут назад"
  */
-function getTimeAgo(DateTime $created_date,  string $additional_text = "назад"): string
+function getTimeAgo(DateTime $created_date, string $additional_text = "назад"): string
 {
     $current_date = date_create();
     $diff = date_diff($current_date, $created_date);
@@ -145,9 +145,9 @@ function getTimeAgo(DateTime $created_date,  string $additional_text = "наза
  *          "date_title" => "23.09.2021 13:34",
  *   ]]
  *
- * @param array $posts<array{id: string, title: string, content: string, author: string, login: string, type_id:string, views_count: string, avatar_path: string}>
- * @param array $post_types<array{id: string, name: string, icon_class: string}>
- * @return array<array{id: string, title: string, type: string, contain: string, user_name: string, avatar: string, views_count:string, created_date:string, time_ago: string, date_title: string}>
+ * @param array $posts<array>
+ * @param array $post_types<array>
+ * @return array<array>
  */
 function normalizePosts(array $posts, array $post_types, array $user_likes): array
 {
@@ -160,7 +160,8 @@ function normalizePosts(array $posts, array $post_types, array $user_likes): arr
     return $result;
 }
 
-function normalizePost(array $post, array $post_types, array $user_likes): array {
+function normalizePost(array $post, array $post_types, array $user_likes): array
+{
     if ($post === []) {
         return $post;
     }
@@ -192,7 +193,8 @@ function normalizePost(array $post, array $post_types, array $user_likes): array
     ];
 }
 
-function normalizeUser(array $user): array {
+function normalizeUser(array $user): array
+{
     if ($user === []) {
         return $user;
     }
@@ -213,7 +215,8 @@ function normalizeUser(array $user): array {
     ];
 }
 
-function normalizeUsers(array $users): array {
+function normalizeUsers(array $users): array
+{
     $result = [];
 
     foreach ($users as $user) {
@@ -223,7 +226,8 @@ function normalizeUsers(array $users): array {
     return $result;
 }
 
-function normalizeLike(array $like, array $post_types): array {
+function normalizeLike(array $like, array $post_types): array
+{
     if ($like === []) {
         return $like;
     }
@@ -247,7 +251,8 @@ function normalizeLike(array $like, array $post_types): array {
     ];
 }
 
-function normalizeLikes(array $likes, array $post_types): array {
+function normalizeLikes(array $likes, array $post_types): array
+{
     $result = [];
 
     foreach ($likes as $like) {
@@ -257,7 +262,8 @@ function normalizeLikes(array $likes, array $post_types): array {
     return $result;
 }
 
-function normalizeComment(array $comment): array {
+function normalizeComment(array $comment): array
+{
     if ($comment === []) {
         return $comment;
     }
@@ -277,7 +283,8 @@ function normalizeComment(array $comment): array {
     ];
 }
 
-function normalizeComments(array $comments): array {
+function normalizeComments(array $comments): array
+{
     $result = [];
 
     foreach ($comments as $comment) {
@@ -287,7 +294,8 @@ function normalizeComments(array $comments): array {
     return $result;
 }
 
-function normalizeSubscription(array $subscription): array {
+function normalizeSubscription(array $subscription): array
+{
     if ($subscription === []) {
         return $subscription;
     }
@@ -303,7 +311,8 @@ function normalizeSubscription(array $subscription): array {
     ];
 }
 
-function normalizeSubscriptions(array $subscriptions): array {
+function normalizeSubscriptions(array $subscriptions): array
+{
     $result = [];
 
     foreach ($subscriptions as $subscription) {
@@ -313,7 +322,8 @@ function normalizeSubscriptions(array $subscriptions): array {
     return $result;
 }
 
-function normalizeHashtag(array $hashtag): array {
+function normalizeHashtag(array $hashtag): array
+{
     if ($hashtag === []) {
         return $hashtag;
     }
@@ -325,7 +335,8 @@ function normalizeHashtag(array $hashtag): array {
     ];
 }
 
-function normalizeHashtags(array $hashtags): array {
+function normalizeHashtags(array $hashtags): array
+{
     $result = [];
 
     foreach ($hashtags as $hashtag) {
@@ -335,7 +346,8 @@ function normalizeHashtags(array $hashtags): array {
     return $result;
 }
 
-function normalizeMessage(array $message): array {
+function normalizeMessage(array $message): array
+{
     if ($message === []) {
         return $message;
     }
@@ -358,7 +370,8 @@ function normalizeMessage(array $message): array {
     ];
 }
 
-function normalizeMessages(array $messages): array {
+function normalizeMessages(array $messages): array
+{
     $result = [];
 
     foreach ($messages as $message) {
@@ -411,20 +424,33 @@ function normalizePostTypes(array $post_types): array
     return $result;
 }
 
-function getFirstTypeId(array $post_types): string {
+function getFirstTypeId(array $post_types): string
+{
     return $post_types[0] ? $post_types[0]["id"] : "";
 }
 
-function checkFilling(string $field_name, string $field_title): string {
+function checkFilling(string $field_name, string $field_title): string
+{
     $error_message = "";
-    if (isset($_POST[$field_name]) && $_POST[$field_name] === "") {
+    if (isset($_POST[$field_name]) && trim($_POST[$field_name]) === "") {
         $error_message = $field_title . ". Это поле должно быть заполнено.";
     }
 
     return $error_message;
 }
 
-function addError(array $errors, string $error_message, string $field_name): array {
+function checkLength(string $text, string $field_title, int $length): string
+{
+    $error_message = "";
+    if (mb_strlen($text, "UTF-8") > $length) {
+        $error_message = $field_title . ". Длина этого поля не может превышать " . $length . " символов";
+    }
+
+    return $error_message;
+}
+
+function addError(array $errors, string $error_message, string $field_name): array
+{
     if ($error_message !== "") {
         $errors[$field_name][] = $error_message;
     }
@@ -443,7 +469,8 @@ function checkTags($pattern, $tags, $errors): array
     return $errors;
 }
 
-function checkPictureType($pattern, $type): string {
+function checkPictureType($pattern, $type): string
+{
     $error = "";
     if (!preg_match($pattern, $type)) {
         $error = "Неверный формат файла";
@@ -452,18 +479,21 @@ function checkPictureType($pattern, $type): string {
     return $error;
 }
 
-function getFilePath($full_path, $file_name): string {
+function getFilePath($full_path, $file_name): string
+{
     return $full_path . basename($file_name);
 }
 
-function downloadFile($tmp_path, $full_path, $file_name) {
+function downloadFile($tmp_path, $full_path, $file_name)
+{
     if ($tmp_path !== "") {
         $file_path = getFilePath($full_path, $file_name);
         move_uploaded_file($tmp_path, $file_path);
     }
 }
 
-function downloadContent($content, $full_path, $file_name) {
+function downloadContent($content, $full_path, $file_name)
+{
     if ($content !== "") {
         $download_photo = file_get_contents($content);
         $file_path = getFilePath($full_path, $file_name);
@@ -471,7 +501,8 @@ function downloadContent($content, $full_path, $file_name) {
     }
 }
 
-function getValidateURL($url, $errors): string {
+function getValidateURL($url, $errors): string
+{
     $result = "";
 
     if (count($errors) === 0) {
@@ -481,7 +512,8 @@ function getValidateURL($url, $errors): string {
     return $result;
 }
 
-function checkURL($url): string {
+function checkURL($url): string
+{
     if ($url === "") {
         return "Не заполнено поле ссылка";
     }
@@ -489,10 +521,11 @@ function checkURL($url): string {
     return filter_var($url, FILTER_VALIDATE_URL) ? "" : "Неверная ссылка";
 }
 
-function checkYoutubeURL($url): string {
+function checkYoutubeURL($url): string
+{
     if ($url === "") {
         $result = "Не заполнено поле ссылка youtube";
-    } else if (!filter_var($url, FILTER_VALIDATE_URL)) {
+    } elseif (!filter_var($url, FILTER_VALIDATE_URL)) {
         $result = "Неверная ссылка на видео";
     } else {
         $result = check_youtube_url($url);
@@ -501,7 +534,8 @@ function checkYoutubeURL($url): string {
     return $result;
 }
 
-function addPictureFile($web_name, $field, $result, $uploads_dir): array {
+function addPictureFile($web_name, $field, $result, $uploads_dir): array
+{
     if ($_FILES[$web_name]["error"] !== 0) {
         return $result;
     }
@@ -521,64 +555,90 @@ function addPictureFile($web_name, $field, $result, $uploads_dir): array {
     return $result;
 }
 
-function addPictureURL($web_name, $result, $uploads_dir): array {
+function addPictureURL($web_name, $result, $uploads_dir): array
+{
     if ($result["file_name"] !== "") {
         return $result;
     }
 
     if ($_POST[$web_name] === "") {
-        $result["errors"] = addError($result["errors"], "Необходимо выбрать изображение с компьютера или указать ссылку из интернета.", $web_name);
+        $result["errors"] = addError(
+            $result["errors"],
+            "Необходимо выбрать изображение с компьютера или указать ссылку из интернета.",
+            $web_name
+        );
         return $result;
     }
 
     $result["picture_url"] = filter_var($_POST[$web_name], FILTER_VALIDATE_URL);
     $photo_info = pathinfo($result["picture_url"]);
-    $result["errors"] = addError($result["errors"], checkPictureType("/(jpg|jpeg|png|gif)/i", $photo_info["extension"] ?? ""), $web_name);
+    $result["errors"] = addError(
+        $result["errors"],
+        checkPictureType(
+            "/(jpg|jpeg|png|gif)/i",
+            $photo_info["extension"] ?? ""
+        ),
+        $web_name
+    );
     $result["file_name"] = $photo_info["basename"];
     $result["content"] = $uploads_dir . $result["file_name"];
 
     return $result;
 }
 
-function addWebsite($web_name, $result, $field): array {
-    $website = $_POST[$web_name];
-    $result["errors"] = addError($result["errors"], checkURL($website), $web_name);
-    $result["content"] = getValidateURL($website, $result["errors"]);
-    $result[$field] = $result["content"];
+function addWebsite($web_name, $result, $field): array
+{
+    $result[$field] = $_POST[$web_name];
+    $result["errors"] = addError($result["errors"], checkLength($result[$field], $web_name, 1000), $web_name);
+    $result["errors"] = addError($result["errors"], checkURL($result[$field]), $web_name);
+    $result["content"] = getValidateURL($result[$field], $result["errors"]);
 
     return $result;
 }
 
-function addVideoURL($web_name, $result, $field): array {
-    $video_url = $_POST[$web_name];
-    $result["errors"] = addError($result["errors"], checkYoutubeURL($video_url), $web_name);
-    $result["content"] = getValidateURL($video_url, $result["errors"]);
-    $result[$field] = $result["content"];
+function addVideoURL($web_name, $result, $field): array
+{
+    $result[$field] = $_POST[$web_name];
+    $result["errors"] = addError($result["errors"], checkLength($result[$field], $web_name, 1000), $web_name);
+    $result["errors"] = addError($result["errors"], checkYoutubeURL($result[$field]), $web_name);
+    $result["content"] = getValidateURL($result[$field], $result["errors"]);
 
     return $result;
 }
 
-function addTextContent($web_name, $result, $field, $required_empty_filed): array {
-    $result["errors"] = addError($result["errors"], checkFilling($web_name, $required_empty_filed[$web_name]), $web_name);
+function addTextContent($web_name, $result, $field, $required_empty_filed, $length = 1000): array
+{
+    $result["errors"] = addError(
+        $result["errors"],
+        checkFilling($web_name, $required_empty_filed[$web_name]),
+        $web_name
+    );
+
+    $result["errors"] = addError($result["errors"], checkLength($_POST[$web_name], $web_name, $length), $web_name);
+
     $result[$field] = $_POST[$web_name] ?? "";
 
     return $result;
 }
 
-function addTags($field, $result): array {
+function addTags($field, $result): array
+{
     if (isset($_POST[$field]) && $_POST[$field] !== "") {
         $result[$field] = explode(" ", $_POST[$field]);
-        $result["errors"] = checkTags("/^#[A-Za-zА-Яа-яËё0-9]{1,19}$/u", $result[$field], $result["errors"]);
+        $result["errors"] = checkTags("/^#[A-Za-zА-яËё0-9]{1,19}$/u", $result[$field], $result["errors"]);
     }
 
     return $result;
 }
 
-function addEmail($field, $web_name, $result, $connect): array {
+function addEmail($field, $web_name, $result, $connect): array
+{
     $result["errors"] = addError($result["errors"], checkFilling($web_name, "Email"), $web_name);
     if ($_POST[$web_name] === "") {
         return $result;
     }
+
+    $result["errors"] = addError($result["errors"], checkLength($_POST[$web_name], "Email", 320), $web_name);
 
     $email = filter_var($_POST[$web_name], FILTER_VALIDATE_EMAIL);
     if (!$email) {
@@ -597,8 +657,9 @@ function addEmail($field, $web_name, $result, $connect): array {
     return $result;
 }
 
-function addLogin($field, $web_name, $result, $connect): array {
-    $result = addTextContent($web_name, $result, $field, ["login" => "Логин"]);
+function addLogin($field, $web_name, $result, $connect): array
+{
+    $result = addTextContent($web_name, $result, $field, ["login" => "Логин"], 128);
 
     if ($_POST[$web_name] === "") {
         return $result;
@@ -616,7 +677,8 @@ function addLogin($field, $web_name, $result, $connect): array {
     return $result;
 }
 
-function checkPassword($web_name, $result, $check_field, $field_title): array {
+function checkPassword($web_name, $result, $check_field, $field_title): array
+{
     $result["errors"] = addError($result["errors"], checkFilling($web_name, $field_title), $web_name);
 
     $password = $_POST[$web_name];
@@ -633,11 +695,13 @@ function checkPassword($web_name, $result, $check_field, $field_title): array {
     return $result;
 }
 
-function getHashPassword($password): string {
+function getHashPassword($password): string
+{
     return password_hash($password, PASSWORD_DEFAULT);
 }
 
-function addPassword($field, $web_name, $result): array {
+function addPassword($field, $web_name, $result): array
+{
     $result = checkPassword($web_name, $result, "password-repeat", "Пароль");
 
     if (count($result["errors"]) > 0) {
@@ -649,15 +713,23 @@ function addPassword($field, $web_name, $result): array {
     return $result;
 }
 
-function addPasswordRepeat($web_name, $result): array {
+function addPasswordRepeat($web_name, $result): array
+{
     return checkPassword($web_name, $result, "password", "Повтор пароля");
 }
 
-function redirectTo($page) {
+function redirectTo($page): void
+{
     header("Location: $page");
     exit();
 }
 
-function getUserAuthentication(): array {
+function getUserAuthentication(): array
+{
     return $_SESSION['user'] ?? [];
+}
+
+function getTagsString($tags): string
+{
+    return implode(" ", $tags);
 }
