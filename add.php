@@ -67,6 +67,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         checkFilling("heading", $required_empty_filed["heading"]),
         "heading"
     );
+    $result["errors"] = addError(
+        $result["errors"],
+        checkLength($result["title"], $required_empty_filed["heading"], 200),
+        "heading"
+    );
 
     foreach ($current_post_fields as $field => $web_name) {
         $result = match ($field) {

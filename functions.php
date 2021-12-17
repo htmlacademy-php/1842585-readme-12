@@ -594,7 +594,7 @@ function addPictureURL($web_name, $result, $uploads_dir): array
 function addWebsite($web_name, $result, $field): array
 {
     $result[$field] = $_POST[$web_name];
-    $result["errors"] = addError($result["errors"], checkLength($result[$field], $web_name, 1000), $web_name);
+    $result["errors"] = addError($result["errors"], checkLength($result[$field], "Ссылка", 1000), $web_name);
     $result["errors"] = addError($result["errors"], checkURL($result[$field]), $web_name);
     $result["content"] = getValidateURL($result[$field], $result["errors"]);
 
@@ -618,8 +618,11 @@ function addTextContent($web_name, $result, $field, $required_empty_filed, $leng
         checkFilling($web_name, $required_empty_filed[$web_name]),
         $web_name
     );
-
-    $result["errors"] = addError($result["errors"], checkLength($_POST[$web_name], $web_name, $length), $web_name);
+    $result["errors"] = addError(
+        $result["errors"],
+        checkLength($_POST[$web_name], $required_empty_filed[$web_name], $length),
+        $web_name
+    );
 
     $result[$field] = $_POST[$web_name] ?? "";
 
@@ -643,9 +646,11 @@ function addEmail($field, $web_name, $result, $connect): array
         return $result;
     }
 
-    $result["errors"] = addError($result["errors"], checkLength($_POST[$web_name], "Email", 320), $web_name);
+    $result[$field] = $_POST[$web_name];
 
-    $email = filter_var($_POST[$web_name], FILTER_VALIDATE_EMAIL);
+    $result["errors"] = addError($result["errors"], checkLength($result[$field], "Email", 320), $web_name);
+
+    $email = filter_var($result[$field], FILTER_VALIDATE_EMAIL);
     if (!$email) {
         $result["errors"] = addError($result["errors"], "Неверно заполнен email", $web_name);
         return $result;
@@ -656,8 +661,6 @@ function addEmail($field, $web_name, $result, $connect): array
         $result["errors"] = addError($result["errors"], "Пользователь с таким email уже существует", $web_name);
         return $result;
     }
-
-    $result[$field] = $email;
 
     return $result;
 }
@@ -723,7 +726,7 @@ function addPasswordRepeat($web_name, $result): array
     return checkPassword($web_name, $result, "password", "Повтор пароля");
 }
 
-#[NoReturn] function redirectTo($page): void
+#[NoReturn] function redirectTo($page)
 {
     header("Location: $page");
     exit();
