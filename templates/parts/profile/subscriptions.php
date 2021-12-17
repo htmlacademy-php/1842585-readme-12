@@ -1,7 +1,7 @@
 <?php
 /**
  * Шаблон подписок на автора
- * @var $content array<array{id: string, user_id: string, user_name: string, avatar: string, like_at: DateTime, post_id: string, post_type: string, post_content: string, post_title:string, time_ago:string, date_title: string}> - лайки постов пользователя
+ * @var $content array<array> - лайки постов пользователя
  * @var $current_user_id - идентификатор авторизованного пользователя
  * @var $current_user_subscriptions - подписки текущего пользователя
  */
@@ -12,7 +12,7 @@
     <section class="profile__subscriptions tabs__content tabs__content--active">
         <h2 class="visually-hidden">Подписки</h2>
         <ul class="profile__subscriptions-list">
-            <?php foreach ($content as $user): ?>
+            <?php foreach ($content as $user) : ?>
                 <li class="post-mini post-mini--photo post user">
                     <?php
                         $user_profile = include_template("/parts/user/profile.php", [
@@ -31,7 +31,14 @@
                             "subscribers_count" => $user["subscribers_count"],
                             "template_class" => "post-mini",
                             "author_id" => $user["id"],
-                            "is_subscribe" => in_array($user["id"], array_column($current_user_subscriptions, "author_id"), true),
+                            "is_subscribe" => in_array(
+                                $user["id"],
+                                array_column(
+                                    $current_user_subscriptions,
+                                    "author_id"
+                                ),
+                                true
+                            ),
                             "is_current_user" => $user["id"] === $current_user_id,
                         ]);
                         print($user_info);

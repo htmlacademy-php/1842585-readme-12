@@ -10,7 +10,8 @@ require_once("config.php");
 
 $user = getUserAuthentication();
 $author_id = filter_input(INPUT_GET, 'author_id', FILTER_SANITIZE_SPECIAL_CHARS, FILTER_NULL_ON_FAILURE);
-if (!$author_id || count($user) === 0) {
+$author = normalizeUser(getUserById($connect, $author_id));
+if (count($author) === 0 || count($user) === 0) {
     redirectTo("/");
 }
 
@@ -19,23 +20,19 @@ $users_likes = getUserLikes($connect, $user["id"]);
 $post_types = normalizePostTypes(fetchPostTypes($connect));
 $hashtags = [];
 
-switch($tab) {
-    case "posts": {
+switch ($tab) {
+    case "posts":
         $content = normalizePosts(getPostsByUserId($connect, $author_id), $post_types, $users_likes);
         $hashtags = normalizeHashtags(getPostsTags($connect));
         break;
-    }
-    case "likes": {
+    case "likes":
         $content = normalizeLikes(getLikesByUserId($connect, $author_id), $post_types);
         break;
-    }
-    case "subscriptions": {
+    case "subscriptions":
         $content = normalizeUsers(getSubscribersByUserId($connect, $author_id));
         break;
-    }
-    default: {
+    default:
         $content = [];
-    }
 }
 
 $tab_content = include_template("/parts/profile/$tab.php", [
@@ -55,7 +52,7 @@ $user_info = include_template("/parts/user/info.php", [
 ]);
 
 $profile = include_template("profile.php", [
-    "author" => normalizeUser(getUserById($connect, $author_id)),
+    "author" => $author,
     "tab" => $tab,
     "tab_content" => $tab_content,
     "user_info" => $user_info,
