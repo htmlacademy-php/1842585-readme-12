@@ -18,7 +18,8 @@ function fetchAssocData($result): array
     return $result ?? [];
 }
 
-function prepareResult($connect, $query, $types = "", $params = []): mysqli_result {
+function prepareResult($connect, $query, $types = "", $params = []): mysqli_result
+{
 
     $stmt = mysqli_prepare($connect, $query);
     checkResult($stmt, $connect, "Ошибка подготовки запроса");
@@ -37,7 +38,8 @@ function prepareResult($connect, $query, $types = "", $params = []): mysqli_resu
     return $result;
 }
 
-function preparePostResult($connect, $query, $types, $params): bool {
+function preparePostResult($connect, $query, $types, $params): bool
+{
 
     $stmt = mysqli_prepare($connect, $query);
     checkResult($stmt, $connect, "Ошибка подготовки запроса");
@@ -51,6 +53,7 @@ function preparePostResult($connect, $query, $types, $params): bool {
     return $result;
 }
 
-function getInsertId($connect): string {
+function getInsertId($connect): string
+{
     return (string) mysqli_insert_id($connect);
 }

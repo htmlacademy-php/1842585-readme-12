@@ -32,18 +32,24 @@ $post_types = normalizePostTypes(fetchPostTypes($connect));
 $users_likes = getUserLikes($connect, $user["id"]);
 
 $limit = 6;
-$popularPosts = $current_type_id ? fetchPopularPostsByType($connect, $current_type_id, $offset, $sort_field, $sort_direction) : fetchPopularPosts($connect, $offset, $sort_field, $sort_direction);
+$popularPosts = $current_type_id
+    ? fetchPopularPostsByType($connect, $current_type_id, $offset, $sort_field, $sort_direction) :
+    fetchPopularPosts($connect, $offset, $sort_field, $sort_direction);
 
 $current_type_params = $current_type_id ? "type_id=" . htmlspecialchars($current_type_id) . "&" : "";
 $current_offset_params = $offset === 0 ? "" : "offset=" . htmlspecialchars($offset) . "&";
-$current_sort_params = "sort_field=" . htmlspecialchars($sort_field) . "&sort_direction=" . htmlspecialchars($sort_direction);
+$current_sort_params = "sort_field=" .
+    htmlspecialchars($sort_field) . "&sort_direction=" .
+    htmlspecialchars($sort_direction);
 
 $popular = include_template("popular.php", [
     "post_types" => $post_types,
     "posts" => normalizePosts($popularPosts, $post_types, $users_likes),
     "prev_offset" => $offset - $limit,
     "next_offset" => $offset + $limit,
-    "post_count" => $current_type_id ? getPostsCountByType($connect, $current_type_id)["count"] : getPostsCount($connect)["count"],
+    "post_count" => $current_type_id ?
+        getPostsCountByType($connect, $current_type_id)["count"] :
+        getPostsCount($connect)["count"],
     "current_type_id" => $current_type_id,
     "sort_field" => $sort_field,
     "sort_direction" => $sort_direction,

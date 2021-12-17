@@ -3,6 +3,10 @@
  * @var $connect mysqli - подключение к базе данных
  */
 
+use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\NoReturn;
+use JetBrains\PhpStorm\Pure;
+
 /**
  * Обрезает переданный текст если количество символов превышает максимально допустимое.
  *
@@ -32,6 +36,7 @@
  *  content => string - обработанный текст
  *  truncated => bool - true если текст был обрезан]
  */
+#[ArrayShape(["content" => "string", "truncated" => "bool"])]
 function truncateContent(string $content, int $maxLength = 300): array
 {
     $resultLength = 0;
@@ -65,7 +70,7 @@ function truncateContent(string $content, int $maxLength = 300): array
  * @param string $additional_text - дополнительный текст в конце строки
  * @return string "19 минут назад"
  */
-function getTimeAgo(DateTime $created_date, string $additional_text = "назад"): string
+#[Pure] function getTimeAgo(DateTime $created_date, string $additional_text = "назад"): string
 {
     $current_date = date_create();
     $diff = date_diff($current_date, $created_date);
@@ -335,7 +340,7 @@ function normalizeHashtag(array $hashtag): array
     ];
 }
 
-function normalizeHashtags(array $hashtags): array
+#[Pure] function normalizeHashtags(array $hashtags): array
 {
     $result = [];
 
@@ -718,7 +723,7 @@ function addPasswordRepeat($web_name, $result): array
     return checkPassword($web_name, $result, "password", "Повтор пароля");
 }
 
-function redirectTo($page): void
+#[NoReturn] function redirectTo($page): void
 {
     header("Location: $page");
     exit();

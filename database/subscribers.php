@@ -24,7 +24,7 @@ function getSubscribersByUserId($connect, $user_id): array
         u.login,
         u.avatar_path";
 
-    return fetchData(prepareResult($connect, $query,"i" , [$user_id]));
+    return fetchData(prepareResult($connect, $query, "i", [$user_id]));
 }
 
 function getSubscription($connect, $user_id, $author_id): array
@@ -35,7 +35,7 @@ function getSubscription($connect, $user_id, $author_id): array
     FROM subscribes
     WHERE subscribe_id = ? AND author_id = ?";
 
-    return fetchAssocData(prepareResult($connect, $query,"ii" , [$user_id, $author_id]));
+    return fetchAssocData(prepareResult($connect, $query, "ii", [$user_id, $author_id]));
 }
 
 function getSubscriptionsByUserId($connect, $user_id): array
@@ -47,7 +47,7 @@ function getSubscriptionsByUserId($connect, $user_id): array
     FROM subscribes
     WHERE subscribe_id = ?";
 
-    return fetchData(prepareResult($connect, $query,"i" , [$user_id]));
+    return fetchData(prepareResult($connect, $query, "i", [$user_id]));
 }
 
 function getSubscribersCountByUserId($connect, $user_id): array
@@ -58,10 +58,11 @@ function getSubscribersCountByUserId($connect, $user_id): array
         INNER JOIN users u on u.id = s.subscribe_id
     WHERE author_id = ?";
 
-    return fetchAssocData(prepareResult($connect, $query,"i" , [$user_id]));
+    return fetchAssocData(prepareResult($connect, $query, "i", [$user_id]));
 }
 
-function addSubscription($connect, $subscription): string {
+function addSubscription($connect, $subscription): string
+{
     $query = "INSERT INTO subscribes (
             author_id,
             subscribe_id,
@@ -77,7 +78,8 @@ function addSubscription($connect, $subscription): string {
     return getInsertId($connect);
 }
 
-function deleteSubscription($connect, $subscription_id): bool {
+function deleteSubscription($connect, $subscription_id): bool
+{
     $query = "DELETE
     FROM subscribes
     WHERE id = ?";

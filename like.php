@@ -52,12 +52,10 @@ if (count($like) === 0) {
 
     if ($result && $message_id) {
         mysqli_commit($connect);
-    }
-    else {
+    } else {
         mysqli_rollback($connect);
     }
-}
-else {
+} else {
     $result = deleteLike($connect, $like["id"]);
 }
 

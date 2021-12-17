@@ -39,7 +39,7 @@ $current_recipient = normalizeUser(getUserById($connect, $recipient_id));
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     foreach ($messages as $message) {
-        if ($message["recipient_id"] === $user["id"]){
+        if ($message["recipient_id"] === $user["id"]) {
             updateStatusMessage($connect, $message["id"]);
         }
     }
@@ -72,4 +72,3 @@ $page_profile = include_template(
 );
 
 print($page_profile);
-

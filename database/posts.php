@@ -61,7 +61,8 @@ function fetchPopularPosts($connect, $offset, $sort_field, $sort_direction): arr
     return fetchData(prepareResult($connect, $query, "i", [$offset]));
 }
 
-function fetchPopularPostsByType($connect, $type_id, $offset, $sort_field, $sort_direction): array {
+function fetchPopularPostsByType($connect, $type_id, $offset, $sort_field, $sort_direction): array
+{
     $query = "SELECT
         posts.created_at,
         posts.id,
@@ -435,7 +436,8 @@ function searchPostsByHashtag($connect, $hashtag): array
     return fetchData(prepareResult($connect, $query, "s", [$hashtag]));
 }
 
-function getPostsCountByUserId($connect, $user_id): array {
+function getPostsCountByUserId($connect, $user_id): array
+{
     $query = "SELECT
         COUNT(id) AS count
     FROM posts
@@ -444,7 +446,8 @@ function getPostsCountByUserId($connect, $user_id): array {
     return fetchAssocData(prepareResult($connect, $query, "i", [$user_id]));
 }
 
-function getPostsCount($connect): array {
+function getPostsCount($connect): array
+{
     $query = "SELECT
         COUNT(id) AS count
     FROM posts";
@@ -452,7 +455,8 @@ function getPostsCount($connect): array {
     return fetchAssocData(prepareResult($connect, $query));
 }
 
-function getPostsCountByType($connect, $type_id): array {
+function getPostsCountByType($connect, $type_id): array
+{
     $query = "SELECT
         COUNT(id) AS count
     FROM posts
@@ -461,7 +465,8 @@ function getPostsCountByType($connect, $type_id): array {
     return fetchAssocData(prepareResult($connect, $query, "i", [$type_id]));
 }
 
-function getPostsRepost($connect, $user_id, $user_id_original, $post_id_original): array {
+function getPostsRepost($connect, $user_id, $user_id_original, $post_id_original): array
+{
     $query = "SELECT
         id AS count
     FROM posts
@@ -470,7 +475,8 @@ function getPostsRepost($connect, $user_id, $user_id_original, $post_id_original
     return fetchAssocData(prepareResult($connect, $query, "iii", [$user_id, $user_id_original, $post_id_original]));
 }
 
-function addPost($connect, $post): string {
+function addPost($connect, $post): string
+{
     $query = "INSERT INTO posts (
             created_at,
             title,
@@ -502,7 +508,8 @@ function addPost($connect, $post): string {
     return getInsertId($connect);
 }
 
-function updatePostViews($connect, $post_id): string {
+function updatePostViews($connect, $post_id): string
+{
     $query = "UPDATE posts
     SET views_count = views_count + 1
     WHERE id = ?";

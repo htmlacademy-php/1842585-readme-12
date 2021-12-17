@@ -36,26 +36,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     foreach ($reg_fields as $field => $web_name) {
         switch ($field) {
-            case "email": {
+            case "email":
                 $result = addEmail($field, $web_name, $result, $connect);
                 break;
-            }
-            case "login": {
+            case "login":
                 $result = addLogin($field, $web_name, $result, $connect);
                 break;
-            }
-            case "password": {
+            case "password":
                 $result = addPassword($field, $web_name, $result);
                 break;
-            }
-            case "password-repeat": {
+            case "password-repeat":
                 $result = addPasswordRepeat($web_name, $result);
                 break;
-            }
-            case "avatar_path": {
+            case "avatar_path":
                 $result = addPictureFile($web_name, "avatar_path", $result, $uploads_dir);
                 break;
-            }
         }
     }
 

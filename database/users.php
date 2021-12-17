@@ -82,7 +82,8 @@ function getUserById($connect, $id): array
     return fetchAssocData(prepareResult($connect, $query, "i", [$id]));
 }
 
-function addUser($connect, $user): string {
+function addUser($connect, $user): string
+{
     $query = "INSERT INTO users (
             registered_at,
             email,

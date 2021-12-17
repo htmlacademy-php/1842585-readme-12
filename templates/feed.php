@@ -3,7 +3,7 @@
 /**
  * Шаблон главной страницы авторизованного пользователя
  * @var $post_types array<array{id: string, name: string, icon_class: string}> - массив типов постов
- * @var $posts array<array{id: string, title: string, type: string, contain: string, user_name: string, avatar: string, views_count:string, created_date:string, time_ago: string, date_title: string}> - массив постов пользователей
+ * @var $posts array<array> - массив постов пользователей
  * @var $current_type_id string - идентификатор типа поста, если установлена сортировка
  */
 
@@ -16,12 +16,15 @@
         <h2 class="visually-hidden">Лента</h2>
         <div class="feed__main-wrapper">
             <div class="feed__wrapper">
-                <?php foreach ($posts as $index => $post): ?>
+                <?php foreach ($posts as $index => $post) : ?>
                     <article class="feed__post post <?= htmlspecialchars($post["type"]) ?>">
                         <header class="post__header post__author">
-                            <a class="post__author-link" href="/profile.php?author_id=<?= htmlspecialchars($post["user_id"]) ?>" title="Автор">
+                            <a class="post__author-link"
+                               href="/profile.php?author_id=<?= htmlspecialchars($post["user_id"]) ?>" title="Автор">
                                 <div class="post__avatar-wrapper">
-                                    <img class="post__author-avatar" src="<?= htmlspecialchars($post["avatar"]) ?>" alt="Аватар пользователя" width="60" height="60">
+                                    <img class="post__author-avatar"
+                                         src="<?= htmlspecialchars($post["avatar"]) ?>"
+                                         alt="Аватар пользователя" width="60" height="60">
                                 </div>
                                 <div class="post__info">
                                     <b class="post__author-name"><?= htmlspecialchars($post["user_name"]) ?></b>
@@ -55,11 +58,12 @@
         </div>
         <ul class="feed__filters filters">
             <li class="feed__filters-item filters__item">
-                <a class="filters__button <?= $current_type_id === null ? "filters__button--active" : "" ?>" href="feed.php">
+                <a class="filters__button <?= $current_type_id === null ? "filters__button--active" : "" ?>"
+                   href="/feed.php">
                     <span>Все</span>
                 </a>
             </li>
-            <?php foreach ($post_types as $post_type): ?>
+            <?php foreach ($post_types as $post_type) : ?>
                 <li class="feed__filters-item filters__item">
                     <a class="filters__button filters__button--<?php
                     $active_class = $current_type_id === $post_type["id"] ? " filters__button--active" : "";

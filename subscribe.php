@@ -57,16 +57,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $author["email"],
             getSubscriptionTextTemplate($author["login"], $user["user_name"], $user["id"])
         );
-    }
-    else {
+    } else {
         $result = deleteSubscription($connect, $subscription["id"]);
         $message_id = 1;
     }
 
     if ($result && $message_id) {
         mysqli_commit($connect);
-    }
-    else {
+    } else {
         mysqli_rollback($connect);
     }
 }

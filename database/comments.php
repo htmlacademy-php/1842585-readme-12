@@ -1,6 +1,7 @@
 <?php
 
-function getCommentsByPostId($connect, $post_id): array {
+function getCommentsByPostId($connect, $post_id): array
+{
     $query = "SELECT
         pc.id,
         created_at,
@@ -18,7 +19,8 @@ function getCommentsByPostId($connect, $post_id): array {
     return fetchData(prepareResult($connect, $query, "i", [$post_id]));
 }
 
-function getTwoCommentsByPostId($connect, $post_id): array {
+function getTwoCommentsByPostId($connect, $post_id): array
+{
     $query = "SELECT
         pc.id,
         created_at,
@@ -37,7 +39,8 @@ function getTwoCommentsByPostId($connect, $post_id): array {
     return fetchData(prepareResult($connect, $query, "i", [$post_id]));
 }
 
-function addComment($connect, $comment): string {
+function addComment($connect, $comment): string
+{
     $query = "INSERT INTO post_comments (
                 created_at,
                 content,

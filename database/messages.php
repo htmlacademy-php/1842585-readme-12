@@ -62,7 +62,10 @@ function getLastMessagesEveryRecipient($connect, $user_id): array
                              mes.user_id,
                              mes.recipient_id
                  ) ml
-                        ON (m.user_id = ml.recipient_id AND m.recipient_id = ml.user_id OR m.user_id = ml.user_id AND m.recipient_id = ml.recipient_id) AND m.id = ml.last_message_id
+                        ON (m.user_id = ml.recipient_id AND
+                            m.recipient_id = ml.user_id OR
+                            m.user_id = ml.user_id AND
+                            m.recipient_id = ml.recipient_id) AND m.id = ml.last_message_id
              LEFT JOIN (SELECT
                             unrm.recipient_id,
                             unrm.user_id,

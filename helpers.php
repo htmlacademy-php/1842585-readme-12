@@ -79,7 +79,7 @@ function check_youtube_url(string $url): string
 
     set_error_handler(function () {
     }, E_WARNING);
-    $headers = get_headers('https://www.youtube.com/oembed?format=json&url=http://www.youtube.com/watch?v=' . $id);
+    $headers = get_headers('https://www.youtube.com/oembed?format=json&url=https://www.youtube.com/watch?v=' . $id);
     restore_error_handler();
 
     if (!is_array($headers)) {
