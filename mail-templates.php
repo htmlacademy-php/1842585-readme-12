@@ -1,14 +1,19 @@
 <?php
 
-function getProfileLink(string $user_id): string {
+use JetBrains\PhpStorm\Pure;
+
+function getProfileLink(string $user_id): string
+{
     return $_SERVER["HTTP_ORIGIN"] . "/profile.php?author_id=" . htmlspecialchars($user_id);
 }
 
-function getPublicationSubject($author): string {
+function getPublicationSubject($author): string
+{
     return "Новая публикация от пользователя " . $author;
 }
 
-function getPublicationTextTemplate($author, $author_id, $title, $subscriber): string {
+#[Pure] function getPublicationTextTemplate($author, $author_id, $title, $subscriber): string
+{
     return "<h4>Здравствуйте, " . $subscriber . ".</h4>
         <p>Пользователь " . $author . " только что опубликовал новую запись " . $title . ".</p>
         <p>Посмотрите её на странице пользователя:
@@ -16,11 +21,13 @@ function getPublicationTextTemplate($author, $author_id, $title, $subscriber): s
         </p>";
 }
 
-function getSubscriptionSubject(): string {
+function getSubscriptionSubject(): string
+{
     return "У вас новый подписчик";
 }
 
-function getSubscriptionTextTemplate($author, $subscriber, $subscriber_id): string {
+#[Pure] function getSubscriptionTextTemplate($author, $subscriber, $subscriber_id): string
+{
     return "<h4>Здравствуйте, " . $author . "</h4>
         <p>На вас подписался новый пользователь " . $subscriber . "</p>
         <p>Вот ссылка на его профиль:

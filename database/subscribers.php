@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Функция для получения подписчиков авторизованного пользователя
+ * @param $connect
+ * @param $user_id
+ * @return array
+ */
 function getSubscribersByUserId($connect, $user_id): array
 {
     $query = "SELECT
@@ -24,9 +30,16 @@ function getSubscribersByUserId($connect, $user_id): array
         u.login,
         u.avatar_path";
 
-    return fetchData(prepareResult($connect, $query,"i" , [$user_id]));
+    return fetchData(prepareResult($connect, $query, "i", [$user_id]));
 }
 
+/**
+ * Функция для получения подписки пользователя
+ * @param $connect
+ * @param $user_id
+ * @param $author_id
+ * @return array
+ */
 function getSubscription($connect, $user_id, $author_id): array
 {
     $query = "SELECT
@@ -35,9 +48,15 @@ function getSubscription($connect, $user_id, $author_id): array
     FROM subscribes
     WHERE subscribe_id = ? AND author_id = ?";
 
-    return fetchAssocData(prepareResult($connect, $query,"ii" , [$user_id, $author_id]));
+    return fetchAssocData(prepareResult($connect, $query, "ii", [$user_id, $author_id]));
 }
 
+/**
+ * Функция для получения массива подписок пользователя
+ * @param $connect
+ * @param $user_id
+ * @return array
+ */
 function getSubscriptionsByUserId($connect, $user_id): array
 {
     $query = "SELECT
@@ -47,9 +66,15 @@ function getSubscriptionsByUserId($connect, $user_id): array
     FROM subscribes
     WHERE subscribe_id = ?";
 
-    return fetchData(prepareResult($connect, $query,"i" , [$user_id]));
+    return fetchData(prepareResult($connect, $query, "i", [$user_id]));
 }
 
+/**
+ * Функция для получения количества подписок пользователя
+ * @param $connect
+ * @param $user_id
+ * @return array
+ */
 function getSubscribersCountByUserId($connect, $user_id): array
 {
     $query = "SELECT
@@ -58,10 +83,17 @@ function getSubscribersCountByUserId($connect, $user_id): array
         INNER JOIN users u on u.id = s.subscribe_id
     WHERE author_id = ?";
 
-    return fetchAssocData(prepareResult($connect, $query,"i" , [$user_id]));
+    return fetchAssocData(prepareResult($connect, $query, "i", [$user_id]));
 }
 
-function addSubscription($connect, $subscription): string {
+/**
+ * Функция для добавления подписки
+ * @param $connect
+ * @param $subscription
+ * @return string
+ */
+function addSubscription($connect, $subscription): string
+{
     $query = "INSERT INTO subscribes (
             author_id,
             subscribe_id,
@@ -77,7 +109,14 @@ function addSubscription($connect, $subscription): string {
     return getInsertId($connect);
 }
 
-function deleteSubscription($connect, $subscription_id): bool {
+/**
+ * Функция для удаления подписки
+ * @param $connect
+ * @param $subscription_id
+ * @return bool
+ */
+function deleteSubscription($connect, $subscription_id): bool
+{
     $query = "DELETE
     FROM subscribes
     WHERE id = ?";

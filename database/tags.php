@@ -1,6 +1,13 @@
 <?php
 
-function getPostTags($connect, $post_id): array {
+/**
+ * Функция для получения массива тегов поста
+ * @param $connect
+ * @param $post_id
+ * @return array
+ */
+function getPostTags($connect, $post_id): array
+{
     $query = "SELECT
         ph.id,
         ph.post_id,
@@ -13,7 +20,13 @@ function getPostTags($connect, $post_id): array {
     return fetchData(prepareResult($connect, $query, "s", [$post_id]));
 }
 
-function getPostsTags($connect): array {
+/**
+ * Функция для получения массива тегов всех постов
+ * @param $connect
+ * @return array
+ */
+function getPostsTags($connect): array
+{
     $query = "SELECT
         ph.id,
         ph.post_id,
@@ -25,7 +38,14 @@ function getPostsTags($connect): array {
     return fetchData(prepareResult($connect, $query));
 }
 
-function getTagByName($connect, $name): array {
+/**
+ * Функция для получения тега по имени
+ * @param $connect
+ * @param $name
+ * @return array
+ */
+function getTagByName($connect, $name): array
+{
     $query = "SELECT
         id
     FROM hashtags
@@ -34,7 +54,14 @@ function getTagByName($connect, $name): array {
     return fetchAssocData(prepareResult($connect, $query, "s", [$name]));
 }
 
-function addNewTag($connect, $tag): string {
+/**
+ * Функция для добавления тега
+ * @param $connect
+ * @param $tag
+ * @return string
+ */
+function addNewTag($connect, $tag): string
+{
     $query = "INSERT INTO hashtags (
                 name
             ) VALUES (
@@ -46,7 +73,14 @@ function addNewTag($connect, $tag): string {
     return getInsertId($connect);
 }
 
-function addPostTag($connect, $post_tag): string {
+/**
+ * Функция для привязки тега к посту
+ * @param $connect
+ * @param $post_tag
+ * @return string
+ */
+function addPostTag($connect, $post_tag): string
+{
     $query = "INSERT INTO post_hashtags (
                 post_id, hashtag_id
             ) VALUES (

@@ -17,22 +17,23 @@ if (count($user) === 0) {
 }
 
 $errors = [];
+$result = [
+    "title" => "",
+    "content" => "",
+    "author" => "",
+    "picture_url" => "",
+    "tmp_path" => "",
+    "file_name" => "",
+    "video_url" => "",
+    "website" => "",
+    "tags" => [],
+    "errors" => [],
+];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $type_id = $_POST["type_id"];
     $uploads_dir = '/uploads/';
     $full_path = __DIR__ . $uploads_dir;
-    $result = [
-        "content" => "",
-        "author" => "",
-        "picture_url" => "",
-        "tmp_path" => "",
-        "file_name" => "",
-        "video_url" => "",
-        "website" => "",
-        "tags" => [],
-        "errors" => [],
-    ];
     $post_fields = [
         1 => [
             "author" => "author",
@@ -46,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "picture_url" => "photo-url",
         ],
         4 => [
-            "video-url" => "video-url",
+            "video_url" => "video-url",
         ],
         5 => [
             "content" => "post-text",
@@ -66,29 +67,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         checkFilling("heading", $required_empty_filed["heading"]),
         "heading"
     );
+    $result["errors"] = addError(
+        $result["errors"],
+        checkLength($result["title"], $required_empty_filed["heading"], 200),
+        "heading"
+    );
 
     foreach ($current_post_fields as $field => $web_name) {
-        switch ($field) {
-            case "picture_file": {
-                $result = addPictureFile($web_name, "content", $result, $uploads_dir);
-                break;
-            }
-            case "picture_url": {
-                $result = addPictureURL($web_name, $result, $uploads_dir);
-                break;
-            }
-            case "website": {
-                $result = addWebsite($web_name, $result, $field);
-                break;
-            }
-            case "video-url": {
-                $result = addVideoURL($web_name, $result, $field);
-                break;
-            }
-            default: {
-                $result = addTextContent($web_name, $result, $field, $required_empty_filed);
-            }
-        }
+        $result = match ($field) {
+            "picture_file" => addPictureFile($web_name, "content", $result, $uploads_dir),
+            "picture_url" => addPictureURL($web_name, $result, $uploads_dir),
+            "website" => addWebsite($web_name, $result, $field),
+            "video_url" => addVideoURL($web_name, $result, $field),
+            default => addTextContent($web_name, $result, $field, $required_empty_filed),
+        };
     }
 
     $result = addTags("tags", $result);
@@ -152,6 +144,7 @@ $errors_template = include_template("/parts/add/errors.php", [
     "errors" => $errors,
 ]);
 $part_template = include_template("/parts/add/" . $current_post_type['icon_class'] . ".php", [
+    "result" => $result,
     "errors" => $errors,
     "errors_template" => $errors_template,
 ]);

@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Функция для получения массива сообщений получателя и авторизованного пользователя
+ * @param $connect
+ * @param $user_id
+ * @param $recipient_id
+ * @return array
+ */
 function getMessagesByRecipient($connect, $user_id, $recipient_id): array
 {
     $query = "SELECT
@@ -25,6 +32,12 @@ function getMessagesByRecipient($connect, $user_id, $recipient_id): array
     return fetchData(prepareResult($connect, $query, "iiii", [$user_id, $recipient_id, $recipient_id, $user_id]));
 }
 
+/**
+ * Функция для получения массива последних сообщений авторизованного пользователя
+ * @param $connect
+ * @param $user_id
+ * @return array
+ */
 function getLastMessagesEveryRecipient($connect, $user_id): array
 {
     $query = "SELECT
@@ -62,7 +75,10 @@ function getLastMessagesEveryRecipient($connect, $user_id): array
                              mes.user_id,
                              mes.recipient_id
                  ) ml
-                        ON (m.user_id = ml.recipient_id AND m.recipient_id = ml.user_id OR m.user_id = ml.user_id AND m.recipient_id = ml.recipient_id) AND m.id = ml.last_message_id
+                        ON (m.user_id = ml.recipient_id AND
+                            m.recipient_id = ml.user_id OR
+                            m.user_id = ml.user_id AND
+                            m.recipient_id = ml.recipient_id) AND m.id = ml.last_message_id
              LEFT JOIN (SELECT
                             unrm.recipient_id,
                             unrm.user_id,
@@ -78,6 +94,12 @@ function getLastMessagesEveryRecipient($connect, $user_id): array
     return fetchData(prepareResult($connect, $query, "ii", [$user_id, $user_id]));
 }
 
+/**
+ * Функция для получения массива непрочитанных сообщений авторизованного пользователя
+ * @param $connect
+ * @param $user_id
+ * @return array
+ */
 function getAllUnreadMessages($connect, $user_id): array
 {
     $query = "SELECT
@@ -88,6 +110,12 @@ function getAllUnreadMessages($connect, $user_id): array
     return fetchAssocData(prepareResult($connect, $query, "i", [$user_id]));
 }
 
+/**
+ * Функция для добавления нового сообщения
+ * @param $connect
+ * @param $message
+ * @return string
+ */
 function addMessage($connect, $message): string
 {
     $query = "INSERT INTO messages (
@@ -107,6 +135,12 @@ function addMessage($connect, $message): string
     return getInsertId($connect);
 }
 
+/**
+ * Функция для обновления статуса прочтения сообщения
+ * @param $connect
+ * @param $message_id
+ * @return string
+ */
 function updateStatusMessage($connect, $message_id): string
 {
     $query = "UPDATE messages

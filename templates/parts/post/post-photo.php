@@ -10,7 +10,7 @@
 
 ?>
 <div class="post__main">
-    <?php if ($show_title): ?>
+    <?php if ($show_title) : ?>
         <h2><a href="/post.php?post_id=<?= htmlspecialchars($id) ?>"></a><?= htmlspecialchars($title) ?></h2>
     <?php endif; ?>
     <div class="post-photo__image-wrapper <?= $is_details ? "post-details__image-wrapper" : "" ?>">

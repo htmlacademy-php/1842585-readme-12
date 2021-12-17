@@ -8,9 +8,20 @@ use Symfony\Component\Mime\Email;
 
 require_once './vendor/autoload.php';
 
-$transport = Transport::fromDsn("smtp://2f9a68295f0fcb:ce330b45e27fd2@smtp.mailtrap.io:2525?encryption=tls&auth_mode=login");
+$transport = Transport::fromDsn(
+    "smtp://2f9a68295f0fcb:ce330b45e27fd2@smtp.mailtrap.io:2525?encryption=tls&auth_mode=login"
+);
 $mailer = new Mailer($transport);
 
+/**
+ * Функция для отправки уведомления на почту
+ * @param MailerInterface $mailer
+ * @param string $sender
+ * @param string $subject
+ * @param string $recipient
+ * @param string $text
+ * @return array
+ */
 function sendEmail(MailerInterface $mailer, string $sender, string $subject, string $recipient, string $text): Array
 {
     $errors = "";

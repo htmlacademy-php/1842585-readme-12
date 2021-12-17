@@ -13,20 +13,19 @@ if (count(getUserAuthentication()) > 0) {
 }
 
 $errors = [];
+$result = [
+    "email" => "",
+    "login" => "",
+    "password" => "",
+    "avatar_path" => "",
+    "tmp_path" => "",
+    "file_name" => "",
+    "errors" => [],
+];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     $uploads_dir = '/uploads/';
     $full_path = __DIR__ . $uploads_dir;
-    $result = [
-        "email" => "",
-        "login" => "",
-        "password" => "",
-        "avatar_path" => "",
-        "tmp_path" => "",
-        "file_name" => "",
-        "errors" => [],
-    ];
     $reg_fields = [
         "email" => "email",
         "login" => "login",
@@ -37,26 +36,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     foreach ($reg_fields as $field => $web_name) {
         switch ($field) {
-            case "email": {
+            case "email":
                 $result = addEmail($field, $web_name, $result, $connect);
                 break;
-            }
-            case "login": {
+            case "login":
                 $result = addLogin($field, $web_name, $result, $connect);
                 break;
-            }
-            case "password": {
+            case "password":
                 $result = addPassword($field, $web_name, $result);
                 break;
-            }
-            case "password-repeat": {
+            case "password-repeat":
                 $result = addPasswordRepeat($web_name, $result);
                 break;
-            }
-            case "avatar_path": {
+            case "avatar_path":
                 $result = addPictureFile($web_name, "avatar_path", $result, $uploads_dir);
                 break;
-            }
         }
     }
 
@@ -90,6 +84,7 @@ $reg_page = include_template("registration.php", [
     "template_class" => "page__main--registration",
     "type_id" => getFirstTypeId(normalizePostTypes(fetchPostTypes($connect))),
     "current_page" => "registration",
+    "result" => $result,
     "errors" => $errors,
     "errors_template" => $errors_template,
 ]);

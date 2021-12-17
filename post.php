@@ -79,7 +79,9 @@ $post_template = include_template("post.php", [
     "user" => $user,
     "user_profile" => $user_profile,
     "user_info" => $user_info,
-    "comments" => $show_all_comments ? normalizeComments(getCommentsByPostId($connect, $post_id)) : normalizeComments(getTwoCommentsByPostId($connect, $post_id)),
+    "comments" => $show_all_comments ?
+        normalizeComments(getCommentsByPostId($connect, $post_id)) :
+        normalizeComments(getTwoCommentsByPostId($connect, $post_id)),
     "show_all_comments" => $show_all_comments,
     "hashtags" => $hashtags,
     "errors" => $errors,

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Функция для получения пользователя по email
+ * @param $connect
+ * @param $email
+ * @return array
+ */
 function getUserByEmail($connect, $email): array
 {
     $query = "SELECT
@@ -28,6 +34,12 @@ function getUserByEmail($connect, $email): array
     return fetchAssocData(prepareResult($connect, $query, "s", [$email]));
 }
 
+/**
+ * Функция для получения пользователя по email или логину
+ * @param $connect
+ * @param $login
+ * @return array
+ */
 function getUserByLoginOrEmail($connect, $login): array
 {
     $query = "SELECT
@@ -56,6 +68,12 @@ function getUserByLoginOrEmail($connect, $login): array
     return fetchAssocData(prepareResult($connect, $query, "ss", [$login, $login]));
 }
 
+/**
+ * Функция для получения пользователя по идентификатору
+ * @param $connect
+ * @param $id
+ * @return array
+ */
 function getUserById($connect, $id): array
 {
     $query = "SELECT
@@ -82,7 +100,14 @@ function getUserById($connect, $id): array
     return fetchAssocData(prepareResult($connect, $query, "i", [$id]));
 }
 
-function addUser($connect, $user): string {
+/**
+ * Функция для добавления пользователя
+ * @param $connect
+ * @param $user
+ * @return string
+ */
+function addUser($connect, $user): string
+{
     $query = "INSERT INTO users (
             registered_at,
             email,

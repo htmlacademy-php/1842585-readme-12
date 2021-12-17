@@ -17,7 +17,8 @@ date_default_timezone_set('Europe/Moscow');
 $post_types = normalizePostTypes(fetchPostTypes($connect));
 $users_likes = getUserLikes($connect, $user["id"]);
 $current_type_id = filter_input(INPUT_GET, 'type_id', FILTER_SANITIZE_SPECIAL_CHARS);
-$posts = $current_type_id ? fetchPostSubscribesByType($connect, $current_type_id, $user["id"]) : fetchPostSubscribes($connect, $user["id"]);
+$posts = $current_type_id ? fetchPostSubscribesByType($connect, $current_type_id, $user["id"])
+    : fetchPostSubscribes($connect, $user["id"]);
 $feed = include_template("feed.php", [
     "post_types" => $post_types,
     "posts" => normalizePosts($posts, $post_types, $users_likes),
