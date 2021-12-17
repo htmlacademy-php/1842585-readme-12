@@ -1,6 +1,10 @@
 <?php
 
-// Запрос для типов постов
+/**
+ * Функция для получения массива типов постов
+ * @param $connect
+ * @return array
+ */
 function fetchPostTypes($connect): array
 {
     $query = "SELECT id, name, icon_class from content_types";
@@ -8,7 +12,14 @@ function fetchPostTypes($connect): array
     return fetchData(prepareResult($connect, $query));
 }
 
-// Получаем шесть самых популярных постов и их авторов, а так же типы постов
+/**
+ * Функция для получения массива популярных постов
+ * @param $connect
+ * @param $offset
+ * @param $sort_field
+ * @param $sort_direction
+ * @return array
+ */
 function fetchPopularPosts($connect, $offset, $sort_field, $sort_direction): array
 {
     $query = "SELECT
@@ -61,6 +72,15 @@ function fetchPopularPosts($connect, $offset, $sort_field, $sort_direction): arr
     return fetchData(prepareResult($connect, $query, "i", [$offset]));
 }
 
+/**
+ * Функция для получения массива популярных постов по типу поста
+ * @param $connect
+ * @param $type_id
+ * @param $offset
+ * @param $sort_field
+ * @param $sort_direction
+ * @return array
+ */
 function fetchPopularPostsByType($connect, $type_id, $offset, $sort_field, $sort_direction): array
 {
     $query = "SELECT
@@ -114,6 +134,12 @@ function fetchPopularPostsByType($connect, $type_id, $offset, $sort_field, $sort
     return fetchData(prepareResult($connect, $query, "ii", [$type_id, $offset]));
 }
 
+/**
+ * Функция для получения поста по идентификатору
+ * @param $connect
+ * @param $post_id
+ * @return array
+ */
 function fetchPostById($connect, $post_id): array
 {
     $query = "SELECT
@@ -171,6 +197,12 @@ function fetchPostById($connect, $post_id): array
     return fetchAssocData(prepareResult($connect, $query, "i", [$post_id]));
 }
 
+/**
+ * Функция для получения массива постов подписчиков
+ * @param $connect
+ * @param $user_id
+ * @return array
+ */
 function fetchPostSubscribes($connect, $user_id): array
 {
     $query = "SELECT
@@ -224,6 +256,13 @@ function fetchPostSubscribes($connect, $user_id): array
     return fetchData(prepareResult($connect, $query, "i", [$user_id]));
 }
 
+/**
+ * Функция для получения массива постов подписчиков по типу поста
+ * @param $connect
+ * @param $type_id
+ * @param $user_id
+ * @return array
+ */
 function fetchPostSubscribesByType($connect, $type_id, $user_id): array
 {
     $query = "SELECT
@@ -277,6 +316,12 @@ function fetchPostSubscribesByType($connect, $type_id, $user_id): array
     return fetchData(prepareResult($connect, $query, "ii", [$type_id, $user_id]));
 }
 
+/**
+ * Функция для получения массива постов пользователя
+ * @param $connect
+ * @param $user_id
+ * @return array
+ */
 function getPostsByUserId($connect, $user_id): array
 {
     $query = "SELECT
@@ -329,6 +374,12 @@ function getPostsByUserId($connect, $user_id): array
     return fetchData(prepareResult($connect, $query, "i", [$user_id]));
 }
 
+/**
+ * Функция для поиска постов
+ * @param $connect
+ * @param $search
+ * @return array
+ */
 function searchPosts($connect, $search): array
 {
     $query = "SELECT
@@ -380,6 +431,12 @@ function searchPosts($connect, $search): array
     return fetchData(prepareResult($connect, $query, "s", [$search]));
 }
 
+/**
+ * Функция для поиска постов по тегу
+ * @param $connect
+ * @param $hashtag
+ * @return array
+ */
 function searchPostsByHashtag($connect, $hashtag): array
 {
     $query = "SELECT
@@ -436,6 +493,12 @@ function searchPostsByHashtag($connect, $hashtag): array
     return fetchData(prepareResult($connect, $query, "s", [$hashtag]));
 }
 
+/**
+ * Функция для получения количества постов пользователя
+ * @param $connect
+ * @param $user_id
+ * @return array
+ */
 function getPostsCountByUserId($connect, $user_id): array
 {
     $query = "SELECT
@@ -446,6 +509,11 @@ function getPostsCountByUserId($connect, $user_id): array
     return fetchAssocData(prepareResult($connect, $query, "i", [$user_id]));
 }
 
+/**
+ * Функция для получения общего количества постов
+ * @param $connect
+ * @return array
+ */
 function getPostsCount($connect): array
 {
     $query = "SELECT
@@ -455,6 +523,12 @@ function getPostsCount($connect): array
     return fetchAssocData(prepareResult($connect, $query));
 }
 
+/**
+ * Функция для получения количества постов по типу поста
+ * @param $connect
+ * @param $type_id
+ * @return array
+ */
 function getPostsCountByType($connect, $type_id): array
 {
     $query = "SELECT
@@ -465,6 +539,14 @@ function getPostsCountByType($connect, $type_id): array
     return fetchAssocData(prepareResult($connect, $query, "i", [$type_id]));
 }
 
+/**
+ * Функция для получения массива постов созданных с помощью репоста
+ * @param $connect
+ * @param $user_id
+ * @param $user_id_original
+ * @param $post_id_original
+ * @return array
+ */
 function getPostsRepost($connect, $user_id, $user_id_original, $post_id_original): array
 {
     $query = "SELECT
@@ -475,6 +557,12 @@ function getPostsRepost($connect, $user_id, $user_id_original, $post_id_original
     return fetchAssocData(prepareResult($connect, $query, "iii", [$user_id, $user_id_original, $post_id_original]));
 }
 
+/**
+ * Функция для добавления поста
+ * @param $connect
+ * @param $post
+ * @return string
+ */
 function addPost($connect, $post): string
 {
     $query = "INSERT INTO posts (
@@ -508,6 +596,12 @@ function addPost($connect, $post): string
     return getInsertId($connect);
 }
 
+/**
+ * Функция для обновления счетчика просмотров поста
+ * @param $connect
+ * @param $post_id
+ * @return string
+ */
 function updatePostViews($connect, $post_id): string
 {
     $query = "UPDATE posts

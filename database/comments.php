@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Функция для получения массива с комментариями по идентификатору поста
+ * @param $connect
+ * @param $post_id
+ * @return array
+ */
 function getCommentsByPostId($connect, $post_id): array
 {
     $query = "SELECT
@@ -19,6 +25,12 @@ function getCommentsByPostId($connect, $post_id): array
     return fetchData(prepareResult($connect, $query, "i", [$post_id]));
 }
 
+/**
+ * Функция для получения массива из двух комментариев по идентификатору поста
+ * @param $connect
+ * @param $post_id
+ * @return array
+ */
 function getTwoCommentsByPostId($connect, $post_id): array
 {
     $query = "SELECT
@@ -39,6 +51,12 @@ function getTwoCommentsByPostId($connect, $post_id): array
     return fetchData(prepareResult($connect, $query, "i", [$post_id]));
 }
 
+/**
+ * Функция для добавления комментария в базу
+ * @param $connect
+ * @param $comment
+ * @return string
+ */
 function addComment($connect, $comment): string
 {
     $query = "INSERT INTO post_comments (

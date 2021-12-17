@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Функция для получения массива тегов поста
+ * @param $connect
+ * @param $post_id
+ * @return array
+ */
 function getPostTags($connect, $post_id): array
 {
     $query = "SELECT
@@ -14,6 +20,11 @@ function getPostTags($connect, $post_id): array
     return fetchData(prepareResult($connect, $query, "s", [$post_id]));
 }
 
+/**
+ * Функция для получения массива тегов всех постов
+ * @param $connect
+ * @return array
+ */
 function getPostsTags($connect): array
 {
     $query = "SELECT
@@ -27,6 +38,12 @@ function getPostsTags($connect): array
     return fetchData(prepareResult($connect, $query));
 }
 
+/**
+ * Функция для получения тега по имени
+ * @param $connect
+ * @param $name
+ * @return array
+ */
 function getTagByName($connect, $name): array
 {
     $query = "SELECT
@@ -37,6 +54,12 @@ function getTagByName($connect, $name): array
     return fetchAssocData(prepareResult($connect, $query, "s", [$name]));
 }
 
+/**
+ * Функция для добавления тега
+ * @param $connect
+ * @param $tag
+ * @return string
+ */
 function addNewTag($connect, $tag): string
 {
     $query = "INSERT INTO hashtags (
@@ -50,6 +73,12 @@ function addNewTag($connect, $tag): string
     return getInsertId($connect);
 }
 
+/**
+ * Функция для привязки тега к посту
+ * @param $connect
+ * @param $post_tag
+ * @return string
+ */
 function addPostTag($connect, $post_tag): string
 {
     $query = "INSERT INTO post_hashtags (

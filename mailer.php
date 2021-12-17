@@ -1,6 +1,5 @@
 <?php
 
-use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\MailerInterface;
@@ -14,7 +13,15 @@ $transport = Transport::fromDsn(
 );
 $mailer = new Mailer($transport);
 
-#[ArrayShape(["success" => "bool", "errors" => "string"])]
+/**
+ * Функция для отправки уведомления на почту
+ * @param MailerInterface $mailer
+ * @param string $sender
+ * @param string $subject
+ * @param string $recipient
+ * @param string $text
+ * @return array
+ */
 function sendEmail(MailerInterface $mailer, string $sender, string $subject, string $recipient, string $text): Array
 {
     $errors = "";
